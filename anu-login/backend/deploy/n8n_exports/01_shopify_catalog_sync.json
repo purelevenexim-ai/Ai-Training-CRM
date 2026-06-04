@@ -1,0 +1,122 @@
+{
+  "name": "01 - Shopify Catalog Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/30 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-sync",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "baseUrl",
+              "value": "http://127.0.0.1:8000/api"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-config",
+      "name": "Set Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$json.baseUrl + '/ai/sync'}}",
+        "options": {}
+      },
+      "id": "trigger-sync",
+      "name": "Trigger Sync",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        760,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$json.baseUrl + '/ai/catalog'}}",
+        "options": {}
+      },
+      "id": "verify-catalog",
+      "name": "Verify Catalog",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        260
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Config": {
+      "main": [
+        [
+          {
+            "node": "Trigger Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Sync": {
+      "main": [
+        [
+          {
+            "node": "Verify Catalog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "versionId": "01-shopify-sync-v1",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "id": "01-shopify-catalog-sync",
+  "tags": []
+}

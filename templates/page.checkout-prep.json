@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "basil-checkout-prep": {
+      "type": "basil-checkout-prep",
+      "settings": {}
+    }
+  },
+  "order": [
+    "basil-checkout-prep"
+  ]
+}

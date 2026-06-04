@@ -1,0 +1,86 @@
+{
+  "name": "Pureleven WhatsApp Replenishment (Day 30)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "cronExpression", "expression": "0 9 * * *"}]
+        }
+      },
+      "name": "Every Day 9 AM IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT o.shopify_order_id, o.email, c.phone, c.first_name,\n       (SELECT STRING_AGG(item->>'name', ', ') FROM jsonb_array_elements(o.items::jsonb) item) AS product_name,\n       o.total_amount,\n       NOW() - o.order_date AS days_since\nFROM crm_orders o\nJOIN crm_customers c ON c.id = o.customer_id\nWHERE o.order_date BETWEEN NOW() - INTERVAL '31 days' AND NOW() - INTERVAL '29 days'\n  AND o.replenishment_email_sent = FALSE\n  AND o.rto = FALSE\n  AND c.phone IS NOT NULL\n  AND c.phone != ''\nLIMIT 100",
+        "options": {}
+      },
+      "name": "Get 30-Day Customers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [460, 300],
+      "credentials": {
+        "postgres": {
+          "id": "pureleven-postgres",
+          "name": "Pureleven Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Loop Over Customers",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://pureleven-ai-engine:8000/api/crm/wabis/send",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "phone": "={{ $json.phone.replace(/[^0-9]/g, '').length === 10 ? '91' + $json.phone.replace(/[^0-9]/g, '') : $json.phone.replace(/[^0-9]/g, '') }}",
+          "message": "Hi {{ $json.first_name || 'there' }},\n\n30 days since your order! 🔄\n\nTime to reorder {{ $json.product_name }}?\nUse REFILL30 for ₹100 off 🎁\n\nhttps://pureleven.com\n\n- Pureleven"
+        },
+        "options": {}
+      },
+      "name": "Send WhatsApp Replenishment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE crm_orders SET replenishment_email_sent = TRUE WHERE shopify_order_id = '{{ $json.shopify_order_id }}'",
+        "options": {}
+      },
+      "name": "Mark Replenishment Sent",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1120, 300],
+      "credentials": {
+        "postgres": {
+          "id": "pureleven-postgres",
+          "name": "Pureleven Postgres"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every Day 9 AM IST":        {"main": [[{"node": "Get 30-Day Customers",          "type": "main", "index": 0}]]},
+    "Get 30-Day Customers":      {"main": [[{"node": "Loop Over Customers",            "type": "main", "index": 0}]]},
+    "Loop Over Customers":       {"main": [[{"node": "Send WhatsApp Replenishment",    "type": "main", "index": 0}]]},
+    "Send WhatsApp Replenishment":{"main": [[{"node": "Mark Replenishment Sent",       "type": "main", "index": 0}]]}
+  },
+  "active": true,
+  "settings": {"executionOrder": "v1"},
+  "tags": ["whatsapp", "replenishment", "lifecycle", "pureleven"]
+}

@@ -1,0 +1,65 @@
+{% comment %}
+  Compact editorial product card for article/blog merchandising surfaces.
+
+  Accepts:
+  - card_product: {Object} Product Liquid object
+  - eyebrow: {String} Optional small label
+  - supporting_text: {String} Optional supporting copy
+  - action_label: {String} Optional CTA label
+  - layout: {String} Optional, 'vertical' or 'horizontal'
+{% endcomment %}
+
+{%- if card_product and card_product != empty -%}
+  {%- liquid
+    assign merch_layout = layout | default: 'vertical'
+    assign merch_action_label = action_label | default: 'View product'
+    assign compare_price = blank
+    if card_product.compare_at_price > card_product.price
+      assign compare_price = card_product.compare_at_price | money
+    endif
+  -%}
+  <a class="article-merch-card article-merch-card--{{ merch_layout }}" href="{{ card_product.url }}">
+    {%- if card_product.featured_media -%}
+      <span class="article-merch-card__media">
+        <img
+          srcset="
+            {%- if card_product.featured_media.width >= 165 -%}{{ card_product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 360 -%}{{ card_product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 533 -%}{{ card_product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+            {{ card_product.featured_media | image_url }} {{ card_product.featured_media.width }}w
+          "
+          src="{{ card_product.featured_media | image_url: width: 533 }}"
+          sizes="(min-width: 990px) 18rem, (min-width: 750px) 24vw, calc(100vw - 8rem)"
+          loading="lazy"
+          width="{{ card_product.featured_media.width }}"
+          height="{{ card_product.featured_media.height }}"
+          alt="{{ card_product.featured_media.alt | default: card_product.title | escape }}"
+        >
+      </span>
+    {%- endif -%}
+
+    <span class="article-merch-card__body">
+      {%- if eyebrow != blank -%}
+        <span class="article-merch-card__eyebrow">{{ eyebrow }}</span>
+      {%- endif -%}
+
+      <span class="article-merch-card__title">{{ card_product.title | escape }}</span>
+
+      {%- if supporting_text != blank -%}
+        <span class="article-merch-card__text">{{ supporting_text }}</span>
+      {%- endif -%}
+
+      <span class="article-merch-card__price-row">
+        {%- if compare_price != blank -%}
+          <span class="article-merch-card__price article-merch-card__price--compare">{{ compare_price }}</span>
+        {%- endif -%}
+        <span class="article-merch-card__price">{{ card_product.price | money }}</span>
+      </span>
+
+      <span class="article-merch-card__footer">
+        <span class="article-merch-card__action">{{ merch_action_label }}</span>
+        <span class="article-merch-card__arrow" aria-hidden="true">&rarr;</span>
+      </span>
+    </span>
+  </a>
+{%- endif -%}

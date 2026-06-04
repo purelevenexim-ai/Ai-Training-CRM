@@ -1,0 +1,325 @@
+[
+  {
+    "release_id": "20260602T160239Z",
+    "created_at": "2026-06-02T16:02:39.085178+00:00",
+    "prepare_result": {
+      "status": "ok",
+      "refresh_steps": {
+        "catalog_sync": {
+          "command": [
+            "python3",
+            "/Users/bthomas/Documents/pureleven_dev/sync_product_catalog_from_wabis_upload.py"
+          ],
+          "stdout": "{\n  \"updated_products\": [\n    \"cardamom\",\n    \"pepper\",\n    \"cinnamon\",\n    \"clove\",\n    \"turmeric\"\n  ],\n  \"updated_combos\": [\n    \"Cardamom 100g + Clove 100g\",\n    \"Cardamom 100g + Black Pepper 200g\",\n    \"Cardamom 100g + Cinnamon 100g\"\n  ],\n  \"catalog_path\": \"/Users/bthomas/Documents/pureleven_dev/anu-login/backend/app/ai/product_catalog.json\",\n  \"source_path\": \"/Users/bthomas/Documents/pureleven_dev/PURELEVEN_WABIS_UPLOAD.txt\"\n}"
+        },
+        "question_bank": {
+          "command": [
+            "python3",
+            "/Users/bthomas/Documents/pureleven_dev/generate_whatsapp_top_1000_questions.py"
+          ],
+          "stdout": "Wrote 1000 entries to /Users/bthomas/Documents/pureleven_dev/WHATSAPP_TOP_1000_QUESTIONS.json\nWrote markdown summary to /Users/bthomas/Documents/pureleven_dev/WHATSAPP_TOP_1000_QUESTIONS.md"
+        }
+      },
+      "output_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts",
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "wabis_rows": 1000
+    },
+    "evaluate_result": {
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "categories": {
+        "availability": 50,
+        "best_pack": 50,
+        "budget": 50,
+        "clarification": 50,
+        "combo": 50,
+        "comparison": 50,
+        "complaint": 50,
+        "delivery": 50,
+        "followup": 50,
+        "gift": 50,
+        "gift_personal": 50,
+        "how_to_use": 50,
+        "negation": 50,
+        "order": 50,
+        "origin": 50,
+        "price": 50,
+        "quality": 50,
+        "restock": 50,
+        "value_objection": 50,
+        "wholesale": 50
+      },
+      "tones": {
+        "manglish_purchase": 100,
+        "malayalam_warm": 100,
+        "malayalam_price": 100,
+        "wholesale": 100,
+        "negation": 100,
+        "english_warm": 100,
+        "english_direct": 100,
+        "english_sales": 100,
+        "manglish_warm": 100,
+        "manglish_price": 100
+      },
+      "problems": []
+    },
+    "upload_wabis_requested": false,
+    "upload_wabis_status": "not_requested",
+    "release_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts/releases/20260602T160239Z"
+  },
+  {
+    "release_id": "20260602T160229Z",
+    "created_at": "2026-06-02T16:02:29.743522+00:00",
+    "prepare_result": {
+      "status": "ok",
+      "refresh_steps": {
+        "catalog_sync": {
+          "command": [
+            "python3",
+            "/Users/bthomas/Documents/pureleven_dev/sync_product_catalog_from_wabis_upload.py"
+          ],
+          "stdout": "{\n  \"updated_products\": [\n    \"cardamom\",\n    \"pepper\",\n    \"cinnamon\",\n    \"clove\",\n    \"turmeric\"\n  ],\n  \"updated_combos\": [\n    \"Cardamom 100g + Clove 100g\",\n    \"Cardamom 100g + Black Pepper 200g\",\n    \"Cardamom 100g + Cinnamon 100g\"\n  ],\n  \"catalog_path\": \"/Users/bthomas/Documents/pureleven_dev/anu-login/backend/app/ai/product_catalog.json\",\n  \"source_path\": \"/Users/bthomas/Documents/pureleven_dev/PURELEVEN_WABIS_UPLOAD.txt\"\n}"
+        },
+        "question_bank": {
+          "command": [
+            "python3",
+            "/Users/bthomas/Documents/pureleven_dev/generate_whatsapp_top_1000_questions.py"
+          ],
+          "stdout": "Wrote 1000 entries to /Users/bthomas/Documents/pureleven_dev/WHATSAPP_TOP_1000_QUESTIONS.json\nWrote markdown summary to /Users/bthomas/Documents/pureleven_dev/WHATSAPP_TOP_1000_QUESTIONS.md"
+        }
+      },
+      "output_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts",
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "wabis_rows": 1000
+    },
+    "evaluate_result": {
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "categories": {
+        "availability": 50,
+        "best_pack": 50,
+        "budget": 50,
+        "clarification": 50,
+        "combo": 50,
+        "comparison": 50,
+        "complaint": 50,
+        "delivery": 50,
+        "followup": 50,
+        "gift": 50,
+        "gift_personal": 50,
+        "how_to_use": 50,
+        "negation": 50,
+        "order": 50,
+        "origin": 50,
+        "price": 50,
+        "quality": 50,
+        "restock": 50,
+        "value_objection": 50,
+        "wholesale": 50
+      },
+      "tones": {
+        "manglish_purchase": 100,
+        "malayalam_warm": 100,
+        "malayalam_price": 100,
+        "wholesale": 100,
+        "negation": 100,
+        "english_warm": 100,
+        "english_direct": 100,
+        "english_sales": 100,
+        "manglish_warm": 100,
+        "manglish_price": 100
+      },
+      "problems": []
+    },
+    "upload_wabis_requested": false,
+    "upload_wabis_status": "not_requested",
+    "release_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts/releases/20260602T160229Z"
+  },
+  {
+    "release_id": "20260602T160114Z",
+    "created_at": "2026-06-02T16:01:14.932558+00:00",
+    "prepare_result": {
+      "status": "ok",
+      "refresh_steps": {
+        "catalog_sync": {
+          "command": [
+            "python3",
+            "/Users/bthomas/Documents/pureleven_dev/sync_product_catalog_from_wabis_upload.py"
+          ],
+          "stdout": "{\n  \"updated_products\": [\n    \"cardamom\",\n    \"pepper\",\n    \"cinnamon\",\n    \"clove\",\n    \"turmeric\"\n  ],\n  \"updated_combos\": [\n    \"Cardamom 100g + Clove 100g\",\n    \"Cardamom 100g + Black Pepper 200g\",\n    \"Cardamom 100g + Cinnamon 100g\"\n  ],\n  \"catalog_path\": \"/Users/bthomas/Documents/pureleven_dev/anu-login/backend/app/ai/product_catalog.json\",\n  \"source_path\": \"/Users/bthomas/Documents/pureleven_dev/PURELEVEN_WABIS_UPLOAD.txt\"\n}"
+        },
+        "question_bank": {
+          "command": [
+            "python3",
+            "/Users/bthomas/Documents/pureleven_dev/generate_whatsapp_top_1000_questions.py"
+          ],
+          "stdout": "Wrote 1000 entries to /Users/bthomas/Documents/pureleven_dev/WHATSAPP_TOP_1000_QUESTIONS.json\nWrote markdown summary to /Users/bthomas/Documents/pureleven_dev/WHATSAPP_TOP_1000_QUESTIONS.md"
+        }
+      },
+      "output_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts",
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "wabis_rows": 1000
+    },
+    "evaluate_result": {
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "categories": {
+        "availability": 50,
+        "best_pack": 50,
+        "budget": 50,
+        "clarification": 50,
+        "combo": 50,
+        "comparison": 50,
+        "complaint": 50,
+        "delivery": 50,
+        "followup": 50,
+        "gift": 50,
+        "gift_personal": 50,
+        "how_to_use": 50,
+        "negation": 50,
+        "order": 50,
+        "origin": 50,
+        "price": 50,
+        "quality": 50,
+        "restock": 50,
+        "value_objection": 50,
+        "wholesale": 50
+      },
+      "tones": {
+        "manglish_purchase": 100,
+        "malayalam_warm": 100,
+        "malayalam_price": 100,
+        "wholesale": 100,
+        "negation": 100,
+        "english_warm": 100,
+        "english_direct": 100,
+        "english_sales": 100,
+        "manglish_warm": 100,
+        "manglish_price": 100
+      },
+      "problems": []
+    },
+    "upload_wabis_requested": false,
+    "upload_wabis_status": "not_requested",
+    "release_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts/releases/20260602T160114Z"
+  },
+  {
+    "release_id": "20260602T154334Z",
+    "created_at": "2026-06-02T15:43:34.700667+00:00",
+    "prepare_result": {
+      "status": "ok",
+      "output_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts",
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "wabis_rows": 1000
+    },
+    "evaluate_result": {
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "categories": {
+        "availability": 50,
+        "best_pack": 50,
+        "budget": 50,
+        "clarification": 50,
+        "combo": 50,
+        "comparison": 50,
+        "complaint": 50,
+        "delivery": 50,
+        "followup": 50,
+        "gift": 50,
+        "gift_personal": 50,
+        "how_to_use": 50,
+        "negation": 50,
+        "order": 50,
+        "origin": 50,
+        "price": 50,
+        "quality": 50,
+        "restock": 50,
+        "value_objection": 50,
+        "wholesale": 50
+      },
+      "tones": {
+        "manglish_purchase": 100,
+        "malayalam_warm": 100,
+        "malayalam_price": 100,
+        "wholesale": 100,
+        "negation": 100,
+        "english_warm": 100,
+        "english_direct": 100,
+        "english_sales": 100,
+        "manglish_warm": 100,
+        "manglish_price": 100
+      },
+      "problems": []
+    },
+    "upload_wabis_requested": false,
+    "upload_wabis_status": "not_requested",
+    "release_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts/releases/20260602T154334Z"
+  },
+  {
+    "release_id": "20260602T154320Z",
+    "created_at": "2026-06-02T15:43:20.368843+00:00",
+    "prepare_result": {
+      "status": "ok",
+      "output_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts",
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "wabis_rows": 1000
+    },
+    "evaluate_result": {
+      "train_rows": 700,
+      "validation_rows": 200,
+      "gold_rows": 100,
+      "categories": {
+        "availability": 50,
+        "best_pack": 50,
+        "budget": 50,
+        "clarification": 50,
+        "combo": 50,
+        "comparison": 50,
+        "complaint": 50,
+        "delivery": 50,
+        "followup": 50,
+        "gift": 50,
+        "gift_personal": 50,
+        "how_to_use": 50,
+        "negation": 50,
+        "order": 50,
+        "origin": 50,
+        "price": 50,
+        "quality": 50,
+        "restock": 50,
+        "value_objection": 50,
+        "wholesale": 50
+      },
+      "tones": {
+        "manglish_purchase": 100,
+        "malayalam_warm": 100,
+        "malayalam_price": 100,
+        "wholesale": 100,
+        "negation": 100,
+        "english_warm": 100,
+        "english_direct": 100,
+        "english_sales": 100,
+        "manglish_warm": 100,
+        "manglish_price": 100
+      },
+      "problems": []
+    },
+    "upload_wabis_requested": false,
+    "upload_wabis_status": "not_requested",
+    "release_dir": "/Users/bthomas/Documents/pureleven_dev/training_artifacts/releases/20260602T154320Z"
+  }
+]

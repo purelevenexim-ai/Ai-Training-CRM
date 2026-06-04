@@ -1,0 +1,16 @@
+<svg width="112" height="112" viewBox="0 0 112 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="lockShadow" x="8" y="8" width="96" height="96" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#7A5A12" flood-opacity="0.22"/>
+    </filter>
+    <linearGradient id="lockBody" x1="56" y1="34" x2="56" y2="82" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7D465"/>
+      <stop offset="1" stop-color="#C89B2E"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#lockShadow)">
+    <path d="M34 52C34 46.4772 38.4772 42 44 42H68C73.5228 42 78 46.4772 78 52V78C78 83.5228 73.5228 88 68 88H44C38.4772 88 34 83.5228 34 78V52Z" fill="url(#lockBody)"/>
+    <path d="M42 42V34C42 26.268 48.268 20 56 20C63.732 20 70 26.268 70 34V42" stroke="#A8771F" stroke-width="8" stroke-linecap="round"/>
+    <path d="M56 60C59.3137 60 62 62.6863 62 66C62 68.3134 60.6918 70.3213 58.7778 71.3228V76C58.7778 77.6568 57.4346 79 55.7778 79H56.2222C54.5654 79 53.2222 77.6568 53.2222 76V71.3228C51.3082 70.3213 50 68.3134 50 66C50 62.6863 52.6863 60 56 60Z" fill="#0E5C36"/>
+  </g>
+</svg>

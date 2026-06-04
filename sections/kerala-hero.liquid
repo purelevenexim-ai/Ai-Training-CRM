@@ -1,0 +1,132 @@
+{{ 'section-kerala-hero.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="kerala-hero">
+      {% if section.settings.image != blank %}
+        <picture class="kerala-hero__image">
+          {%- assign image_alt = section.settings.image.alt | default: "Kerala - God's Own Country" -%}
+          
+          {%- comment -%}WebP sources for modern browsers{%- endcomment -%}
+          {%- if section.settings.image.width >= 550 -%}
+          <source
+            type="image/webp"
+            srcset="
+              {%- if section.settings.image.width >= 550 -%}{{ section.settings.image | image_url: width: 550, format: 'webp' }} 550w,{%- endif -%}
+              {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750, format: 'webp' }} 750w,{%- endif -%}
+              {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100, format: 'webp' }} 1100w,{%- endif -%}
+              {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500, format: 'webp' }} 1500w,{%- endif -%}
+              {{ section.settings.image | image_url: width: 2000, format: 'webp' }} 2000w"
+            sizes="(min-width: 1200px) 1100px, (min-width: 750px) calc(100vw - 100px), calc(100vw - 40px)"
+          >
+          {%- endif -%}
+          
+          {%- if section.settings.image_behavior == 'ambient' or section.settings.image_behavior == 'zoom' -%}
+            <img
+              src="{{ section.settings.image | image_url: width: 1500 }}"
+              alt="{{ image_alt }}"
+              class="kerala-hero__img"
+              loading="lazy"
+              decoding="async"
+              width="{{ section.settings.image.width }}"
+              height="{{ section.settings.image.height }}"
+              srcset="
+                {{ section.settings.image | image_url: width: 550 }} 550w,
+                {{ section.settings.image | image_url: width: 750 }} 750w,
+                {{ section.settings.image | image_url: width: 1100 }} 1100w,
+                {{ section.settings.image | image_url: width: 1500 }} 1500w,
+                {{ section.settings.image | image_url: width: 2000 }} 2000w"
+              sizes="(min-width: 1200px) 1100px, (min-width: 750px) calc(100vw - 100px), calc(100vw - 40px)"
+            />
+          {%- else -%}
+            <img
+              src="{{ section.settings.image | image_url: width: 1500 }}"
+              alt="{{ image_alt }}"
+              class="kerala-hero__img"
+              loading="lazy"
+              decoding="async"
+              width="{{ section.settings.image.width }}"
+              height="{{ section.settings.image.height }}"
+            />
+          {%- endif -%}
+        </picture>
+      {% else %}
+        <div class="kerala-hero__placeholder">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Kerala Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_behavior",
+      "label": "Image behavior",
+      "default": "none",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "ambient",
+          "label": "Ambient"
+        },
+        {
+          "value": "zoom",
+          "label": "Zoom in on scroll"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Kerala Hero"
+    }
+  ]
+}
+{% endschema %}

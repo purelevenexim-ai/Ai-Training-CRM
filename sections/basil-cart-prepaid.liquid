@@ -1,0 +1,79 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- if cart != empty -%}
+  {%- liquid
+    assign prepaid_saving = settings.basil_cart_prepaid_saving | default: 30 | plus: 0
+    assign benefit_1 = settings.basil_cart_prepaid_benefit_1 | default: 'Faster dispatch'
+    assign benefit_2 = settings.basil_cart_prepaid_benefit_2 | default: 'Priority packing'
+  -%}
+  <div class="section-{{ section.id }}-padding">
+    <div class="page-width">
+      <div class="basil-prepaid-card">
+        <div class="basil-prepaid-card__left">
+          <span class="basil-prepaid-card__rupee-icon" aria-hidden="true">₹</span>
+          <div class="basil-prepaid-card__copy">
+            <p class="basil-prepaid-card__heading">Pay online &amp; get extra benefits!</p>
+            <ul class="basil-prepaid-card__benefits">
+              <li><span class="basil-prepaid-card__tick" aria-hidden="true">✓</span> ₹{{ prepaid_saving }} Extra OFF</li>
+              <li><span class="basil-prepaid-card__tick" aria-hidden="true">✓</span> {{ benefit_1 }}</li>
+              {%- if benefit_2 != blank -%}
+                <li><span class="basil-prepaid-card__tick" aria-hidden="true">•</span> {{ benefit_2 }}</li>
+              {%- endif -%}
+            </ul>
+          </div>
+        </div>
+        <a href="{{ routes.root_url }}checkout" class="basil-prepaid-card__cta">
+          Save ₹{{ prepaid_saving }}&nbsp;<span aria-hidden="true">›</span>
+        </a>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Basil cart prepaid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Basil cart prepaid"
+    }
+  ]
+}
+{% endschema %}

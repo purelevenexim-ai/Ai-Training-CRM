@@ -1,0 +1,266 @@
+/* ============================================================
+   PureLeven Brand Clean Layer
+   Loaded LAST (after pureleven-saas-ui.css) to unify the site.
+   Brand rules:
+     Teal  #0C7A66 = commerce CTAs (Add to Cart / Buy / Checkout)
+     Green #1B4A2C = nav / story / structural
+     Serif (Cormorant Garamond) = headings & product names
+     Sans  (Plus Jakarta Sans)  = body, UI, prices, buttons
+   ============================================================ */
+
+:root {
+  --pl-teal: #0c7a66;
+  --pl-teal-dark: #095a4b;
+  --pl-teal-darker: #063a34;
+  --pl-teal-soft: #e4f7f4;
+  --pl-green: #1b4a2c;
+  --pl-green-dark: #142b1c;
+  --pl-cream: #f7f1e6;
+  --pl-warm: #fdfaf5;
+  --pl-ink: #1f2a24;
+  --pl-muted: #5c6b63;
+  --pl-line: #e9e2d4;
+
+  --pl-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --pl-serif: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+
+  --pl-radius: 12px;
+  --pl-radius-sm: 10px;
+  --pl-cta-h: 50px;
+
+  /* Override theme font tokens so all components inherit the brand fonts */
+  --font-body-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-body-style: normal;
+  --font-body-weight: 400;
+  --font-body-weight-bold: 700;
+}
+
+/* ---------- Typography ---------- */
+body {
+  font-family: var(--pl-sans);
+  color: var(--pl-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Strong override: several legacy files hard-code Inter with !important.
+   Force the brand sans on body, UI, prices, buttons & form fields. */
+html body,
+html body button,
+html body .button,
+html body input,
+html body select,
+html body textarea,
+html body .price,
+html body .price .price-item,
+html body .price-item--regular,
+html body .price-item--sale,
+html body .totals__total-value,
+html body .cart-item__price-wrapper {
+  font-family: var(--pl-sans) !important;
+}
+
+h1, h2, h3, h4,
+.h0, .h1, .h2, .h3,
+.banner__heading,
+.product__title,
+.product__title h1,
+.cart__heading,
+.collection__title .title,
+.title-wrapper .title,
+.rich-text__heading {
+  font-family: var(--pl-serif);
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  color: var(--pl-green);
+}
+
+/* Section subheadings / eyebrows stay clean sans for contrast */
+.title-wrapper .subtitle,
+.rich-text__text,
+.banner__text {
+  font-family: var(--pl-sans);
+  color: var(--pl-muted);
+}
+
+/* Prices read as crisp sans, consistent weight & color */
+.price,
+.price .price-item,
+.price-item--regular,
+.price-item--sale,
+.product__price,
+.cart-item__price-wrapper,
+.totals__total-value {
+  font-family: var(--pl-sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.price-item--sale,
+.price__sale .price-item--sale {
+  color: var(--pl-teal-dark);
+  font-weight: 700;
+}
+
+/* Card-specific price layout: compact inline ₹ format */
+.pl-price-row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 0.4rem;
+}
+.pl-price-compare {
+  font-size: 1.2rem;
+  color: #999;
+  font-weight: 400;
+  text-decoration: line-through;
+  font-family: var(--pl-sans);
+}
+.pl-price-sale {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--pl-ink, #1f2a24);
+  font-family: var(--pl-sans);
+}
+.pl-price-regular {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--pl-ink, #1f2a24);
+  font-family: var(--pl-sans);
+}
+
+/* ---------- Buttons: commerce CTAs -> Teal ---------- */
+.button:not(.banner__buttons .button),
+.product-form__submit,
+.shopify-payment-button__button--unbranded,
+.cart__checkout-button,
+.cart__dynamic-checkout-buttons button,
+.quick-add__submit,
+button.cart-notification__links .button,
+.product-form__buttons .button {
+  font-family: var(--pl-sans);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  border-radius: var(--pl-radius-sm);
+}
+
+.product-form__submit,
+.shopify-payment-button__button--unbranded,
+.cart__checkout-button,
+.quick-add__submit,
+.button--primary,
+.product-form__buttons .button:not(.button--secondary) {
+  --color-button: 12, 122, 102;
+  --color-button-text: 255, 255, 255;
+  background: var(--pl-teal) !important;
+  color: #fff !important;
+  border: 0 !important;
+  min-height: var(--pl-cta-h);
+  box-shadow: 0 6px 18px -10px rgba(12, 122, 102, 0.7);
+  transition: background 0.18s ease, transform 0.12s ease,
+    box-shadow 0.18s ease;
+}
+.product-form__submit:hover,
+.shopify-payment-button__button--unbranded:hover,
+.cart__checkout-button:hover,
+.quick-add__submit:hover,
+.button--primary:hover {
+  background: var(--pl-teal-darker) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -10px rgba(6, 58, 52, 0.75);
+}
+.product-form__submit::after,
+.button--primary::after { display: none; }
+
+/* Shiprocket headless / one-click checkout button -> brand teal */
+button.sr-headless-checkout,
+.shiprocket-headless button.sr-headless-checkout {
+  background: var(--pl-teal) !important;
+  border-radius: var(--pl-radius-sm) !important;
+}
+button.sr-headless-checkout:hover {
+  background: var(--pl-teal-darker) !important;
+}
+
+/* Secondary / outline buttons -> teal outline */
+.button--secondary {
+  background: transparent !important;
+  color: var(--pl-teal-dark) !important;
+  border: 1.5px solid var(--pl-teal) !important;
+  border-radius: var(--pl-radius-sm);
+}
+.button--secondary:hover {
+  background: var(--pl-teal-soft) !important;
+}
+
+/* Hero / story buttons stay forest green (nav/story) */
+.banner__buttons .button {
+  font-family: var(--pl-sans);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  border-radius: var(--pl-radius-sm);
+}
+
+/* Links / inline accents */
+a.link,
+.link--text {
+  color: var(--pl-teal-dark);
+}
+
+/* ---------- Spacing & rhythm: reduce clutter ---------- */
+.shopify-section { position: relative; }
+
+/* Calmer dividers */
+hr,
+.section-divider {
+  border-color: var(--pl-line);
+}
+
+/* Card titles use serif for a premium feel */
+.card__heading,
+.card-information__text,
+.full-unstyled-link {
+  font-family: var(--pl-serif);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+html body .card .card__heading,
+html body .card .card__heading a,
+html body .card-information .card__heading,
+html body .card-information .card__heading a,
+html body .card__information .card__heading,
+html body .card__information .card__heading a {
+  font-family: var(--pl-sans) !important;
+  font-weight: 700 !important;
+}
+
+/* Price + quick-add rows stretch full width inside flex-start card info */
+.product-card-wrapper .card__information .price,
+.product-card-wrapper .card__information price-component {
+  width: 100%;
+}
+
+/* Quiet badges so they don't shout against clean layout */
+.badge {
+  font-family: var(--pl-sans);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+}
+
+/* Form fields */
+.field__input,
+.select__select,
+.customer input,
+.search__input {
+  font-family: var(--pl-sans);
+  border-radius: var(--pl-radius-sm);
+}
+.field__input:focus,
+.select__select:focus {
+  outline-color: var(--pl-teal);
+}

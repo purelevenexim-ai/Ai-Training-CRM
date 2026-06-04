@@ -1,0 +1,167 @@
+{% comment %} pl-order-summary.liquid — Pure Leven Cart {% endcomment %}
+
+{% assign subtotal_rupees  = cart.items_subtotal_price | default: cart.total_price | divided_by: 100 %}
+{% assign total_rupees     = cart.total_price | divided_by: 100 %}
+{% assign discount_rupees  = cart.total_discount | default: 0 | divided_by: 100 %}
+{% assign ship_threshold   = settings.free_shipping_threshold | default: 649 %}
+{% assign ship_threshold_paise = ship_threshold | times: 100 %}
+
+{% assign ship_unlocked = false %}
+{% if cart.total_price >= ship_threshold_paise %}
+  {% assign ship_unlocked = true %}
+{% endif %}
+
+{% comment %} Compare-at-price savings (not same as coupon discount) {% endcomment %}
+{% assign cmp_savings_p = 0 %}
+{% for item in cart.items %}
+  {% if item.variant.compare_at_price > item.price %}
+    {% assign ls = item.variant.compare_at_price | minus: item.price | times: item.quantity %}
+    {% assign cmp_savings_p = cmp_savings_p | plus: ls %}
+  {% endif %}
+{% endfor %}
+{% assign cmp_savings = cmp_savings_p | divided_by: 100 %}
+{% assign total_savings = cmp_savings | plus: discount_rupees %}
+{% comment %} MRP = what customer would pay at full compare_at price {% endcomment %}
+{% assign mrp_rupees = subtotal_rupees | plus: cmp_savings %}
+
+<div class="pl-os-card">
+  <div class="pl-os-title-row">
+    <span class="pl-os-title">Order Summary</span>
+    <a href="/cart" class="pl-os-edit">Edit</a>
+  </div>
+
+  {% if cmp_savings > 0 %}
+  <div class="pl-os-row">
+    <span class="pl-os-label">MRP ({{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %})</span>
+    <span class="pl-os-val pl-os-mrp">₹{{ mrp_rupees }}</span>
+  </div>
+  <div class="pl-os-row">
+    <span class="pl-os-label pl-os-label-disc">Product discount</span>
+    <span class="pl-os-val-disc">&minus;&#8377;{{ cmp_savings }}</span>
+  </div>
+  {% else %}
+  <div class="pl-os-row">
+    <span class="pl-os-label">Subtotal ({{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %})</span>
+    <span class="pl-os-val">₹{{ subtotal_rupees }}</span>
+  </div>
+  {% endif %}
+
+  {% if discount_rupees > 0 %}
+  <div class="pl-os-row">
+    <span class="pl-os-label pl-os-label-disc">Coupon discount</span>
+    <span class="pl-os-val-disc">&minus;&#8377;{{ discount_rupees }}</span>
+  </div>
+  {% endif %}
+
+  <div class="pl-os-row">
+    <span class="pl-os-label">Shipping</span>
+    {% if ship_unlocked %}
+      <span class="pl-os-free">FREE</span>
+    {% else %}
+      <span class="pl-os-val">Calculated at checkout</span>
+    {% endif %}
+  </div>
+
+  <hr class="pl-os-divider">
+
+  <div class="pl-os-total-row">
+    <span class="pl-os-total-label">Total</span>
+    <span class="pl-os-total-val">₹{{ total_rupees }}</span>
+  </div>
+
+  {% if total_savings > 0 %}
+  <div class="pl-os-savings">
+    &#129303; You&rsquo;re saving <strong>&#8377;{{ total_savings }}</strong> on this order!
+  </div>
+  {% elsif discount_rupees > 0 %}
+  <div class="pl-os-savings">
+    &#129303; You&rsquo;re saving &#8377;{{ discount_rupees }} on this order
+  </div>
+  {% endif %}
+
+  <p class="pl-os-delivery">
+    📦 Estimated delivery: <strong data-pl-delivery-date>loading…</strong>
+  </p>
+
+  <!-- Coupon accordion — collapsed by default -->
+  <button class="pl-coup-toggle"
+          type="button"
+          data-pl-coupon-toggle
+          onclick="plToggleCoupon(this)"
+          aria-expanded="false">
+    🏷 Have a coupon code? <span>Tap to enter →</span>
+  </button>
+  <div class="pl-coup-form" data-pl-coupon-form hidden>
+    <div class="pl-coup-inner">
+      <input class="pl-coup-input"
+             type="text"
+             name="discount"
+             placeholder="Enter code"
+             autocomplete="off"
+             aria-label="Coupon code"
+             data-pl-coupon-input>
+      <button class="pl-coup-apply" type="button"
+              onclick="plApplyCoupon(this)">
+        Apply
+      </button>
+    </div>
+  </div>
+</div>
+
+{% unless hide_cta %}
+{% if total_savings > 0 %}
+<div class="pl-checkout-savings-nudge">
+  &#127881; You save <strong>&#8377;{{ total_savings }}</strong> today &mdash; don&rsquo;t leave it behind!
+</div>
+{% endif %}
+<!-- Buy Now button — Shiprocket Fastrr checkout -->
+<div class="pl-checkout-cta-wrap">
+  <div class="shiprocket-headless pl-sr-wrap" aria-label="Checkout"></div>
+</div>
+<p class="pl-buy-returns">&#8617; Free 7-day returns &middot; No questions asked</p>
+<p class="pl-buy-micro">&#128666; Cash on Delivery available &middot; &#9889; Ships in 24&ndash;48h</p>
+
+<!-- COA + Harvest freshness -->
+<div class="pl-os-proof-row">
+  <a href="/pages/certificates" target="_blank" rel="noopener noreferrer" class="pl-os-coa">
+    &#128196; View lab certificates (COA)
+  </a>
+  <span class="pl-os-harvest">&#127807; Nov 2025 harvest &middot; peak season</span>
+</div>
+
+<!-- Payment method icons -->
+<div class="pl-pay-icons" aria-label="Accepted payment methods">
+  <span class="pl-pay-icon" title="UPI">
+    <svg viewBox="0 0 40 16" width="40" height="16" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="16" rx="2" fill="#f1f5f9"/>
+      <text x="20" y="11.5" font-size="7" font-weight="700" fill="#6b21a8" text-anchor="middle" font-family="system-ui,sans-serif">UPI</text>
+    </svg>
+  </span>
+  <span class="pl-pay-icon" title="Visa">
+    <svg viewBox="0 0 40 16" width="40" height="16" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="16" rx="2" fill="#1a1f71"/>
+      <text x="20" y="11.5" font-size="8" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="system-ui,sans-serif" letter-spacing="-0.5">VISA</text>
+    </svg>
+  </span>
+  <span class="pl-pay-icon" title="Mastercard">
+    <svg viewBox="0 0 40 16" width="40" height="16" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="16" rx="2" fill="#f1f5f9"/>
+      <circle cx="15" cy="8" r="5" fill="#eb001b"/>
+      <circle cx="25" cy="8" r="5" fill="#f79e1b"/>
+      <path d="M20 4.27a5 5 0 0 1 0 7.46A5 5 0 0 1 20 4.27z" fill="#ff5f00"/>
+    </svg>
+  </span>
+  <span class="pl-pay-icon" title="Net Banking">
+    <svg viewBox="0 0 40 16" width="40" height="16" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="16" rx="2" fill="#f1f5f9"/>
+      <text x="20" y="11.5" font-size="6.5" font-weight="700" fill="#334155" text-anchor="middle" font-family="system-ui,sans-serif">NetBanking</text>
+    </svg>
+  </span>
+  <span class="pl-pay-icon" title="Cash on Delivery">
+    <svg viewBox="0 0 40 16" width="40" height="16" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="16" rx="2" fill="#dcfce7"/>
+      <text x="20" y="11.5" font-size="7" font-weight="700" fill="#15803d" text-anchor="middle" font-family="system-ui,sans-serif">COD</text>
+    </svg>
+  </span>
+</div>
+{% endunless %}

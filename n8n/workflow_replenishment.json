@@ -1,0 +1,88 @@
+{
+  "name": "Pureleven — Replenishment Reminder (30-50 days since last order)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 24 }]
+        }
+      },
+      "name": "Daily at 10am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://track.pureleven.com/api/crm/audiences/replenishment_due/export",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{ "name": "format", "value": "meta" }]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.PURELEVEN_INTERNAL_API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Replenishment Audience",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [{ "value1": "={{ $json.count }}", "operation": "larger", "value2": 0 }]
+        }
+      },
+      "name": "Any customers?",
+      "type": "n8n-nodes-base.if",
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "name": "Split Customers",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://api.wabis.in/v1/send-template",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "to", "value": "={{ $json.phone }}" },
+            { "name": "template", "value": "replenishment_v1" },
+            {
+              "name": "params",
+              "value": "={{ JSON.stringify([ $json.first_name || 'there' ]) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "WhatsApp Replenishment",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1120, 200],
+      "notes": "Template: replenishment_v1\nMessage: 'Time to restock your Kerala spices, {{first_name}}! Re-order easily and get free shipping. [shop link]'"
+    }
+  ],
+  "connections": {
+    "Daily at 10am":              { "main": [[{ "node": "Fetch Replenishment Audience", "type": "main", "index": 0 }]] },
+    "Fetch Replenishment Audience":{ "main": [[{ "node": "Any customers?", "type": "main", "index": 0 }]] },
+    "Any customers?":             { "main": [[{ "node": "Split Customers", "type": "main", "index": 0 }], []] },
+    "Split Customers":            { "main": [[{ "node": "WhatsApp Replenishment", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "pureleven-retargeting" }]
+}

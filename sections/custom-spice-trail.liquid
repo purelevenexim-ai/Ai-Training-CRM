@@ -1,0 +1,77 @@
+<style>
+  .spice-trail { padding: 5rem 1.5rem; background-color: #FFFFFF; text-align: center; }
+  .spice-trail__heading { font-family: var(--font-heading-family); font-size: 2.4rem; margin-bottom: 1rem; color: #1B3A30; }
+  .spice-trail__divider { font-size: 1.5rem; color: #D4821A; margin-bottom: 3rem; }
+  .spice-trail__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+  @media(min-width: 750px) { .spice-trail__grid { grid-template-columns: repeat(4, 1fr); gap: 4rem 2rem; } .spice-trail { padding: 8rem 3.5rem; } .spice-trail__heading { font-size: 3.2rem; } }
+  .spice-trail__item { text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: transform 0.3s ease; }
+  .spice-trail__item:hover { transform: scale(1.04); }
+  .spice-trail__image-wrapper { width: 130px; height: 130px; border-radius: 50%; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.06); margin-bottom: 1.5rem; background: #fff; display: flex; justify-content: center; align-items: center; border: 1px solid rgba(27, 58, 48, 0.05); }
+  @media(min-width: 750px) { .spice-trail__image-wrapper { width: 170px; height: 170px; margin-bottom: 2rem; } }
+  .spice-trail__image { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; }
+  
+  /* Feature allowing sketches with white backgrounds to blend perfectly */
+  .spice-trail__item.is-sketch .spice-trail__image { mix-blend-mode: multiply; object-fit: contain; padding: 25px; filter: contrast(1.1); }
+  
+  .spice-trail__title { font-family: var(--font-body-family); font-weight: 600; font-size: 1.5rem; color: #1B3A30; margin: 0; letter-spacing: 0.05em; text-transform: capitalize; }
+  .spice-trail__subtitle { font-size: 1.2rem; color: #5A6B67; margin-top: 0.4rem; font-style: italic; }
+</style>
+
+<div class="spice-trail">
+  {%- if section.settings.heading != blank -%}
+    <h2 class="spice-trail__heading">{{ section.settings.heading }}</h2>
+    <div class="spice-trail__divider">❦</div>
+  {%- endif -%}
+
+  <div class="spice-trail__grid">
+    {%- for block in section.blocks -%}
+      <a href="{{ block.settings.link | default: '#' }}" class="spice-trail__item {% if block.settings.is_sketch %}is-sketch{% endif %}" {{ block.shopify_attributes }}>
+        <div class="spice-trail__image-wrapper">
+          {%- if block.settings.image != blank -%}
+            <img src="{{ block.settings.image | img_url: '400x400' }}" alt="{{ block.settings.title | escape }}" class="spice-trail__image" loading="lazy">
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'spice-trail__image' }}
+          {%- endif -%}
+        </div>
+        <h3 class="spice-trail__title">{{ block.settings.title }}</h3>
+        {%- if block.settings.subtitle != blank -%}
+          <p class="spice-trail__subtitle">{{ block.settings.subtitle }}</p>
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Spice Trail (Categories)",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Explore The Spice Garden" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "limit": 4,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Sketch Image", "info": "Upload a hand-drawn sketch or photo." },
+        { "type": "checkbox", "id": "is_sketch", "label": "Blend sketch into background", "default": true, "info": "Turn on if your sketch has a white background. It will blend flawlessly." },
+        { "type": "text", "id": "title", "label": "Title", "default": "Cardamom" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Green Pods" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    { 
+      "name": "Spice Trail Categories",
+      "blocks": [
+        { "type": "category", "settings": { "title": "Cardamom", "subtitle": "Green Pods" } },
+        { "type": "category", "settings": { "title": "Black Pepper", "subtitle": "Whole Peppercorns" } },
+        { "type": "category", "settings": { "title": "Cloves", "subtitle": "Aromatic Buds" } },
+        { "type": "category", "settings": { "title": "Cinnamon", "subtitle": "True Ceylon Bark" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

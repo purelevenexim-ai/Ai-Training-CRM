@@ -1,0 +1,566 @@
+{%- assign comparison_count = 0 -%}
+{%- for block in section.blocks -%}
+  {%- if block.settings.label != blank and block.settings.pureleven_value != blank and block.settings.market_value != blank -%}
+    {%- assign comparison_count = comparison_count | plus: 1 -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- capture fallback_comparison_rows -%}
+  {% render 'product-seo-comparison-rows', product_handle: product.handle %}
+{%- endcapture -%}
+{%- assign comparison_metaobject = product.metafields.custom.product_comparison_entry.value -%}
+{%- assign comparison_metafield = product.metafields.custom.product_comparison.value -%}
+{%- assign comparison_eyebrow = section.settings.eyebrow -%}
+{%- assign comparison_heading = section.settings.heading -%}
+{%- assign comparison_intro = section.settings.intro -%}
+{%- assign comparison_pureleven_label = section.settings.pureleven_label -%}
+{%- assign comparison_market_label = section.settings.market_label -%}
+{%- assign comparison_row_1_label = '' -%}
+{%- assign comparison_row_1_pureleven = '' -%}
+{%- assign comparison_row_1_market = '' -%}
+{%- assign comparison_row_2_label = '' -%}
+{%- assign comparison_row_2_pureleven = '' -%}
+{%- assign comparison_row_2_market = '' -%}
+{%- assign comparison_row_3_label = '' -%}
+{%- assign comparison_row_3_pureleven = '' -%}
+{%- assign comparison_row_3_market = '' -%}
+{%- assign comparison_row_4_label = '' -%}
+{%- assign comparison_row_4_pureleven = '' -%}
+{%- assign comparison_row_4_market = '' -%}
+{%- if comparison_metaobject != blank -%}
+  {%- assign comparison_metaobject_heading = comparison_metaobject.heading.value | default: comparison_metaobject.heading -%}
+  {%- if comparison_metaobject_heading != blank -%}
+    {%- assign comparison_heading = comparison_metaobject_heading -%}
+    {%- assign comparison_eyebrow = comparison_metaobject.eyebrow.value | default: comparison_metaobject.eyebrow | default: comparison_eyebrow -%}
+    {%- assign comparison_intro_value = comparison_metaobject.intro.value | default: comparison_metaobject.intro -%}
+    {%- if comparison_intro_value != blank -%}
+      {%- capture comparison_intro -%}<p>{{ comparison_intro_value }}</p>{%- endcapture -%}
+    {%- endif -%}
+    {%- assign comparison_pureleven_label = comparison_metaobject.pureleven_label.value | default: comparison_metaobject.pureleven_label | default: comparison_pureleven_label -%}
+    {%- assign comparison_market_label = comparison_metaobject.market_label.value | default: comparison_metaobject.market_label | default: comparison_market_label -%}
+    {%- assign comparison_row_1_label = comparison_metaobject.row_1_label.value | default: comparison_metaobject.row_1_label -%}
+    {%- assign comparison_row_1_pureleven = comparison_metaobject.row_1_pureleven.value | default: comparison_metaobject.row_1_pureleven -%}
+    {%- assign comparison_row_1_market = comparison_metaobject.row_1_market.value | default: comparison_metaobject.row_1_market -%}
+    {%- assign comparison_row_2_label = comparison_metaobject.row_2_label.value | default: comparison_metaobject.row_2_label -%}
+    {%- assign comparison_row_2_pureleven = comparison_metaobject.row_2_pureleven.value | default: comparison_metaobject.row_2_pureleven -%}
+    {%- assign comparison_row_2_market = comparison_metaobject.row_2_market.value | default: comparison_metaobject.row_2_market -%}
+    {%- assign comparison_row_3_label = comparison_metaobject.row_3_label.value | default: comparison_metaobject.row_3_label -%}
+    {%- assign comparison_row_3_pureleven = comparison_metaobject.row_3_pureleven.value | default: comparison_metaobject.row_3_pureleven -%}
+    {%- assign comparison_row_3_market = comparison_metaobject.row_3_market.value | default: comparison_metaobject.row_3_market -%}
+    {%- assign comparison_row_4_label = comparison_metaobject.row_4_label.value | default: comparison_metaobject.row_4_label -%}
+    {%- assign comparison_row_4_pureleven = comparison_metaobject.row_4_pureleven.value | default: comparison_metaobject.row_4_pureleven -%}
+    {%- assign comparison_row_4_market = comparison_metaobject.row_4_market.value | default: comparison_metaobject.row_4_market -%}
+  {%- endif -%}
+{%- endif -%}
+{%- capture metaobject_comparison_rows -%}
+  {%- if comparison_row_1_label != blank and comparison_row_1_pureleven != blank and comparison_row_1_market != blank -%}
+    <tr>
+      <td class="product-comparison__attribute">{{ comparison_row_1_label }}</td>
+      <td class="product-comparison__pureleven"><p>{{ comparison_row_1_pureleven }}</p></td>
+      <td class="product-comparison__market"><p>{{ comparison_row_1_market }}</p></td>
+    </tr>
+  {%- endif -%}
+  {%- if comparison_row_2_label != blank and comparison_row_2_pureleven != blank and comparison_row_2_market != blank -%}
+    <tr>
+      <td class="product-comparison__attribute">{{ comparison_row_2_label }}</td>
+      <td class="product-comparison__pureleven"><p>{{ comparison_row_2_pureleven }}</p></td>
+      <td class="product-comparison__market"><p>{{ comparison_row_2_market }}</p></td>
+    </tr>
+  {%- endif -%}
+  {%- if comparison_row_3_label != blank and comparison_row_3_pureleven != blank and comparison_row_3_market != blank -%}
+    <tr>
+      <td class="product-comparison__attribute">{{ comparison_row_3_label }}</td>
+      <td class="product-comparison__pureleven"><p>{{ comparison_row_3_pureleven }}</p></td>
+      <td class="product-comparison__market"><p>{{ comparison_row_3_market }}</p></td>
+    </tr>
+  {%- endif -%}
+  {%- if comparison_row_4_label != blank and comparison_row_4_pureleven != blank and comparison_row_4_market != blank -%}
+    <tr>
+      <td class="product-comparison__attribute">{{ comparison_row_4_label }}</td>
+      <td class="product-comparison__pureleven"><p>{{ comparison_row_4_pureleven }}</p></td>
+      <td class="product-comparison__market"><p>{{ comparison_row_4_market }}</p></td>
+    </tr>
+  {%- endif -%}
+{%- endcapture -%}
+{%- capture metafield_comparison_rows -%}
+  {%- if comparison_metafield != blank and comparison_metafield.rows != blank -%}
+    {%- for row in comparison_metafield.rows -%}
+      {%- if row.label != blank and row.pureleven != blank and row.market != blank -%}
+        <tr>
+          <td class="product-comparison__attribute">{{ row.label }}</td>
+          <td class="product-comparison__pureleven"><p>{{ row.pureleven }}</p></td>
+          <td class="product-comparison__market"><p>{{ row.market }}</p></td>
+        </tr>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+{%- if comparison_metaobject == blank and comparison_metafield != blank -%}
+  {%- if comparison_metafield.eyebrow != blank -%}
+    {%- assign comparison_eyebrow = comparison_metafield.eyebrow -%}
+  {%- endif -%}
+  {%- if comparison_metafield.heading != blank -%}
+    {%- assign comparison_heading = comparison_metafield.heading -%}
+  {%- endif -%}
+  {%- if comparison_metafield.intro != blank -%}
+    {%- capture comparison_intro -%}<p>{{ comparison_metafield.intro }}</p>{%- endcapture -%}
+  {%- endif -%}
+  {%- if comparison_metafield.purelevenLabel != blank -%}
+    {%- assign comparison_pureleven_label = comparison_metafield.purelevenLabel -%}
+  {%- endif -%}
+  {%- if comparison_metafield.marketLabel != blank -%}
+    {%- assign comparison_market_label = comparison_metafield.marketLabel -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign has_metafield_comparison = false -%}
+{%- if metafield_comparison_rows != blank -%}
+  {%- assign has_metafield_comparison = true -%}
+{%- endif -%}
+{%- assign has_metaobject_comparison = false -%}
+{%- if metaobject_comparison_rows != blank -%}
+  {%- assign has_metaobject_comparison = true -%}
+{%- endif -%}
+{%- assign has_fallback_comparison = false -%}
+{%- if fallback_comparison_rows != blank -%}
+  {%- assign has_fallback_comparison = true -%}
+{%- endif -%}
+
+{%- if comparison_count > 0 or has_metaobject_comparison or has_metafield_comparison or has_fallback_comparison or request.design_mode -%}
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    }
+
+    @media screen and (min-width: 750px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+      }
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__header {
+      max-width: 90rem;
+      margin: 0 auto 3.2rem;
+      text-align: left;
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__eyebrow {
+      margin: 0 0 1rem;
+      color: #8F5A12;
+      opacity: 0.72;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__heading {
+      margin: 0;
+      max-width: 18ch;
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__intro {
+      max-width: 66rem;
+      margin: 1.2rem auto 0;
+      color: rgba(var(--color-foreground), 0.75);
+      font-size: 1.6rem;
+      line-height: 1.75;
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__table-wrap {
+      max-width: 96rem;
+      margin: 0 auto;
+      overflow-x: auto;
+      border: 0.1rem solid rgba(var(--color-foreground), 0.08);
+      border-radius: 2.6rem;
+      background: linear-gradient(180deg, rgba(var(--color-foreground), 0.025), rgba(var(--color-foreground), 0.01));
+      box-shadow: 0 2.2rem 6rem rgba(27, 58, 48, 0.06);
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 62rem;
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__table th,
+    .product-comparison-{{ section.id }} .product-comparison__table td {
+      padding: 1.8rem 2rem;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__table thead th {
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(var(--color-foreground), 0.7);
+      background: rgba(var(--color-foreground), 0.03);
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__table thead th:nth-child(2) {
+      background: rgba(27, 94, 86, 0.12);
+      color: #1B5E56;
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__attribute {
+      width: 28%;
+      font-weight: 600;
+      color: rgb(var(--color-foreground));
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__pureleven {
+      width: 36%;
+      color: rgb(var(--color-foreground));
+      background: rgba(27, 94, 86, 0.05);
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__market {
+      width: 36%;
+      color: rgba(var(--color-foreground), 0.75);
+    }
+
+    @media screen and (max-width: 749px) {
+      .product-comparison-{{ section.id }} .product-comparison__table-wrap {
+        overflow-x: visible;
+        border-radius: 1.6rem;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__table,
+      .product-comparison-{{ section.id }} .product-comparison__table thead,
+      .product-comparison-{{ section.id }} .product-comparison__table tbody,
+      .product-comparison-{{ section.id }} .product-comparison__table tr,
+      .product-comparison-{{ section.id }} .product-comparison__table th,
+      .product-comparison-{{ section.id }} .product-comparison__table td {
+        display: block;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__table {
+        min-width: 0;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__table tr {
+        padding: 1.3rem 1.2rem;
+        border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__table tr:last-child {
+        border-bottom: 0;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__table td {
+        padding: 0;
+        border-bottom: 0;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__table td + td {
+        margin-top: 1rem;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__attribute {
+        font-size: 1.35rem;
+        line-height: 1.35;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__pureleven,
+      .product-comparison-{{ section.id }} .product-comparison__market {
+        padding: 1rem;
+        border-radius: 1.2rem;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__pureleven::before,
+      .product-comparison-{{ section.id }} .product-comparison__market::before {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__pureleven::before {
+        content: 'Pureleven';
+        color: #1b5e56;
+      }
+
+      .product-comparison-{{ section.id }} .product-comparison__market::before {
+        content: 'Generic market';
+        color: rgba(var(--color-foreground), 0.62);
+      }
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__footer {
+      max-width: 82rem;
+      margin: 2rem auto 0;
+      text-align: left;
+      color: rgba(var(--color-foreground), 0.75);
+    }
+
+    .product-comparison-{{ section.id }} .product-comparison__placeholder {
+      max-width: 96rem;
+      margin: 0 auto;
+      padding: 2rem 2.4rem;
+      border: 0.1rem dashed rgba(var(--color-foreground), 0.2);
+      border-radius: 1.6rem;
+      color: rgba(var(--color-foreground), 0.7);
+      background: rgba(var(--color-foreground), 0.02);
+    }
+  {%- endstyle -%}
+
+  <div class="color-{{ section.settings.color_scheme }} gradient product-comparison-{{ section.id }}">
+    <section class="page-width section-{{ section.id }}-padding" aria-labelledby="ProductComparison-{{ section.id }}">
+      <div class="product-comparison__header">
+        {% render 'product-seo-section-header',
+          mode: 'comparison',
+          product_handle: product.handle,
+          custom_eyebrow: comparison_eyebrow,
+          custom_heading: comparison_heading,
+          custom_intro: comparison_intro,
+          class_prefix: 'product-comparison',
+          heading_id: 'ProductComparison-' | append: section.id,
+          heading_size: section.settings.heading_size
+        %}
+      </div>
+
+      {%- if has_metaobject_comparison -%}
+        <div class="product-comparison__table-wrap">
+          <table class="product-comparison__table">
+            <thead>
+              <tr>
+                <th scope="col">Attribute</th>
+                <th scope="col">{{ comparison_pureleven_label | escape }}</th>
+                <th scope="col">{{ comparison_market_label | escape }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ metaobject_comparison_rows }}
+            </tbody>
+          </table>
+        </div>
+
+        {%- if section.settings.footer_note != blank -%}
+          <div class="product-comparison__footer rte">{{ section.settings.footer_note }}</div>
+        {%- endif -%}
+      {%- elsif has_metafield_comparison -%}
+        <div class="product-comparison__table-wrap">
+          <table class="product-comparison__table">
+            <thead>
+              <tr>
+                <th scope="col">Attribute</th>
+                <th scope="col">{{ comparison_pureleven_label | escape }}</th>
+                <th scope="col">{{ comparison_market_label | escape }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ metafield_comparison_rows }}
+            </tbody>
+          </table>
+        </div>
+
+        {%- if section.settings.footer_note != blank -%}
+          <div class="product-comparison__footer rte">{{ section.settings.footer_note }}</div>
+        {%- endif -%}
+      {%- elsif comparison_count > 0 -%}
+        <div class="product-comparison__table-wrap">
+          <table class="product-comparison__table">
+            <thead>
+              <tr>
+                <th scope="col">Attribute</th>
+                <th scope="col">{{ comparison_pureleven_label | escape }}</th>
+                <th scope="col">{{ comparison_market_label | escape }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for block in section.blocks -%}
+                {%- if block.settings.label != blank and block.settings.pureleven_value != blank and block.settings.market_value != blank -%}
+                  <tr {{ block.shopify_attributes }}>
+                    <td class="product-comparison__attribute">{{ block.settings.label | escape }}</td>
+                    <td class="product-comparison__pureleven">{{ block.settings.pureleven_value }}</td>
+                    <td class="product-comparison__market">{{ block.settings.market_value }}</td>
+                  </tr>
+                {%- endif -%}
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </div>
+
+        {%- if section.settings.footer_note != blank -%}
+          <div class="product-comparison__footer rte">{{ section.settings.footer_note }}</div>
+        {%- endif -%}
+      {%- elsif has_fallback_comparison -%}
+        <div class="product-comparison__table-wrap">
+          <table class="product-comparison__table">
+            <thead>
+              <tr>
+                <th scope="col">Attribute</th>
+                <th scope="col">{{ comparison_pureleven_label | escape }}</th>
+                <th scope="col">{{ comparison_market_label | escape }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ fallback_comparison_rows }}
+            </tbody>
+          </table>
+        </div>
+
+        {%- if section.settings.footer_note != blank -%}
+          <div class="product-comparison__footer rte">{{ section.settings.footer_note }}</div>
+        {%- endif -%}
+      {%- elsif request.design_mode -%}
+        <div class="product-comparison__placeholder">
+          Add comparison rows here to explain why this product is different from generic market alternatives.
+        </div>
+      {%- endif -%}
+    </section>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product comparison",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Why shoppers compare"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How this product compares"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h0",
+          "label": "H0"
+        },
+        {
+          "value": "hxl",
+          "label": "HXL"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "pureleven_label",
+      "label": "Pureleven column label",
+      "default": "Pureleven"
+    },
+    {
+      "type": "text",
+      "id": "market_label",
+      "label": "Comparison column label",
+      "default": "Generic market"
+    },
+    {
+      "type": "richtext",
+      "id": "footer_note",
+      "label": "Footer note"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Comparison row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Attribute",
+          "default": "Source"
+        },
+        {
+          "type": "richtext",
+          "id": "pureleven_value",
+          "label": "Pureleven value",
+          "default": "<p>Directly sourced from Kerala farms.</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "market_value",
+          "label": "Comparison value",
+          "default": "<p>Mixed origin with limited source clarity.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product comparison"
+    }
+  ]
+}
+{% endschema %}

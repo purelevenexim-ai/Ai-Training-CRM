@@ -1,0 +1,43 @@
+{%- comment -%}
+  snippets/basil-offer-bar.liquid
+  Phase 3: Dynamic offer display strip.
+  Shown above cart / checkout-prep based on business rules.
+  Rules engine evaluates and returns offer text via basil-cart.js.
+{%- endcomment -%}
+
+{%- comment -%}
+  Usage: {%- render 'basil-offer-bar', offer_text: 'Buy 2 get 10% OFF', offer_code: 'SAVE10' -%}
+  When offer_text is blank, bar is hidden.
+{%- endcomment -%}
+
+{%- if offer_text != blank -%}
+<div
+  class="basil-offer-bar"
+  role="status"
+  aria-live="polite"
+  data-basil-offer-bar
+  {% if offer_code != blank %}data-offer-code="{{ offer_code | escape }}"{% endif %}
+>
+  <div class="basil-offer-bar__inner">
+    <span class="basil-offer-bar__icon">🎉</span>
+    <span class="basil-offer-bar__text">{{ offer_text }}</span>
+    {%- if offer_code != blank -%}
+      <button
+        class="basil-offer-bar__copy"
+        type="button"
+        data-basil-copy-code="{{ offer_code | escape }}"
+        aria-label="Copy offer code {{ offer_code }}"
+      >
+        {{ offer_code }}
+        <span class="basil-offer-bar__copy-icon">📋</span>
+      </button>
+    {%- endif -%}
+    <button
+      class="basil-offer-bar__dismiss"
+      type="button"
+      aria-label="Dismiss offer"
+      data-basil-offer-dismiss
+    >✕</button>
+  </div>
+</div>
+{%- endif -%}

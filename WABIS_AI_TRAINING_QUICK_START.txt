@@ -1,0 +1,51 @@
+═══════════════════════════════════════════════════════════════════════════════
+ WABIS AI CHATBOT TRAINING — QUICK START (5 MINUTES)
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ READY TO UPLOAD: Training data prepared with 667 Q&A pairs
+
+FILES TO USE:
+  📄 WABIS_AI_TRAINING_DATA.csv ← MAIN FILE (use this one!)
+     Location: /Users/bthomas/Documents/pureleven_dev/
+     Size: 472 KB
+     Format: CSV with question, answer, category, product, language
+
+DO THIS NOW (5 steps):
+─────────────────────
+
+1️⃣  Open: https://bot.wabis.in
+    → Log in with your Wabis credentials
+
+2️⃣  Go to: Settings ⚙️ → AI & Knowledge Base (or AI Training)
+
+3️⃣  Click: "Upload" / "Import" / "Add Training Data" button
+
+4️⃣  Select: WABIS_AI_TRAINING_DATA.csv from pureleven_dev folder
+
+5️⃣  Click: "Train" / "Import" / "Start Training"
+    → Wait for training to complete (5-30 min)
+    → Model status should show "Active" when done
+
+✓ DONE! Your bot is now trained on 667 real customer Q&As.
+
+
+WHAT YOU GET:
+─────────────
+✓ Bilingual chatbot (English + Malayalam)
+✓ Accurate pricing info
+✓ Order collection flow
+✓ Complaint handling
+✓ Wholesale inquiry support
+✓ 24/7 automated responses
+
+
+NEED HELP?
+──────────
+📖 Full guide: See WABIS_AI_TRAINING_MANUAL_GUIDE.md
+📊 Full summary: See WABIS_AI_TRAINING_COMPLETION_SUMMARY.md
+🆘 Stuck? Contact support@wabis.in
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Ready? Go to https://bot.wabis.in/settings and upload WABIS_AI_TRAINING_DATA.csv
+═══════════════════════════════════════════════════════════════════════════════

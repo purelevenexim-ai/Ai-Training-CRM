@@ -1,0 +1,187 @@
+{
+  "name": "08 - Health and Daily Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-health",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "baseUrl",
+              "value": "http://127.0.0.1:8000/api"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-health-config",
+      "name": "Set Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$json.baseUrl + '/monitoring/health'}}",
+        "options": {}
+      },
+      "id": "get-health",
+      "name": "Get Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        760,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.status}}",
+              "operation": "notEqual",
+              "value2": "ok"
+            }
+          ]
+        }
+      },
+      "id": "if-not-ok",
+      "name": "Health Not OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1000,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/monitoring/test-alert",
+        "options": {}
+      },
+      "id": "send-test-alert",
+      "name": "Send Test Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/monitoring/daily-report",
+        "options": {}
+      },
+      "id": "send-daily-report",
+      "name": "Send Daily Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        340
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Config": {
+      "main": [
+        [
+          {
+            "node": "Get Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Health": {
+      "main": [
+        [
+          {
+            "node": "Health Not OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health Not OK?": {
+      "main": [
+        [
+          {
+            "node": "Send Test Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Daily Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Test Alert": {
+      "main": [
+        [
+          {
+            "node": "Send Daily Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "versionId": "08-health-daily-report-v1",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "id": "08-health-and-daily-report",
+  "tags": []
+}

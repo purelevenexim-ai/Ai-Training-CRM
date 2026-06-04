@@ -1,0 +1,1564 @@
+Attached Element Context from Integrated Browser
+
+Element: span.pl-fc-badge
+
+URL: https://pureleven.com/
+
+HTML Path:
+main#MainContent.content-for-layout.focus-none > section#shopify-section-template--26477014876453__featured_collection_xT3MCp.shopify-section.section > div.color-scheme-1.isolate.gradient > div#collection-template--26477014876453__featured_collection_xT3MCp.collection.section-template--26477014876453__featured_collection_xT3MCp-padding > div.collection__title.title-wrapper.title-wrapper--no-top-margin.page-width > div.pl-fc-badges > div.pl-fc-badges__items > span.pl-fc-badge
+
+Attributes:
+- class: pl-fc-badge
+
+Dimensions:
+- top: 371px
+- left: 146px
+- width: 93px
+- height: 27px
+
+Outer HTML:
+```html
+<span class="pl-fc-badge"><svg width="28" height="12" viewBox="0 0 28 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.87 6.33c0 .46-.1.83-.3 1.1-.2.28-.48.42-.83.42-.34 0-.62-.13-.84-.4V9H.5V4.17h.36l.04.38c.22-.3.5-.44.84-.44.36 0 .64.14.84.41.2.28.3.65.3 1.13v.68zm-.4-.06c0-.35-.07-.63-.22-.84-.15-.21-.36-.31-.62-.31-.32 0-.56.14-.71.42v1.56c.15.28.39.42.72.42.25 0 .46-.1.61-.31.15-.2.22-.5.22-.9v-.04zM6.04 6.3c0 .35-.07.66-.2.93-.13.27-.32.47-.56.62-.24.14-.51.22-.82.22-.31 0-.58-.07-.82-.22-.24-.15-.43-.35-.56-.62-.13-.27-.2-.58-.2-.93v-.09c0-.35.07-.66.2-.93.13-.27.32-.47.56-.62.24-.15.51-.22.82-.22.3 0 .58.07.82.22.24.15.43.35.56.62.13.27.2.58.2.93v.09zm-.4-.1c0-.43-.1-.77-.29-1.01-.19-.25-.45-.37-.77-.37-.32 0-.58.12-.77.37-.19.25-.29.59-.29 1.02v.09c0 .43.1.77.29 1.02.19.25.45.37.77.37.32 0 .58-.12.77-.37.19-.25.29-.59.29-1.01v-.11zM9.09 8h-.4l-.02-.36c-.22.28-.5.42-.84.42-.28 0-.5-.08-.66-.24-.16-.16-.24-.39-.24-.7V4.17h.4v2.94c0 .45.19.67.57.67.35 0 .61-.14.78-.42V4.17h.4V8z" fill="#5A5AFF"></path><path d="M18.21 1.9H9.79C5.49 1.9 2 5.4 2 9.7v.6c0 4.3 3.49 7.8 7.79 7.8h8.42c4.3 0 7.79-3.5 7.79-7.8V9.7c0-4.3-3.49-7.8-7.79-7.8z" fill="#7B61FF" opacity=".15"></path></svg>PhonePe</span>
+```
+
+Computed Styles:
+- margin: 0px 0px 0px 0px
+- padding: 4px 8px 4px 8px
+- --alpha-badge-border: .1
+- --alpha-button-background: 1
+- --alpha-button-border: 1
+- --alpha-link: .85
+- --animate-delay: 1s
+- --animate-duration: 1s
+- --animate-repeat: 1
+- --animation-fade-in: fadeIn .6s cubic-bezier(0, 0, .3, 1)
+- --animation-slide-in: slideIn .6s cubic-bezier(0, 0, .3, 1) forwards
+- --badge-corner-radius: 0.4rem
+- --blog-card-border-opacity: 0.1
+- --blog-card-border-width: 0.0rem
+- --blog-card-corner-radius: 1.6rem
+- --blog-card-image-padding: 0.0rem
+- --blog-card-shadow-blur-radius: 0.5rem
+- --blog-card-shadow-horizontal-offset: 0.0rem
+- --blog-card-shadow-opacity: 0.0
+- --blog-card-shadow-vertical-offset: 0.4rem
+- --blog-card-shadow-visible: 0
+- --blog-card-text-alignment: left
+- --buttons-border-offset: 0.3px
+- --buttons-border-opacity: 1.0
+- --buttons-border-width: 1px
+- --buttons-radius: 4px
+- --buttons-radius-outset: 5px
+- --buttons-shadow-blur-radius: 5px
+- --buttons-shadow-horizontal-offset: 0px
+- --buttons-shadow-opacity: 0.0
+- --buttons-shadow-vertical-offset: 4px
+- --buttons-shadow-visible: 0
+- --carousel-button-background-color: #2563eb
+- --carousel-card-background-color: #ffffff
+- --carousel-container-background-color: #f3f4f6
+- --carousel-stars-color: #facc15
+- --carousel-text-color: #000000
+- --collection-card-border-opacity: 0.1
+- --collection-card-border-width: 0.0rem
+- --collection-card-corner-radius: 1.6rem
+- --collection-card-image-padding: 0.0rem
+- --collection-card-shadow-blur-radius: 0.5rem
+- --collection-card-shadow-horizontal-offset: 0.0rem
+- --collection-card-shadow-opacity: 0.0
+- --collection-card-shadow-vertical-offset: 0.4rem
+- --collection-card-shadow-visible: 0
+- --collection-card-text-alignment: left
+- --color-background: 255,255,255
+- --color-background-contrast: 191,191,191
+- --color-badge-background: 255,255,255
+- --color-badge-border: 18,18,18
+- --color-badge-foreground: 18,18,18
+- --color-base-accent-1: #2B5E3C
+- --color-base-accent-2: #D68F23
+- --color-base-background-1: #ffffff
+- --color-base-background-2: #F9F7F1
+- --color-base-text: #2A362D
+- --color-base-text-opacity-10-percent: rgba(42, 54, 45, .1)
+- --color-button: 252,228,119
+- --color-button-text: 18,18,18
+- --color-foreground: 18,18,18
+- --color-link: 18,18,18
+- --color-secondary-button: 255,255,255
+- --color-secondary-button-text: 18,18,18
+- --color-shadow: 18,18,18
+- --drawer-border-opacity: 0.1
+- --drawer-border-width: 1px
+- --drawer-shadow-blur-radius: 5px
+- --drawer-shadow-horizontal-offset: 0px
+- --drawer-shadow-opacity: 0.0
+- --drawer-shadow-vertical-offset: 4px
+- --duration-announcement-bar: .25s
+- --duration-default: .2s
+- --duration-extended: 3s
+- --duration-extra-long: .6s
+- --duration-extra-longer: .75s
+- --duration-long: .5s
+- --duration-medium: .3s
+- --duration-short: .1s
+- --ease-out-slow: cubic-bezier(0, 0, .3, 1)
+- --focused-base-box-shadow: 0 0 0 .3rem rgb(255,255,255), 0 0 .5rem .4rem rgba(18,18,18, .3)
+- --focused-base-outline: .2rem solid rgba(18,18,18, .5)
+- --focused-base-outline-offset: .3rem
+- --font-body-scale: 1.0
+- --font-body-style: normal
+- --font-body-weight: 400
+- --font-body-weight-bold: 700
+- --font-heading-scale: 1.0
+- --font-heading-style: normal
+- --font-heading-weight: 500
+- --gradient-background: #ffffff
+- --grid-desktop-horizontal-spacing: 16px
+- --grid-desktop-vertical-spacing: 16px
+- --grid-mobile-horizontal-spacing: 8px
+- --grid-mobile-vertical-spacing: 8px
+- --header-height: 74px
+- --inputs-border-opacity: 1.0
+- --inputs-border-width: 1px
+- --inputs-margin-offset: 0px
+- --inputs-radius: 4px
+- --inputs-radius-outset: 5px
+- --inputs-shadow-blur-radius: 5px
+- --inputs-shadow-horizontal-offset: 0px
+- --inputs-shadow-opacity: 0.0
+- --inputs-shadow-vertical-offset: 4px
+- --media-border-opacity: 0.0
+- --media-border-width: 0px
+- --media-padding: px
+- --media-radius: 4px
+- --media-shadow-blur-radius: 5px
+- --media-shadow-horizontal-offset: 0px
+- --media-shadow-opacity: 0.0
+- --media-shadow-vertical-offset: 4px
+- --media-shadow-visible: 0
+- --page-width: 120rem
+- --page-width-margin: 0rem
+- --payment-terms-background-color: rgb(255 255 255)
+- --pl-amber: #D4821A
+- --pl-amber-hover: #BF7015
+- --pl-amber-light: #F5E6CF
+- --pl-background: #F8F5EE
+- --pl-border: #DDD9CF
+- --pl-category-coffee: #5A3E36
+- --pl-category-grains: #E8E5DC
+- --pl-category-honey: #C89A3D
+- --pl-category-spices: #B45E3C
+- --pl-category-tea: #4D9B93
+- --pl-category-wellness: #7FA89F
+- --pl-cream: #F8F5EE
+- --pl-cream-dark: #EEEAE0
+- --pl-error: #C62828
+- --pl-green: #1B5E56
+- --pl-green-deep: #1B3A30
+- --pl-green-mid: #4D9B93
+- --pl-green-pale: #E8F5F3
+- --pl-green-tint: #F0FAF8
+- --pl-info: #1976D2
+- --pl-primary: #1B5E56
+- --pl-primary-dark: #154039
+- --pl-radius-btn: 100px
+- --pl-radius-card: 16px
+- --pl-sage: #7FA89F
+- --pl-secondary: #4D9B93
+- --pl-shadow-card: 0 4px 20px rgba(27, 58, 48, .09)
+- --pl-shadow-hover: 0 12px 40px rgba(27, 58, 48, .16)
+- --pl-success: #2E7D32
+- --pl-surface: #E8E5DC
+- --pl-text: #1B3A30
+- --pl-text-light: #8A9B97
+- --pl-text-mid: #5A6B67
+- --pl-text-muted: #888888
+- --pl-text-primary: #2C2C2C
+- --pl-text-secondary: #666666
+- --pl-transition: .22s ease
+- --pl-warning: #F57C00
+- --pl-white: #FFFFFF
+- --popup-border-opacity: 1.0
+- --popup-border-width: 1px
+- --popup-corner-radius: 4px
+- --popup-shadow-blur-radius: 5px
+- --popup-shadow-horizontal-offset: 0px
+- --popup-shadow-opacity: 0.0
+- --popup-shadow-vertical-offset: 4px
+- --product-card-border-opacity: 0.1
+- --product-card-border-width: 0.0rem
+- --product-card-corner-radius: 1.6rem
+- --product-card-image-padding: 0.0rem
+- --product-card-shadow-blur-radius: 0.5rem
+- --product-card-shadow-horizontal-offset: 0.0rem
+- --product-card-shadow-opacity: 0.0
+- --product-card-shadow-vertical-offset: 0.4rem
+- --product-card-shadow-visible: 0
+- --product-card-text-alignment: left
+- --spacing-sections-desktop: 0px
+- --spacing-sections-mobile: 0px
+- --text-boxes-border-opacity: 0.0
+- --text-boxes-border-width: 0px
+- --text-boxes-radius: 0px
+- --text-boxes-shadow-blur-radius: 5px
+- --text-boxes-shadow-horizontal-offset: 0px
+- --text-boxes-shadow-opacity: 0.0
+- --text-boxes-shadow-vertical-offset: 4px
+- --text-boxes-shadow-visible: 0
+- --variant-pills-border-opacity: 0.55
+- --variant-pills-border-width: 1px
+- --variant-pills-radius: 40px
+- --variant-pills-shadow-blur-radius: 5px
+- --variant-pills-shadow-horizontal-offset: 0px
+- --variant-pills-shadow-opacity: 0.0
+- --variant-pills-shadow-vertical-offset: 4px
+- -electron-corner-smoothing: none
+- -webkit-border-horizontal-spacing: 0px
+- -webkit-border-image: none
+- -webkit-border-vertical-spacing: 0px
+- -webkit-box-align: stretch
+- -webkit-box-decoration-break: slice
+- -webkit-box-direction: normal
+- -webkit-box-flex: 0
+- -webkit-box-ordinal-group: 1
+- -webkit-box-orient: horizontal
+- -webkit-box-pack: start
+- -webkit-box-reflect: none
+- -webkit-font-smoothing: auto
+- -webkit-line-break: auto
+- -webkit-line-clamp: none
+- -webkit-locale: "en"
+- -webkit-mask-box-image-outset: 0
+- -webkit-mask-box-image-repeat: stretch
+- -webkit-mask-box-image-slice: 0 fill
+- -webkit-mask-box-image-source: none
+- -webkit-mask-box-image-width: auto
+- -webkit-mask-position-x: 0%
+- -webkit-mask-position-y: 0%
+- -webkit-perspective-origin-x: 
+- -webkit-perspective-origin-y: 
+- -webkit-rtl-ordering: logical
+- -webkit-ruby-position: before
+- -webkit-tap-highlight-color: rgba(51, 181, 229, 0.4)
+- -webkit-text-combine: none
+- -webkit-text-decorations-in-effect: none
+- -webkit-text-fill-color: rgb(27, 58, 48)
+- -webkit-text-orientation: vertical-right
+- -webkit-text-security: none
+- -webkit-text-stroke-color: rgb(27, 58, 48)
+- -webkit-text-stroke-width: 0px
+- -webkit-transform-origin-x: 
+- -webkit-transform-origin-y: 
+- -webkit-transform-origin-z: 
+- -webkit-user-drag: auto
+- -webkit-user-modify: read-only
+- -webkit-writing-mode: horizontal-tb
+- accent-color: auto
+- align-content: normal
+- align-items: center
+- align-self: auto
+- alignment-baseline: auto
+- all: 
+- anchor-name: none
+- anchor-scope: none
+- animation-composition: replace
+- animation-delay: 0s
+- animation-direction: normal
+- animation-duration: 0s
+- animation-fill-mode: none
+- animation-iteration-count: 1
+- animation-name: none
+- animation-play-state: running
+- animation-range-end: normal
+- animation-range-start: normal
+- animation-timeline: auto
+- animation-timing-function: ease
+- app-region: none
+- appearance: none
+- aspect-ratio: auto
+- backdrop-filter: none
+- backface-visibility: visible
+- background-attachment: scroll
+- background-blend-mode: normal
+- background-clip: border-box
+- background-color: rgb(255, 255, 255)
+- background-image: none
+- background-origin: padding-box
+- background-position-x: 0%
+- background-position-y: 0%
+- background-repeat: repeat
+- background-size: auto
+- baseline-shift: 0px
+- baseline-source: auto
+- block-size: 27px
+- border-block-end-color: rgb(221, 217, 207)
+- border-block-end-style: solid
+- border-block-end-width: 1px
+- border-block-start-color: rgb(221, 217, 207)
+- border-block-start-style: solid
+- border-block-start-width: 1px
+- border-bottom-color: rgb(221, 217, 207)
+- border-bottom-left-radius: 6px
+- border-bottom-right-radius: 6px
+- border-bottom-style: solid
+- border-bottom-width: 1px
+- border-collapse: separate
+- border-end-end-radius: 6px
+- border-end-start-radius: 6px
+- border-image-outset: 0
+- border-image-repeat: stretch
+- border-image-slice: 100%
+- border-image-source: none
+- border-image-width: 1
+- border-inline-end-color: rgb(221, 217, 207)
+- border-inline-end-style: solid
+- border-inline-end-width: 1px
+- border-inline-start-color: rgb(221, 217, 207)
+- border-inline-start-style: solid
+- border-inline-start-width: 1px
+- border-left-color: rgb(221, 217, 207)
+- border-left-style: solid
+- border-left-width: 1px
+- border-right-color: rgb(221, 217, 207)
+- border-right-style: solid
+- border-right-width: 1px
+- border-start-end-radius: 6px
+- border-start-start-radius: 6px
+- border-top-color: rgb(221, 217, 207)
+- border-top-left-radius: 6px
+- border-top-right-radius: 6px
+- border-top-style: solid
+- border-top-width: 1px
+- bottom: auto
+- box-decoration-break: slice
+- box-shadow: none
+- box-sizing: border-box
+- break-after: auto
+- break-before: auto
+- break-inside: auto
+- buffered-rendering: auto
+- caption-side: top
+- caret-animation: auto
+- caret-color: rgb(27, 58, 48)
+- clear: none
+- clip: auto
+- clip-path: none
+- clip-rule: nonzero
+- color: rgb(27, 58, 48)
+- color-interpolation: srgb
+- color-interpolation-filters: linearrgb
+- color-rendering: auto
+- color-scheme: normal
+- column-count: auto
+- column-fill: balance
+- column-gap: 6px
+- column-rule-color: rgb(27, 58, 48)
+- column-rule-style: none
+- column-rule-width: 0px
+- column-span: none
+- column-width: auto
+- contain: none
+- contain-intrinsic-block-size: none
+- contain-intrinsic-height: none
+- contain-intrinsic-inline-size: none
+- contain-intrinsic-width: none
+- container-name: none
+- container-type: normal
+- content: normal
+- content-visibility: visible
+- corner-bottom-left-shape: round
+- corner-bottom-right-shape: round
+- corner-end-end-shape: round
+- corner-end-start-shape: round
+- corner-start-end-shape: round
+- corner-start-start-shape: round
+- corner-top-left-shape: round
+- corner-top-right-shape: round
+- counter-increment: none
+- counter-reset: none
+- counter-set: none
+- cursor: auto
+- cx: 0px
+- cy: 0px
+- d: none
+- direction: ltr
+- display: flex
+- dominant-baseline: auto
+- dynamic-range-limit: no-limit
+- empty-cells: show
+- field-sizing: fixed
+- fill: rgb(0, 0, 0)
+- fill-opacity: 1
+- fill-rule: nonzero
+- filter: none
+- flex-basis: auto
+- flex-direction: row
+- flex-grow: 0
+- flex-shrink: 1
+- flex-wrap: nowrap
+- float: none
+- flood-color: rgb(0, 0, 0)
+- flood-opacity: 1
+- font-family: Times
+- font-feature-settings: normal
+- font-kerning: auto
+- font-optical-sizing: auto
+- font-palette: normal
+- font-size: 10px
+- font-size-adjust: none
+- font-stretch: 100%
+- font-style: normal
+- font-synthesis-small-caps: auto
+- font-synthesis-style: auto
+- font-synthesis-weight: auto
+- font-variant-alternates: normal
+- font-variant-caps: normal
+- font-variant-east-asian: normal
+- font-variant-emoji: normal
+- font-variant-ligatures: normal
+- font-variant-numeric: normal
+- font-variant-position: normal
+- font-variation-settings: normal
+- font-weight: 600
+- forced-color-adjust: auto
+- grid-auto-columns: auto
+- grid-auto-flow: row
+- grid-auto-rows: auto
+- grid-column-end: auto
+- grid-column-start: auto
+- grid-row-end: auto
+- grid-row-start: auto
+- grid-template-areas: none
+- grid-template-columns: none
+- grid-template-rows: none
+- height: 27px
+- hyphenate-character: auto
+- hyphenate-limit-chars: auto
+- hyphens: manual
+- image-orientation: from-image
+- image-rendering: auto
+- initial-letter: normal
+- inline-size: 93.4219px
+- inset-block-end: auto
+- inset-block-start: auto
+- inset-inline-end: auto
+- inset-inline-start: auto
+- interactivity: auto
+- interest-delay-end: normal
+- interest-delay-start: normal
+- interpolate-size: numeric-only
+- isolation: auto
+- justify-content: normal
+- justify-items: normal
+- justify-self: auto
+- left: auto
+- letter-spacing: 0.6px
+- lighting-color: rgb(255, 255, 255)
+- line-break: auto
+- line-height: 17px
+- list-style-image: none
+- list-style-position: outside
+- list-style-type: disc
+- margin-block-end: 0px
+- margin-block-start: 0px
+- margin-inline-end: 0px
+- margin-inline-start: 0px
+- marker-end: none
+- marker-mid: none
+- marker-start: none
+- mask-clip: border-box
+- mask-composite: add
+- mask-image: none
+- mask-mode: match-source
+- mask-origin: border-box
+- mask-repeat: repeat
+- mask-size: auto
+- mask-type: luminance
+- math-depth: 0
+- math-shift: normal
+- math-style: normal
+- max-block-size: none
+- max-height: none
+- max-inline-size: none
+- max-width: none
+- min-block-size: auto
+- min-height: auto
+- min-inline-size: auto
+- min-width: auto
+- mix-blend-mode: normal
+- object-fit: fill
+- object-position: 50% 50%
+- object-view-box: none
+- offset-anchor: auto
+- offset-distance: 0px
+- offset-path: none
+- offset-position: normal
+- offset-rotate: auto 0deg
+- opacity: 1
+- order: 0
+- orphans: 2
+- outline-color: rgb(27, 58, 48)
+- outline-offset: 0px
+- outline-style: none
+- outline-width: 0px
+- overflow-anchor: auto
+- overflow-block: visible
+- overflow-clip-margin: 0px
+- overflow-inline: visible
+- overflow-wrap: normal
+- overflow-x: visible
+- overflow-y: visible
+- overlay: none
+- overscroll-behavior-block: auto
+- overscroll-behavior-inline: auto
+- overscroll-behavior-x: auto
+- overscroll-behavior-y: auto
+- padding-block-end: 4px
+- padding-block-start: 4px
+- padding-inline-end: 8px
+- padding-inline-start: 8px
+- page: auto
+- page-orientation: 
+- paint-order: normal
+- perspective: none
+- perspective-origin: 46.7109px 13.5px
+- pointer-events: auto
+- position: static
+- position-anchor: auto
+- position-area: none
+- position-try-fallbacks: none
+- position-try-order: normal
+- position-visibility: anchors-visible
+- print-color-adjust: economy
+- quotes: auto
+- r: 0px
+- reading-flow: normal
+- reading-order: 0
+- resize: none
+- right: auto
+- rotate: none
+- row-gap: 6px
+- ruby-align: space-around
+- ruby-position: over
+- rx: auto
+- ry: auto
+- scale: none
+- scroll-behavior: auto
+- scroll-initial-target: none
+- scroll-margin-block-end: 0px
+- scroll-margin-block-start: 0px
+- scroll-margin-bottom: 0px
+- scroll-margin-inline-end: 0px
+- scroll-margin-inline-start: 0px
+- scroll-margin-left: 0px
+- scroll-margin-right: 0px
+- scroll-margin-top: 0px
+- scroll-marker-group: none
+- scroll-padding-block-end: auto
+- scroll-padding-block-start: auto
+- scroll-padding-bottom: auto
+- scroll-padding-inline-end: auto
+- scroll-padding-inline-start: auto
+- scroll-padding-left: auto
+- scroll-padding-right: auto
+- scroll-padding-top: auto
+- scroll-snap-align: none
+- scroll-snap-stop: normal
+- scroll-snap-type: none
+- scroll-target-group: none
+- scroll-timeline-axis: block
+- scroll-timeline-name: none
+- scrollbar-color: auto
+- scrollbar-gutter: auto
+- scrollbar-width: auto
+- shape-image-threshold: 0
+- shape-margin: 0px
+- shape-outside: none
+- shape-rendering: auto
+- size: 
+- speak: normal
+- stop-color: rgb(0, 0, 0)
+- stop-opacity: 1
+- stroke: none
+- stroke-dasharray: none
+- stroke-dashoffset: 0px
+- stroke-linecap: butt
+- stroke-linejoin: miter
+- stroke-miterlimit: 4
+- stroke-opacity: 1
+- stroke-width: 1px
+- tab-size: 8
+- table-layout: auto
+- text-align: start
+- text-align-last: auto
+- text-anchor: start
+- text-autospace: no-autospace
+- text-box-edge: auto
+- text-box-trim: none
+- text-combine-upright: none
+- text-decoration-color: rgb(27, 58, 48)
+- text-decoration-line: none
+- text-decoration-skip-ink: auto
+- text-decoration-style: solid
+- text-decoration-thickness: auto
+- text-emphasis-color: rgb(27, 58, 48)
+- text-emphasis-position: over
+- text-emphasis-style: none
+- text-indent: 0px
+- text-orientation: mixed
+- text-overflow: clip
+- text-rendering: auto
+- text-shadow: none
+- text-size-adjust: auto
+- text-spacing-trim: normal
+- text-transform: none
+- text-underline-offset: auto
+- text-underline-position: auto
+- text-wrap-mode: nowrap
+- text-wrap-style: auto
+- timeline-scope: none
+- top: auto
+- touch-action: auto
+- transform: none
+- transform-box: view-box
+- transform-origin: 46.7109px 13.5px
+- transform-style: flat
+- transition-behavior: normal
+- transition-delay: 0s
+- transition-duration: 0s
+- transition-property: all
+- transition-timing-function: ease
+- translate: none
+- unicode-bidi: normal
+- user-select: auto
+- vector-effect: none
+- vertical-align: baseline
+- view-timeline-axis: block
+- view-timeline-inset: auto
+- view-timeline-name: none
+- view-transition-class: none
+- view-transition-group: normal
+- view-transition-name: none
+- visibility: visible
+- white-space-collapse: collapse
+- widows: 2
+- width: 93.4219px
+- will-change: auto
+- word-break: normal
+- word-spacing: 0px
+- writing-mode: horizontal-tb
+- x: 0px
+- y: 0px
+- z-index: auto
+- zoom: 1
+
+Full Computed CSS:
+```css
+
+/* Matched Rule from regular */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Matched Rule from regular */
+.pl-fc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #FFFFFF;
+  border: 1px solid #DDD9CF;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #1B3A30;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  row-gap: 6px;
+  column-gap: 6px;
+  padding-top: 5px;
+  padding-right: 10px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  background-image: initial;
+  background-position-x: initial;
+  background-position-y: initial;
+  background-size: initial;
+  background-repeat: initial;
+  background-attachment: initial;
+  background-origin: initial;
+  background-clip: initial;
+  background-color: rgb(255, 255, 255);
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(221, 217, 207);
+  border-right-color: rgb(221, 217, 207);
+  border-bottom-color: rgb(221, 217, 207);
+  border-left-color: rgb(221, 217, 207);
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-width: initial;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgb(27, 58, 48);
+  white-space-collapse: collapse;
+  text-wrap-mode: nowrap;
+}
+
+/* Matched Rule from regular */
+.pl-fc-badge {
+  padding: 4px 8px;
+  font-size: 10px;
+  padding-top: 4px;
+  padding-right: 8px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  font-size: 10px;
+}
+
+/* Inherited from ancestor level 1 (user-agent) */
+div {
+  display: block;
+}
+
+/* Inherited from ancestor level 1 (user-agent) */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.pl-fc-badges__items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  row-gap: 8px;
+  column-gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Inherited from ancestor level 2 (user-agent) */
+div {
+  display: block;
+}
+
+/* Inherited from ancestor level 2 (user-agent) */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Inherited from ancestor level 2 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 2 (regular) */
+.pl-fc-badges {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: -18px 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  row-gap: 12px;
+  column-gap: 12px;
+  flex-wrap: wrap;
+  margin-top: -18px;
+  margin-right: 0px;
+  margin-bottom: 24px;
+  margin-left: 0px;
+}
+
+/* Inherited from ancestor level 2 (regular) */
+.pl-fc-badges {
+  gap: 8px;
+  margin: -10px 0 16px;
+  row-gap: 8px;
+  column-gap: 8px;
+  margin-top: -10px;
+  margin-right: 0px;
+  margin-bottom: 16px;
+  margin-left: 0px;
+}
+
+/* Inherited from ancestor level 3 (user-agent) */
+div {
+  display: block;
+}
+
+/* Inherited from ancestor level 3 (user-agent) */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Inherited from ancestor level 3 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 3 (regular) */
+.page-width {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  max-width: var(--page-width);
+  margin-top: 0px;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-left: auto;
+  padding-top: 0px;
+  padding-right: 1.5rem;
+  padding-bottom: 0px;
+  padding-left: 1.5rem;
+}
+
+/* Inherited from ancestor level 3 (regular) */
+.title-wrapper {
+  margin-bottom: 3rem;
+  margin-bottom: 3rem;
+}
+
+/* Inherited from ancestor level 3 (regular) */
+.title-wrapper--no-top-margin {
+  margin-top: 0;
+  margin-top: 0px;
+}
+
+/* Inherited from ancestor level 3 (regular) */
+.page-width {
+  padding-left: max(2.4rem,env(safe-area-inset-left));
+  padding-right: max(2.4rem,env(safe-area-inset-right));
+  padding-left: max(2.4rem,env(safe-area-inset-left));
+  padding-right: max(2.4rem,env(safe-area-inset-right));
+}
+
+/* Inherited from ancestor level 3 (regular) */
+.collection__title.title-wrapper {
+  margin-bottom: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Inherited from ancestor level 4 (user-agent) */
+div {
+  display: block;
+}
+
+/* Inherited from ancestor level 4 (user-agent) */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Inherited from ancestor level 4 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 4 (regular) */
+.section-template--26477014876453__featured_collection_xT3MCp-padding {
+  padding-top: 9px;
+  padding-bottom: 9px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+/* Inherited from ancestor level 5 (user-agent) */
+div {
+  display: block;
+}
+
+/* Inherited from ancestor level 5 (user-agent) */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Inherited from ancestor level 5 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 5 (regular) */
+:root, .color-scheme-1 {
+  --color-background: 255,255,255;
+  --gradient-background: #ffffff;
+  --color-foreground: 18,18,18;
+  --color-background-contrast: 191,191,191;
+  --color-shadow: 18,18,18;
+  --color-button: 252,228,119;
+  --color-button-text: 18,18,18;
+  --color-secondary-button: 255,255,255;
+  --color-secondary-button-text: 18,18,18;
+  --color-link: 18,18,18;
+  --color-badge-foreground: 18,18,18;
+  --color-badge-background: 255,255,255;
+  --color-badge-border: 18,18,18;
+  --payment-terms-background-color: rgb(255 255 255);
+  --color-background: 255,255,255;
+  --gradient-background: #ffffff;
+  --color-foreground: 18,18,18;
+  --color-background-contrast: 191,191,191;
+  --color-shadow: 18,18,18;
+  --color-button: 252,228,119;
+  --color-button-text: 18,18,18;
+  --color-secondary-button: 255,255,255;
+  --color-secondary-button-text: 18,18,18;
+  --color-link: 18,18,18;
+  --color-badge-foreground: 18,18,18;
+  --color-badge-background: 255,255,255;
+  --color-badge-border: 18,18,18;
+  --payment-terms-background-color: rgb(255 255 255);
+}
+
+/* Inherited from ancestor level 5 (regular) */
+body, .color-scheme-1, .color-scheme-2, .color-scheme-3, .color-scheme-4, .color-scheme-5, .color-scheme-b6fefa64-adf5-4071-9e9e-879217c76846, .color-scheme-d912173e-e796-4415-a5d2-ba2b85e14669, .color-scheme-ee14e502-61a4-4ce5-a732-53c741498cb8, .color-scheme-f98483d3-51b0-4c30-b800-0c2e30a9b6a7 {
+  color: rgba(var(--color-foreground), 0.75);
+  background-color: rgb(var(--color-background));
+  color: rgba(var(--color-foreground), 0.75);
+  background-color: rgb(var(--color-background));
+}
+
+/* Inherited from ancestor level 5 (regular) */
+.isolate {
+  position: relative;
+  z-index: 0;
+  position: relative;
+  z-index: 0;
+}
+
+/* Inherited from ancestor level 5 (regular) */
+.gradient {
+  background: rgb(var(--color-background));
+  background: var(--gradient-background);
+  background-attachment: fixed;
+  background-attachment: fixed;
+}
+
+/* Inherited from ancestor level 6 (user-agent) */
+article, aside, footer, header, hgroup, main, nav, search, section {
+  display: block;
+}
+
+/* Inherited from ancestor level 6 (user-agent) */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Inherited from ancestor level 6 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 6 (regular) */
+.section {
+  transition: background-color .3s ease;
+  transition-behavior: normal;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+  transition-delay: 0s;
+  transition-property: background-color;
+}
+
+/* Inherited from ancestor level 6 (regular) */
+.section+.section {
+  margin-top: var(--spacing-sections-mobile);
+  margin-top: var(--spacing-sections-mobile);
+}
+
+/* Inherited from ancestor level 6 (regular) */
+.section:nth-child(odd) {
+  background-color: #fff;
+  background-color: rgb(255, 255, 255);
+}
+
+/* Inherited from ancestor level 7 (user-agent) */
+article, aside, footer, header, hgroup, main, nav, search, section {
+  display: block;
+}
+
+/* Inherited from ancestor level 7 (user-agent) */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Inherited from ancestor level 7 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 7 (regular) */
+.focus-none {
+  box-shadow: none!important;
+  outline: 0!important;
+  box-shadow: none !important;
+  outline-color: initial !important;
+  outline-style: initial !important;
+  outline-width: 0px !important;
+}
+
+/* Inherited from ancestor level 8 (user-agent) */
+body {
+  display: block;
+  margin-top: 8px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  margin-left: 8px;
+}
+
+/* Inherited from ancestor level 8 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 8 (regular) */
+body, .color-scheme-1, .color-scheme-2, .color-scheme-3, .color-scheme-4, .color-scheme-5, .color-scheme-b6fefa64-adf5-4071-9e9e-879217c76846, .color-scheme-d912173e-e796-4415-a5d2-ba2b85e14669, .color-scheme-ee14e502-61a4-4ce5-a732-53c741498cb8, .color-scheme-f98483d3-51b0-4c30-b800-0c2e30a9b6a7 {
+  color: rgba(var(--color-foreground), 0.75);
+  background-color: rgb(var(--color-background));
+  color: rgba(var(--color-foreground), 0.75);
+  background-color: rgb(var(--color-background));
+}
+
+/* Inherited from ancestor level 8 (regular) */
+body {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-columns: 100%;
+  min-height: 100%;
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 0.06rem;
+  line-height: calc(1 + 0.8 / var(--font-body-scale));
+  font-family: var(--font-body-family);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight);
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-columns: 100%;
+  min-height: 100%;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  font-size: 1.5rem;
+  letter-spacing: 0.06rem;
+  line-height: calc(1 + 0.8 / var(--font-body-scale));
+  font-family: var(--font-body-family);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight);
+}
+
+/* Inherited from ancestor level 8 (regular) */
+body {
+  font-size: 1.6rem;
+  line-height: 1.7;
+  color: var(--pl-text-primary);
+  background-color: var(--color-base-background-1);
+  font-size: 1.6rem;
+  line-height: 1.7;
+  color: var(--pl-text-primary);
+  background-color: var(--color-base-background-1);
+}
+
+/* Inherited from ancestor level 8 (regular) */
+body {
+  background-color: #fff;
+  color: var(--pl-text);
+  background-color: rgb(255, 255, 255);
+  color: var(--pl-text);
+}
+
+/* Inherited from ancestor level 8 (regular) */
+body {
+  margin: 0 auto;
+  margin-top: 0px;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-left: auto;
+}
+
+/* Inherited from ancestor level 8 (regular) */
+.gradient {
+  background: rgb(var(--color-background));
+  background: var(--gradient-background);
+  background-attachment: fixed;
+  background-attachment: fixed;
+}
+
+/* Inherited from ancestor level 9 (inline) */
+element {
+--header-height: 74px;
+}
+
+/* Inherited from ancestor level 9 (user-agent) */
+html {
+  display: block;
+}
+
+/* Inherited from ancestor level 9 (user-agent) */
+:root {
+  view-transition-name: root;
+}
+
+/* Inherited from ancestor level 9 (regular) */
+*, *::before, *::after {
+  box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+/* Inherited from ancestor level 9 (regular) */
+html {
+  box-sizing: border-box;
+  font-size: calc(var(--font-body-scale) * 62.5%);
+  height: 100%;
+  box-sizing: border-box;
+  font-size: calc(var(--font-body-scale) * 62.5%);
+  height: 100%;
+}
+
+/* Inherited from ancestor level 9 (regular) */
+:root {
+  --carousel-card-background-color: #ffffff;
+  --carousel-stars-color: #facc15;
+  --carousel-text-color: #000000;
+  --carousel-button-background-color: #2563eb;
+  --carousel-container-background-color: #f3f4f6;
+  --carousel-card-background-color: #ffffff;
+  --carousel-stars-color: #facc15;
+  --carousel-text-color: #000000;
+  --carousel-button-background-color: #2563eb;
+  --carousel-container-background-color: #f3f4f6;
+}
+
+/* Inherited from ancestor level 9 (regular) */
+:root {
+  --animate-duration: 1s;
+  --animate-delay: 1s;
+  --animate-repeat: 1;
+  --animate-duration: 1s;
+  --animate-delay: 1s;
+  --animate-repeat: 1;
+}
+
+/* Inherited from ancestor level 9 (regular) */
+:root, .color-scheme-1 {
+  --color-background: 255,255,255;
+  --gradient-background: #ffffff;
+  --color-foreground: 18,18,18;
+  --color-background-contrast: 191,191,191;
+  --color-shadow: 18,18,18;
+  --color-button: 252,228,119;
+  --color-button-text: 18,18,18;
+  --color-secondary-button: 255,255,255;
+  --color-secondary-button-text: 18,18,18;
+  --color-link: 18,18,18;
+  --color-badge-foreground: 18,18,18;
+  --color-badge-background: 255,255,255;
+  --color-badge-border: 18,18,18;
+  --payment-terms-background-color: rgb(255 255 255);
+  --color-background: 255,255,255;
+  --gradient-background: #ffffff;
+  --color-foreground: 18,18,18;
+  --color-background-contrast: 191,191,191;
+  --color-shadow: 18,18,18;
+  --color-button: 252,228,119;
+  --color-button-text: 18,18,18;
+  --color-secondary-button: 255,255,255;
+  --color-secondary-button-text: 18,18,18;
+  --color-link: 18,18,18;
+  --color-badge-foreground: 18,18,18;
+  --color-badge-background: 255,255,255;
+  --color-badge-border: 18,18,18;
+  --payment-terms-background-color: rgb(255 255 255);
+}
+
+/* Inherited from ancestor level 9 (regular) */
+:root {
+  --font-body-family: Inter, sans-serif;
+  --font-body-style: normal;
+  --font-body-weight: 400;
+  --font-body-weight-bold: 700;
+  --font-heading-family: "Bodoni Moda", serif;
+  --font-heading-style: normal;
+  --font-heading-weight: 500;
+  --font-body-scale: 1.0;
+  --font-heading-scale: 1.0;
+  --media-padding: px;
+  --media-border-opacity: 0.0;
+  --media-border-width: 0px;
+  --media-radius: 4px;
+  --media-shadow-opacity: 0.0;
+  --media-shadow-horizontal-offset: 0px;
+  --media-shadow-vertical-offset: 4px;
+  --media-shadow-blur-radius: 5px;
+  --media-shadow-visible: 0;
+  --page-width: 120rem;
+  --page-width-margin: 0rem;
+  --product-card-image-padding: 0.0rem;
+  --product-card-corner-radius: 1.6rem;
+  --product-card-text-alignment: left;
+  --product-card-border-width: 0.0rem;
+  --product-card-border-opacity: 0.1;
+  --product-card-shadow-opacity: 0.0;
+  --product-card-shadow-visible: 0;
+  --product-card-shadow-horizontal-offset: 0.0rem;
+  --product-card-shadow-vertical-offset: 0.4rem;
+  --product-card-shadow-blur-radius: 0.5rem;
+  --collection-card-image-padding: 0.0rem;
+  --collection-card-corner-radius: 1.6rem;
+  --collection-card-text-alignment: left;
+  --collection-card-border-width: 0.0rem;
+  --collection-card-border-opacity: 0.1;
+  --collection-card-shadow-opacity: 0.0;
+  --collection-card-shadow-visible: 0;
+  --collection-card-shadow-horizontal-offset: 0.0rem;
+  --collection-card-shadow-vertical-offset: 0.4rem;
+  --collection-card-shadow-blur-radius: 0.5rem;
+  --blog-card-image-padding: 0.0rem;
+  --blog-card-corner-radius: 1.6rem;
+  --blog-card-text-alignment: left;
+  --blog-card-border-width: 0.0rem;
+  --blog-card-border-opacity: 0.1;
+  --blog-card-shadow-opacity: 0.0;
+  --blog-card-shadow-visible: 0;
+  --blog-card-shadow-horizontal-offset: 0.0rem;
+  --blog-card-shadow-vertical-offset: 0.4rem;
+  --blog-card-shadow-blur-radius: 0.5rem;
+  --badge-corner-radius: 0.4rem;
+  --popup-border-width: 1px;
+  --popup-border-opacity: 1.0;
+  --popup-corner-radius: 4px;
+  --popup-shadow-opacity: 0.0;
+  --popup-shadow-horizontal-offset: 0px;
+  --popup-shadow-vertical-offset: 4px;
+  --popup-shadow-blur-radius: 5px;
+  --drawer-border-width: 1px;
+  --drawer-border-opacity: 0.1;
+  --drawer-shadow-opacity: 0.0;
+  --drawer-shadow-horizontal-offset: 0px;
+  --drawer-shadow-vertical-offset: 4px;
+  --drawer-shadow-blur-radius: 5px;
+  --spacing-sections-desktop: 0px;
+  --spacing-sections-mobile: 0px;
+  --grid-desktop-vertical-spacing: 16px;
+  --grid-desktop-horizontal-spacing: 16px;
+  --grid-mobile-vertical-spacing: 8px;
+  --grid-mobile-horizontal-spacing: 8px;
+  --text-boxes-border-opacity: 0.0;
+  --text-boxes-border-width: 0px;
+  --text-boxes-radius: 0px;
+  --text-boxes-shadow-opacity: 0.0;
+  --text-boxes-shadow-visible: 0;
+  --text-boxes-shadow-horizontal-offset: 0px;
+  --text-boxes-shadow-vertical-offset: 4px;
+  --text-boxes-shadow-blur-radius: 5px;
+  --buttons-radius: 4px;
+  --buttons-radius-outset: 5px;
+  --buttons-border-width: 1px;
+  --buttons-border-opacity: 1.0;
+  --buttons-shadow-opacity: 0.0;
+  --buttons-shadow-visible: 0;
+  --buttons-shadow-horizontal-offset: 0px;
+  --buttons-shadow-vertical-offset: 4px;
+  --buttons-shadow-blur-radius: 5px;
+  --buttons-border-offset: 0.3px;
+  --inputs-radius: 4px;
+  --inputs-border-width: 1px;
+  --inputs-border-opacity: 1.0;
+  --inputs-shadow-opacity: 0.0;
+  --inputs-shadow-horizontal-offset: 0px;
+  --inputs-margin-offset: 0px;
+  --inputs-shadow-vertical-offset: 4px;
+  --inputs-shadow-blur-radius: 5px;
+  --inputs-radius-outset: 5px;
+  --variant-pills-radius: 40px;
+  --variant-pills-border-width: 1px;
+  --variant-pills-border-opacity: 0.55;
+  --variant-pills-shadow-opacity: 0.0;
+  --variant-pills-shadow-horizontal-offset: 0px;
+  --variant-pills-shadow-vertical-offset: 4px;
+  --variant-pills-shadow-blur-radius: 5px;
+  --font-body-family: Inter, sans-serif;
+  --font-body-style: normal;
+  --font-body-weight: 400;
+  --font-body-weight-bold: 700;
+  --font-heading-family: "Bodoni Moda", serif;
+  --font-heading-style: normal;
+  --font-heading-weight: 500;
+  --font-body-scale: 1.0;
+  --font-heading-scale: 1.0;
+  --media-padding: px;
+  --media-border-opacity: 0.0;
+  --media-border-width: 0px;
+  --media-radius: 4px;
+  --media-shadow-opacity: 0.0;
+  --media-shadow-horizontal-offset: 0px;
+  --media-shadow-vertical-offset: 4px;
+  --media-shadow-blur-radius: 5px;
+  --media-shadow-visible: 0;
+  --page-width: 120rem;
+  --page-width-margin: 0rem;
+  --product-card-image-padding: 0.0rem;
+  --product-card-corner-radius: 1.6rem;
+  --product-card-text-alignment: left;
+  --product-card-border-width: 0.0rem;
+  --product-card-border-opacity: 0.1;
+  --product-card-shadow-opacity: 0.0;
+  --product-card-shadow-visible: 0;
+  --product-card-shadow-horizontal-offset: 0.0rem;
+  --product-card-shadow-vertical-offset: 0.4rem;
+  --product-card-shadow-blur-radius: 0.5rem;
+  --collection-card-image-padding: 0.0rem;
+  --collection-card-corner-radius: 1.6rem;
+  --collection-card-text-alignment: left;
+  --collection-card-border-width: 0.0rem;
+  --collection-card-border-opacity: 0.1;
+  --collection-card-shadow-opacity: 0.0;
+  --collection-card-shadow-visible: 0;
+  --collection-card-shadow-horizontal-offset: 0.0rem;
+  --collection-card-shadow-vertical-offset: 0.4rem;
+  --collection-card-shadow-blur-radius: 0.5rem;
+  --blog-card-image-padding: 0.0rem;
+  --blog-card-corner-radius: 1.6rem;
+  --blog-card-text-alignment: left;
+  --blog-card-border-width: 0.0rem;
+  --blog-card-border-opacity: 0.1;
+  --blog-card-shadow-opacity: 0.0;
+  --blog-card-shadow-visible: 0;
+  --blog-card-shadow-horizontal-offset: 0.0rem;
+  --blog-card-shadow-vertical-offset: 0.4rem;
+  --blog-card-shadow-blur-radius: 0.5rem;
+  --badge-corner-radius: 0.4rem;
+  --popup-border-width: 1px;
+  --popup-border-opacity: 1.0;
+  --popup-corner-radius: 4px;
+  --popup-shadow-opacity: 0.0;
+  --popup-shadow-horizontal-offset: 0px;
+  --popup-shadow-vertical-offset: 4px;
+  --popup-shadow-blur-radius: 5px;
+  --drawer-border-width: 1px;
+  --drawer-border-opacity: 0.1;
+  --drawer-shadow-opacity: 0.0;
+  --drawer-shadow-horizontal-offset: 0px;
+  --drawer-shadow-vertical-offset: 4px;
+  --drawer-shadow-blur-radius: 5px;
+  --spacing-sections-desktop: 0px;
+  --spacing-sections-mobile: 0px;
+  --grid-desktop-vertical-spacing: 16px;
+  --grid-desktop-horizontal-spacing: 16px;
+  --grid-mobile-vertical-spacing: 8px;
+  --grid-mobile-horizontal-spacing: 8px;
+  --text-boxes-border-opacity: 0.0;
+  --text-boxes-border-width: 0px;
+  --text-boxes-radius: 0px;
+  --text-boxes-shadow-opacity: 0.0;
+  --text-boxes-shadow-visible: 0;
+  --text-boxes-shadow-horizontal-offset: 0px;
+  --text-boxes-shadow-vertical-offset: 4px;
+  --text-boxes-shadow-blur-radius: 5px;
+  --buttons-radius: 4px;
+  --buttons-radius-outset: 5px;
+  --buttons-border-width: 1px;
+  --buttons-border-opacity: 1.0;
+  --buttons-shadow-opacity: 0.0;
+  --buttons-shadow-visible: 0;
+  --buttons-shadow-horizontal-offset: 0px;
+  --buttons-shadow-vertical-offset: 4px;
+  --buttons-shadow-blur-radius: 5px;
+  --buttons-border-offset: 0.3px;
+  --inputs-radius: 4px;
+  --inputs-border-width: 1px;
+  --inputs-border-opacity: 1.0;
+  --inputs-shadow-opacity: 0.0;
+  --inputs-shadow-horizontal-offset: 0px;
+  --inputs-margin-offset: 0px;
+  --inputs-shadow-vertical-offset: 4px;
+  --inputs-shadow-blur-radius: 5px;
+  --inputs-radius-outset: 5px;
+  --variant-pills-radius: 40px;
+  --variant-pills-border-width: 1px;
+  --variant-pills-border-opacity: 0.55;
+  --variant-pills-shadow-opacity: 0.0;
+  --variant-pills-shadow-horizontal-offset: 0px;
+  --variant-pills-shadow-vertical-offset: 4px;
+  --variant-pills-shadow-blur-radius: 5px;
+}
+
+/* Inherited from ancestor level 9 (regular) */
+:root {
+  --pl-primary: #1B5E56;
+  --pl-primary-dark: #154039;
+  --pl-secondary: #4D9B93;
+  --pl-sage: #7FA89F;
+  --pl-background: #F8F5EE;
+  --pl-surface: #E8E5DC;
+  --pl-white: #FFFFFF;
+  --pl-text-primary: #2C2C2C;
+  --pl-text-secondary: #666666;
+  --pl-text-muted: #888888;
+  --pl-category-spices: #B45E3C;
+  --pl-category-honey: #C89A3D;
+  --pl-category-tea: #4D9B93;
+  --pl-category-coffee: #5A3E36;
+  --pl-category-grains: #E8E5DC;
+  --pl-category-wellness: #7FA89F;
+  --pl-success: #2E7D32;
+  --pl-warning: #F57C00;
+  --pl-error: #C62828;
+  --pl-info: #1976D2;
+  --alpha-button-background: 1;
+  --alpha-button-border: 1;
+  --alpha-link: .85;
+  --alpha-badge-border: .1;
+  --focused-base-outline: .2rem solid rgba(var(--color-foreground), .5);
+  --focused-base-outline-offset: .3rem;
+  --focused-base-box-shadow: 0 0 0 .3rem rgb(var(--color-background)), 0 0 .5rem .4rem rgba(var(--color-foreground), .3);
+  --pl-primary: #1B5E56;
+  --pl-primary-dark: #154039;
+  --pl-secondary: #4D9B93;
+  --pl-sage: #7FA89F;
+  --pl-background: #F8F5EE;
+  --pl-surface: #E8E5DC;
+  --pl-white: #FFFFFF;
+  --pl-text-primary: #2C2C2C;
+  --pl-text-secondary: #666666;
+  --pl-text-muted: #888888;
+  --pl-category-spices: #B45E3C;
+  --pl-category-honey: #C89A3D;
+  --pl-category-tea: #4D9B93;
+  --pl-category-coffee: #5A3E36;
+  --pl-category-grains: #E8E5DC;
+  --pl-category-wellness: #7FA89F;
+  --pl-success: #2E7D32;
+  --pl-warning: #F57C00;
+  --pl-error: #C62828;
+  --pl-info: #1976D2;
+  --alpha-button-background: 1;
+  --alpha-button-border: 1;
+  --alpha-link: .85;
+  --alpha-badge-border: .1;
+  --focused-base-outline: .2rem solid rgba(var(--color-foreground), .5);
+  --focused-base-outline-offset: .3rem;
+  --focused-base-box-shadow: 0 0 0 .3rem rgb(var(--color-background)), 0 0 .5rem .4rem rgba(var(--color-foreground), .3);
+}
+
+/* Inherited from ancestor level 9 (regular) */
+:root {
+  --duration-short: .1s;
+  --duration-default: .2s;
+  --duration-announcement-bar: .25s;
+  --duration-medium: .3s;
+  --duration-long: .5s;
+  --duration-extra-long: .6s;
+  --duration-extra-longer: .75s;
+  --duration-extended: 3s;
+  --ease-out-slow: cubic-bezier(0, 0, .3, 1);
+  --animation-slide-in: slideIn var(--duration-extra-long) var(--ease-out-slow) forwards;
+  --animation-fade-in: fadeIn var(--duration-extra-long) var(--ease-out-slow);
+  --duration-short: .1s;
+  --duration-default: .2s;
+  --duration-announcement-bar: .25s;
+  --duration-medium: .3s;
+  --duration-long: .5s;
+  --duration-extra-long: .6s;
+  --duration-extra-longer: .75s;
+  --duration-extended: 3s;
+  --ease-out-slow: cubic-bezier(0, 0, .3, 1);
+  --animation-slide-in: slideIn var(--duration-extra-long) var(--ease-out-slow) forwards;
+  --animation-fade-in: fadeIn var(--duration-extra-long) var(--ease-out-slow);
+}
+
+/* Inherited from ancestor level 9 (regular) */
+:root {
+  --color-base-accent-1: #2B5E3C;
+  --color-base-accent-2: #D68F23;
+  --color-base-text: #2A362D;
+  --color-base-text-opacity-10-percent: rgba(42, 54, 45, .1);
+  --color-base-background-1: #ffffff;
+  --color-base-background-2: #F9F7F1;
+  --font-heading-family: var(--font-heading-family, "Playfair Display", serif);
+  --font-body-family: var(--font-body-family, "Inter", sans-serif);
+  --color-base-accent-1: #2B5E3C;
+  --color-base-accent-2: #D68F23;
+  --color-base-text: #2A362D;
+  --color-base-text-opacity-10-percent: rgba(42, 54, 45, .1);
+  --color-base-background-1: #ffffff;
+  --color-base-background-2: #F9F7F1;
+  --font-heading-family: var(--font-heading-family, "Playfair Display", serif);
+  --font-body-family: var(--font-body-family, "Inter", sans-serif);
+}
+
+/* Inherited from ancestor level 9 (regular) */
+:root {
+  --pl-amber: #D4821A;
+  --pl-amber-light: #F5E6CF;
+  --pl-amber-hover: #BF7015;
+  --pl-green: #1B5E56;
+  --pl-green-deep: #1B3A30;
+  --pl-green-mid: #4D9B93;
+  --pl-green-pale: #E8F5F3;
+  --pl-green-tint: #F0FAF8;
+  --pl-cream: #F8F5EE;
+  --pl-cream-dark: #EEEAE0;
+  --pl-white: #FFFFFF;
+  --pl-text: #1B3A30;
+  --pl-text-mid: #5A6B67;
+  --pl-text-light: #8A9B97;
+  --pl-border: #DDD9CF;
+  --pl-shadow-card: 0 4px 20px rgba(27, 58, 48, .09);
+  --pl-shadow-hover: 0 12px 40px rgba(27, 58, 48, .16);
+  --pl-radius-card: 16px;
+  --pl-radius-btn: 100px;
+  --pl-transition: .22s ease;
+  --pl-amber: #D4821A;
+  --pl-amber-light: #F5E6CF;
+  --pl-amber-hover: #BF7015;
+  --pl-green: #1B5E56;
+  --pl-green-deep: #1B3A30;
+  --pl-green-mid: #4D9B93;
+  --pl-green-pale: #E8F5F3;
+  --pl-green-tint: #F0FAF8;
+  --pl-cream: #F8F5EE;
+  --pl-cream-dark: #EEEAE0;
+  --pl-white: #FFFFFF;
+  --pl-text: #1B3A30;
+  --pl-text-mid: #5A6B67;
+  --pl-text-light: #8A9B97;
+  --pl-border: #DDD9CF;
+  --pl-shadow-card: 0 4px 20px rgba(27, 58, 48, .09);
+  --pl-shadow-hover: 0 12px 40px rgba(27, 58, 48, .16);
+  --pl-radius-card: 16px;
+  --pl-radius-btn: 100px;
+  --pl-transition: .22s ease;
+}
+
+```

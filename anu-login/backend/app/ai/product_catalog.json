@@ -1,0 +1,339 @@
+{
+  "products": [
+    {
+      "id": "black_pepper",
+      "name": "Black Pepper",
+      "aliases": [
+        "black pepper",
+        "blackpepper",
+        "pepper",
+        "kurumulak",
+        "kurumulaku",
+        "kurmumulak",
+        "kurumulakk",
+        "കുരുമുളക്",
+        "മിരിയങ്ങൾ",
+        "മിരിയాలు"
+      ],
+      "origin": "Idukki",
+      "story": "Washed and cleaned Idukki black pepper from our spice-growing belt.",
+      "quality": "Bold aroma, clean whole peppercorns, and strong everyday cooking heat.",
+      "use_cases": [
+        "everyday cooking",
+        "pepper tea",
+        "masala blends",
+        "fried dishes"
+      ],
+      "sizes": [
+        {
+          "size": "250g",
+          "price": 300
+        },
+        {
+          "size": "500g",
+          "price": 540
+        },
+        {
+          "size": "1kg",
+          "price": 950
+        }
+      ],
+      "recommended_pack": "500g",
+      "media_links": [
+        {
+          "id": "img_8e6ca00557d4",
+          "url": "/api/product-media/pepper/img_8e6ca00557d4_uc.jpg",
+          "filename": "img_8e6ca00557d4_uc.jpg",
+          "caption": "Black Pepper - 4.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1UMI0vwyfTAfaT0pydk_IBSE-bSIuosRo",
+          "is_primary": true,
+          "sort_order": 0,
+          "mime_type": "image/jpeg",
+          "size_bytes": 121761,
+          "uploaded_at": "",
+          "updated_at": ""
+        }
+      ]
+    },
+    {
+      "id": "white_pepper",
+      "name": "White Pepper",
+      "aliases": [
+        "white pepper",
+        "whitepepper",
+        "vella kurumulak",
+        "vellakurumulak",
+        "വെള്ള കുരുമുളക്",
+        "organic white pepper"
+      ],
+      "origin": "Idukki",
+      "story": "Naturally processed white pepper cultivated in Idukki, with the husk removed carefully for a cleaner finish.",
+      "quality": "Very pure, clean white pepper with sharper heat and a smooth finish.",
+      "use_cases": [
+        "fried rice",
+        "soups",
+        "sauces",
+        "light-colored dishes",
+        "everyday cooking"
+      ],
+      "sizes": [
+        {
+          "size": "100g",
+          "price": 160
+        },
+        {
+          "size": "200g",
+          "price": 300
+        },
+        {
+          "size": "250g",
+          "price": 400
+        }
+      ],
+      "recommended_pack": "200g",
+      "media_links": []
+    },
+    {
+      "id": "cardamom",
+      "name": "Cardamom",
+      "aliases": [
+        "cardamom",
+        "elakka",
+        "elaichi",
+        "yelakka",
+        "cardmom",
+        "cardamum",
+        "ഏലക്ക"
+      ],
+      "origin": "Idukki",
+      "story": "Idukki sourced 8.5mm A+ grade cardamom with fresh aroma and strong sweetness.",
+      "quality": "A+ grade, bold aroma, and clean green pods chosen for daily home use and gifting.",
+      "use_cases": [
+        "tea",
+        "payasam",
+        "biryani",
+        "baking",
+        "gift packs"
+      ],
+      "sizes": [
+        {
+          "size": "100g",
+          "price": 460
+        },
+        {
+          "size": "200g",
+          "price": 840
+        },
+        {
+          "size": "500g",
+          "price": 1799
+        },
+        {
+          "size": "1kg",
+          "price": 3350
+        }
+      ],
+      "recommended_pack": "200g",
+      "media_links": []
+    },
+    {
+      "id": "clove",
+      "name": "Clove",
+      "aliases": [
+        "clove",
+        "grambu",
+        "grampoo",
+        "grampu",
+        "gampoo",
+        "gramboo",
+        "ഗ്രാമ്പൂ"
+      ],
+      "origin": "Adimali",
+      "story": "Premium quality whole cloves sourced from the Adimali side of the hills.",
+      "quality": "Plump whole cloves with strong aroma for masala, tea, and spice blends.",
+      "use_cases": [
+        "biryani",
+        "tea",
+        "garam masala",
+        "home cooking"
+      ],
+      "sizes": [
+        {
+          "size": "100g",
+          "price": 180
+        },
+        {
+          "size": "200g",
+          "price": 340
+        },
+        {
+          "size": "500g",
+          "price": 649
+        }
+      ],
+      "recommended_pack": "200g",
+      "media_links": [
+        {
+          "id": "img_adf7d4b85008",
+          "url": "/api/product-media/clove/img_adf7d4b85008_uc.jpg",
+          "filename": "img_adf7d4b85008_uc.jpg",
+          "caption": "Clove - 5.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=19WcEkrOQB5S0qhwMDWD95-RoAVB10QUu",
+          "is_primary": true,
+          "sort_order": 0,
+          "mime_type": "image/jpeg",
+          "size_bytes": 160072,
+          "uploaded_at": "",
+          "updated_at": ""
+        }
+      ]
+    },
+    {
+      "id": "turmeric",
+      "name": "Turmeric Powder",
+      "aliases": [
+        "turmeric",
+        "haldi",
+        "manjal",
+        "manjal podi",
+        "മഞ്ഞൾ",
+        "മഞ്ഞൾപ്പൊടി"
+      ],
+      "origin": "Idukki",
+      "story": "Cultivated in our Idukki farm, then cleaned, traditionally boiled, sun-dried, and finely powdered.",
+      "quality": "Fresh farm turmeric with strong color and everyday kitchen use.",
+      "use_cases": [
+        "curries",
+        "daily cooking",
+        "golden milk",
+        "home remedies"
+      ],
+      "sizes": [
+        {
+          "size": "100g",
+          "price": 160
+        },
+        {
+          "size": "200g",
+          "price": 300
+        }
+      ],
+      "recommended_pack": "200g",
+      "media_links": []
+    },
+    {
+      "id": "ceylon_cinnamon",
+      "name": "Ceylon Cinnamon",
+      "aliases": [
+        "cinnamon",
+        "ceylon cinnamon",
+        "patta",
+        "karu patta",
+        "karuvappatta",
+        "karuvapatta",
+        "cinnamomum verum",
+        "cinnamom",
+        "കറുവപ്പട്ട",
+        "കരുവപ്പട്ട",
+        "പട്ട"
+      ],
+      "origin": "Sri Lanka",
+      "story": "Original True Ceylon Cinnamon sourced from Sri Lanka.",
+      "quality": "Delicate bark, sweeter aroma, and the cleaner profile customers expect from true Ceylon cinnamon.",
+      "use_cases": [
+        "tea",
+        "baking",
+        "desserts",
+        "daily spice use"
+      ],
+      "sizes": [
+        {
+          "size": "100g",
+          "price": 320
+        },
+        {
+          "size": "200g",
+          "price": 560
+        },
+        {
+          "size": "500g",
+          "price": 1400
+        }
+      ],
+      "recommended_pack": "200g",
+      "media_links": []
+    },
+    {
+      "id": "star_anise",
+      "name": "Star Anise",
+      "aliases": [
+        "star anise",
+        "star anaise",
+        "thakkolam",
+        "തക്കോലം",
+        "chakra phool"
+      ],
+      "origin": "India",
+      "story": "Premium quality thakkolam used in biriyani, chai masala, and spice blends.",
+      "quality": "Strong sweet-spice aroma with the licorice note customers look for in good star anise.",
+      "use_cases": [
+        "biryani",
+        "chai masala",
+        "spice blends",
+        "restaurant-style cooking"
+      ],
+      "sizes": [
+        {
+          "size": "100g",
+          "price": 180
+        },
+        {
+          "size": "500g",
+          "price": 455
+        }
+      ],
+      "recommended_pack": "100g",
+      "media_links": []
+    }
+  ],
+  "combos": [
+    {
+      "id": "combo_1",
+      "title": "Combo Offer 1",
+      "includes": "Cardamom 100g + Clove 100g",
+      "price": 560
+    },
+    {
+      "id": "combo_2",
+      "title": "Combo Offer 2",
+      "includes": "Cardamom 100g + Black Pepper 200g",
+      "price": 640
+    },
+    {
+      "id": "combo_3",
+      "title": "Combo Offer 3",
+      "includes": "Cardamom 100g + Ceylon Cinnamon 100g",
+      "price": 699
+    },
+    {
+      "id": "combo_4",
+      "title": "Combo Offer 4",
+      "includes": "Cardamom 200g + Clove 200g + Black Pepper 500g",
+      "price": 1649
+    },
+    {
+      "id": "combo_5",
+      "title": "Combo Offer 5",
+      "includes": "Cardamom 100g + Clove 100g + Black Pepper 200g + Ceylon Cinnamon 100g",
+      "price": 999
+    },
+    {
+      "id": "combo_6",
+      "title": "Combo Offer 6",
+      "includes": "Cardamom 100g + Black Pepper 500g",
+      "price": 845
+    }
+  ]
+}

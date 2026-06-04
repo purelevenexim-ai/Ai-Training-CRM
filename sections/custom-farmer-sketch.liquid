@@ -1,0 +1,101 @@
+<style>
+  .farmer-sketch {
+    padding: 3.6rem 1.5rem;
+    background-color: #F8F5EE;
+    text-align: center;
+  }
+  @media(min-width: 750px) {
+    .farmer-sketch { padding: 6rem 3.5rem; }
+  }
+  .farmer-sketch__wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .farmer-sketch__image-container {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto; /* Removed bottom margin since text is in image */
+  }
+  .farmer-sketch__image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    mix-blend-mode: multiply; /* Perfectly blends white sketch backgrounds into the off-white section */
+    filter: contrast(1.1) grayscale(0.1); /* Deepens the sketch lines for a premium feel */
+  }
+  .farmer-sketch__placeholder {
+    width: 100%;
+    padding: 8rem 2rem;
+    background: transparent;
+    border: 1px dashed rgba(27, 94, 86, 0.3);
+    border-radius: 8px;
+    color: #1B5E56;
+    font-size: 1.4rem;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .farmer-sketch__placeholder svg {
+    width: 40px;
+    height: 40px;
+    opacity: 0.5;
+  }
+  .farmer-sketch__title {
+    font-family: var(--font-heading-family);
+    font-size: 2.8rem;
+    color: #1B3A30;
+    margin-bottom: 1.5rem;
+  }
+  @media(min-width: 750px) {
+    .farmer-sketch__title { font-size: 3.6rem; }
+  }
+  .farmer-sketch__caption {
+    font-size: 1.6rem;
+    color: #5A6B67;
+    max-width: 650px;
+    line-height: 1.6;
+    margin: 0 auto;
+    font-style: italic;
+  }
+  .farmer-sketch__divider {
+    font-size: 1.8rem;
+    color: #D4821A;
+    margin-bottom: 2rem;
+  }
+</style>
+
+<div class="farmer-sketch">
+  <div class="farmer-sketch__wrapper">
+    <div class="farmer-sketch__image-container">
+      {%- if section.settings.image != blank -%}
+        <img src="{{ section.settings.image | img_url: 'master' }}" alt="{{ section.settings.title | escape }}" class="farmer-sketch__image" loading="lazy">
+      {%- else -%}
+        <img src="{{ 'pureleven-origin-sketch.svg' | asset_url }}" alt="Kerala spice farming sketch" class="farmer-sketch__image" loading="lazy">
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Farmer Sketch Feature",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Sketch Image",
+      "info": "Upload the wide landscape sketch. The white background will automatically blend into the section."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Farmer Sketch Feature"
+    }
+  ]
+}
+{% endschema %}

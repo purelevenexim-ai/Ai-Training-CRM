@@ -1,0 +1,537 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "image_banner_DiNdUj": {
+      "type": "image-banner",
+      "blocks": {
+        "heading_3WVre7": {
+          "type": "heading",
+          "settings": {
+            "heading": "Fresh Kerala Spices, Chosen at Origin",
+            "heading_size": "h1"
+          }
+        },
+        "text_897bUm": {
+          "type": "text",
+          "settings": {
+            "text": "Black pepper that opens sharp and warm. Cardamom with natural sweetness still locked inside the pod. Small-batch packed from Kerala.",
+            "text_style": "body"
+          }
+        },
+        "buttons_HJ9kNd": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "Shop Spices",
+            "button_link_1": "/collections/all",
+            "button_style_secondary_1": false,
+            "button_label_2": "Read Guides",
+            "button_link_2": "/blogs/cooking-spices",
+            "button_style_secondary_2": true
+          }
+        }
+      },
+      "block_order": [
+        "heading_3WVre7",
+        "text_897bUm",
+        "buttons_HJ9kNd"
+      ],
+      "name": "t:sections.image-banner.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/112.jpg",
+        "image_overlay_opacity": 40,
+        "image_height": "medium",
+        "image_behavior": "none",
+        "desktop_content_position": "middle-left",
+        "desktop_content_alignment": "left",
+        "show_text_box": true,
+        "color_scheme": "scheme-1",
+        "stack_images_on_mobile": true,
+        "mobile_content_alignment": "center",
+        "show_text_below": true
+      }
+    },
+    "idukki_origin_new": {
+      "type": "custom-idukki-origin",
+      "settings": {
+        "image": "shopify://shop_images/turmeric.png",
+        "badge_text": "Buy Better Spices",
+        "heading": "A Simpler Way to Buy Better Spices",
+        "text": "<p>Most spices lose their character long before they reach the kitchen.</p><p>We focus on whole spices, cleaner sourcing, smaller packing cycles, and freshness you can smell the moment the pouch opens.</p><p>No loud claims. Just ingredients that feel alive in the pan.</p>",
+        "btn_label": "Why Farm-Origin Matters",
+        "btn_link": "/blogs/cooking-spices/kerala-spices-farm-origin-vs-retail"
+      }
+    },
+    "custom_liquid_nrxnGY": {
+      "type": "pureleven-delivery-promise",
+      "name": "Pureleven Delivery Promise",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
+    },
+    "featured_collection_xT3MCp": {
+      "type": "featured-collection",
+      "name": "All Products",
+      "settings": {
+        "collection": "all",
+        "products_to_show": 12,
+        "title": "What Customers Keep Coming Back For",
+        "heading_size": "h2",
+        "description": "<p>Fresh essentials for daily cooking, gifting, chai, baking, and traditional recipes.</p>",
+        "show_description": true,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "color_scheme": "",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 52,
+        "padding_bottom": 56
+      }
+    },
+    "homepage_category_ecosystem_R8tYpL": {
+      "type": "homepage-category-ecosystem",
+      "name": "Homepage Category Ecosystem",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 44
+      }
+    },
+    "image_with_text_tJJyHK": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_qJDX9m": {
+          "type": "heading",
+          "settings": {
+            "heading": "Open. Crush. Smell the Difference.",
+            "heading_size": "h2"
+          }
+        },
+        "text_farmstory_01": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Fresh whole spices change cooking instantly. Pepper turns brighter. Cardamom opens sweeter. Cloves grow warmer. Even a simple meal tastes fuller when the natural oils are still there.</p>",
+            "text_style": "body"
+          }
+        }
+      },
+      "block_order": [
+        "heading_qJDX9m",
+        "text_farmstory_01"
+      ],
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/ca3.jpg",
+        "height": "medium",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "image_behavior": "none",
+        "content_layout": "overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "center",
+        "mobile_content_alignment": "center",
+        "section_color_scheme": "",
+        "color_scheme": "scheme-1",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "farmer_sketch_mobile_story": {
+      "type": "custom-farmer-sketch",
+      "settings": {
+        "image": "shopify://shop_images/image2.webp"
+      }
+    },
+    "kerala_hero_section": {
+      "type": "kerala-hero",
+      "name": "Kerala Hero",
+      "settings": {
+        "image": "shopify://shop_images/footer.png",
+        "image_behavior": "none",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "homepage_value_props_NK5J": {
+      "type": "homepage-value-props",
+      "settings": {
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "rich_text_TPyreE": {
+      "type": "pureleven-section-divider",
+      "name": "Combo Packs Heading",
+      "settings": {
+        "eyebrow": "Best Value",
+        "heading": "Kerala Spice Combo Packs",
+        "subtitle": "Bundle and save - farm-direct value",
+        "icon": "seed",
+        "show_ornament": true,
+        "background_style": "cream",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "featured_product_Jbtqkm": {
+      "type": "featured-product",
+      "blocks": {
+        "title_McJiG8": {
+          "type": "title",
+          "settings": {
+            "heading_size": "h2"
+          }
+        },
+        "price_jPKWqk": {
+          "type": "price",
+          "settings": {}
+        },
+        "quantity_selector_LDVffh": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons_aLBi76": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "icon_with_text_6AXezf": {
+          "type": "icon-with-text",
+          "settings": {
+            "layout": "horizontal",
+            "icon_1": "heart",
+            "heading_1": "Top Rated",
+            "icon_2": "return",
+            "heading_2": "Value Pack",
+            "icon_3": "truck",
+            "heading_3": "4-5 Days"
+          }
+        }
+      },
+      "block_order": [
+        "title_McJiG8",
+        "price_jPKWqk",
+        "quantity_selector_LDVffh",
+        "buy_buttons_aLBi76",
+        "icon_with_text_6AXezf"
+      ],
+      "name": "t:sections.featured-product.presets.name",
+      "settings": {
+        "product": "cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack",
+        "color_scheme": "scheme-1",
+        "secondary_background": false,
+        "media_size": "small",
+        "constrain_to_viewport": true,
+        "media_fit": "cover",
+        "media_position": "left",
+        "image_zoom": "none",
+        "hide_variants": true,
+        "enable_video_looping": true,
+        "padding_top": 16,
+        "padding_bottom": 20
+      }
+    },
+    "featured_product_xC3rVR": {
+      "type": "featured-product",
+      "blocks": {
+        "title_AHxCNY": {
+          "type": "title",
+          "settings": {
+            "heading_size": "h2"
+          }
+        },
+        "price_4UyEQW": {
+          "type": "price",
+          "settings": {}
+        },
+        "quantity_selector_NmFA64": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons_nBYYyA": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "icon_with_text_ixMiRK": {
+          "type": "icon-with-text",
+          "settings": {
+            "layout": "horizontal",
+            "icon_1": "heart",
+            "heading_1": "Top Rated",
+            "icon_2": "return",
+            "heading_2": "Value Pack",
+            "icon_3": "truck",
+            "heading_3": "4-5 Days"
+          }
+        }
+      },
+      "block_order": [
+        "title_AHxCNY",
+        "price_4UyEQW",
+        "quantity_selector_NmFA64",
+        "buy_buttons_nBYYyA",
+        "icon_with_text_ixMiRK"
+      ],
+      "name": "t:sections.featured-product.presets.name",
+      "settings": {
+        "product": "cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack",
+        "color_scheme": "scheme-1",
+        "secondary_background": false,
+        "media_size": "small",
+        "constrain_to_viewport": true,
+        "media_fit": "cover",
+        "media_position": "left",
+        "image_zoom": "none",
+        "hide_variants": true,
+        "enable_video_looping": true,
+        "padding_top": 16,
+        "padding_bottom": 20
+      }
+    },
+    "homepage_faq_MX2P8R": {
+      "type": "homepage-faq",
+      "settings": {
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "rich_text_hGLmUH": {
+      "type": "custom-spice-stories",
+      "name": "Customer Reviews",
+      "blocks": {
+        "review_thomas": {
+          "type": "review",
+          "settings": {
+            "review_text": "Very happy with this combo. Fresh spices and good quantity. Saves me time buying separately.",
+            "author_name": "Thomas Varkey",
+            "author_image_url": "https://cdn.shopify.com/s/files/1/0942/9096/8869/files/papa1.jpg?v=1753650257",
+            "review_time": "15h ago",
+            "star_rating": 5,
+            "show_verified_badge": true,
+            "verified_label": "Verified Buyer",
+            "reaction_summary": "👍❤😮",
+            "reaction_count": "124",
+            "comments_count": "25 Comments"
+          }
+        },
+        "review_mary": {
+          "type": "review",
+          "settings": {
+            "review_text": "ഞാൻ കുരുമുളക് വാങ്ങിയിട്ടുണ്ട്. നല്ല quality product ആണ്. ഒരെണ്ണം പോലും മോശമില്ലായിരുന്നു 🌟",
+            "author_name": "Mary",
+            "author_image_url": "https://cdn.shopify.com/s/files/1/0942/9096/8869/files/ammachi.jpg?v=1753650243",
+            "review_time": "8h ago",
+            "star_rating": 5,
+            "show_verified_badge": true,
+            "verified_label": "Verified Buyer",
+            "reaction_summary": "👍❤😮",
+            "reaction_count": "27",
+            "comments_count": "5 Comments"
+          }
+        },
+        "review_kuriakose": {
+          "type": "review",
+          "settings": {
+            "review_text": "Very fresh cardamom. Nice aroma, just like we need for tea. Happy with the quality. 🔥",
+            "author_name": "Kuriakose K.P",
+            "author_image_url": "https://cdn.shopify.com/s/files/1/0942/9096/8869/files/papa.jpg?v=1753650232",
+            "review_time": "1h ago",
+            "star_rating": 5,
+            "show_verified_badge": true,
+            "verified_label": "Verified Buyer",
+            "reaction_summary": "👍❤😮",
+            "reaction_count": "27",
+            "comments_count": "15 Comments"
+          }
+        },
+        "review_sabuji": {
+          "type": "review",
+          "settings": {
+            "review_text": "ये कॉम्बो बहुत अच्छा है। सभी मसाले ताजे और खुशबूदार हैं। 👍",
+            "author_name": "Sabuji K",
+            "author_image_url": "https://cdn.shopify.com/s/files/1/0942/9096/8869/files/appachan.jpg?v=1753650216",
+            "review_time": "5h ago",
+            "star_rating": 5,
+            "show_verified_badge": true,
+            "verified_label": "Verified Buyer",
+            "reaction_summary": "👍❤😮",
+            "reaction_count": "13",
+            "comments_count": "25 Comments"
+          }
+        }
+      },
+      "block_order": [
+        "review_thomas",
+        "review_mary",
+        "review_kuriakose",
+        "review_sabuji"
+      ],
+      "settings": {
+        "eyebrow": "From real kitchens",
+        "heading": "What Home Cooks Notice First",
+        "subtitle": "Usually the aroma. Then the way everyday cooking feels easier.",
+        "icon": "star",
+        "show_ornament": true,
+        "aggregate_product_name": "Kerala Spices - Pureleven",
+        "aggregate_rating_value": "4.9",
+        "aggregate_review_count": "45",
+        "aggregate_best_rating": "5",
+        "padding_top": 32,
+        "padding_bottom": 52
+      }
+    },
+    "1752440320b7906862": {
+      "type": "apps",
+      "blocks": {
+        "ck_google_reviews_google_reviews_UNGUft": {
+          "type": "shopify://apps/ck-google-reviews/blocks/google_reviews/65a77010-5e58-49de-928f-6b86aa6ecffe",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "ck_google_reviews_google_reviews_UNGUft"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "video_kDGdp6": {
+      "type": "video",
+      "name": "t:sections.video.presets.name",
+      "settings": {
+        "heading": "How Pureleven Began",
+        "heading_size": "h1",
+        "enable_video_looping": false,
+        "video": "shopify://files/videos/VID-20231102-WA0018-1.mp4",
+        "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+        "cover_image": "shopify://shop_images/How_it_Started01.jpg",
+        "description": "Intro video about the farming roots and founder story behind Pureleven.",
+        "intro_text": "I started Pureleven to bring the honesty of our farming roots in Kerala straight to your kitchen. This is my story of land, growers, and careful sourcing, and why I believe pure, thoughtfully chosen spices should reach every home exactly as nature intended.",
+        "poster_caption": "Pureleven - Pure & Best",
+        "full_width": false,
+        "color_scheme": "scheme-ee14e502-61a4-4ce5-a732-53c741498cb8",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "custom_liquid_kerala_heritage": {
+      "type": "pureleven-heritage-banner",
+      "name": "Kerala Heritage Banner",
+      "blocks": {
+        "spice_cardamom": {
+          "type": "spice",
+          "settings": {
+            "emoji": "🫙",
+            "label": "Cardamom"
+          }
+        },
+        "spice_black_pepper": {
+          "type": "spice",
+          "settings": {
+            "emoji": "🌶️",
+            "label": "Black Pepper"
+          }
+        },
+        "spice_cloves": {
+          "type": "spice",
+          "settings": {
+            "emoji": "🌸",
+            "label": "Cloves"
+          }
+        },
+        "spice_turmeric": {
+          "type": "spice",
+          "settings": {
+            "emoji": "🫚",
+            "label": "Turmeric"
+          }
+        },
+        "pill_preservatives": {
+          "type": "pill",
+          "settings": {
+            "text": "No Preservatives"
+          }
+        },
+        "pill_farm_to_table": {
+          "type": "pill",
+          "settings": {
+            "text": "Farm to Table"
+          }
+        },
+        "pill_fssai": {
+          "type": "pill",
+          "settings": {
+            "text": "FSSAI Certified"
+          }
+        },
+        "pill_export": {
+          "type": "pill",
+          "settings": {
+            "text": "Export Quality"
+          }
+        }
+      },
+      "block_order": [
+        "spice_cardamom",
+        "spice_black_pepper",
+        "spice_cloves",
+        "spice_turmeric",
+        "pill_preservatives",
+        "pill_farm_to_table",
+        "pill_fssai",
+        "pill_export"
+      ],
+      "settings": {
+        "eyebrow": "From the Hills of Kerala",
+        "title": "Build a better spice shelf.",
+        "description": "<p>Start with the ingredients you use most: fresh pepper, real cardamom, warming cloves, raw honey, and everyday kitchen staples from Kerala.</p><p>Many grow in misty hill regions where slower cycles help hold aroma and natural oils. The difference shows up as soon as the spice hits heat.</p>",
+        "button_label": "Shop Fresh Kerala Spices",
+        "button_link": "/collections/all",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": [
+    "image_banner_DiNdUj",
+    "custom_liquid_nrxnGY",
+    "featured_collection_xT3MCp",
+    "idukki_origin_new",
+    "farmer_sketch_mobile_story",
+    "image_with_text_tJJyHK",
+    "kerala_hero_section",
+    "featured_product_Jbtqkm",
+    "featured_product_xC3rVR",
+    "homepage_category_ecosystem_R8tYpL",
+    "homepage_value_props_NK5J",
+    "rich_text_TPyreE",
+    "homepage_faq_MX2P8R",
+    "rich_text_hGLmUH",
+    "1752440320b7906862",
+    "video_kDGdp6",
+    "custom_liquid_kerala_heritage"
+  ]
+}

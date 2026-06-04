@@ -1,0 +1,43 @@
+{%- assign current_price = product.selected_or_first_available_variant.price | default: product.price -%}
+{%- assign free_shipping_threshold = 64900 -%}
+{%- assign packs_float = free_shipping_threshold | times: 1.0 | divided_by: current_price -%}
+{%- assign packs_for_free_shipping = packs_float | ceil -%}
+{%- if packs_for_free_shipping < 1 -%}
+  {%- assign packs_for_free_shipping = 1 -%}
+{%- endif -%}
+{%- assign kitchen_target = packs_for_free_shipping | plus: 1 -%}
+{%- assign fast_lane_label = 'Combo packs' -%}
+{%- assign fast_lane_url = '/collections/all?filter.p.tag=combo' -%}
+{%- assign fast_lane_copy = 'When you want the fastest kitchen upgrade, jump to a curated multi-spice purchase.' -%}
+
+{%- if product.handle contains 'cassia' or product.handle contains 'ceylon' or product.handle contains 'cinnamon' or product.handle contains 'white-pepper' -%}
+  {%- assign fast_lane_label = 'Best sellers' -%}
+  {%- assign fast_lane_url = '/collections/all' -%}
+  {%- assign fast_lane_copy = 'This category converts better when shoppers see a stronger cooking path, not just one isolated SKU.' -%}
+{%- endif -%}
+
+<div class="product-offer-ladder" {{ block.shopify_attributes }}>
+  <div class="product-offer-ladder__strip">
+    <span>Farm-direct Kerala stock</span>
+    <span>Free shipping on orders above Rs. 649</span>
+    <span>No warehouse-aged spice inventory</span>
+  </div>
+  <div class="product-offer-ladder__cards">
+    <article class="product-offer-ladder__card">
+      <p class="product-offer-ladder__label">Starter move</p>
+      <h3>1 pack</h3>
+      <p>Best when the goal is a clean trial purchase without carrying more spice than the kitchen can rotate.</p>
+    </article>
+    <article class="product-offer-ladder__card product-offer-ladder__card--featured">
+      <p class="product-offer-ladder__label">Sweet spot</p>
+      <h3>{{ packs_for_free_shipping }} pack{% if packs_for_free_shipping > 1 %}s{% endif %}</h3>
+      <p>The quickest way to turn this into a better-value basket and cross the current free-shipping threshold.</p>
+    </article>
+    <article class="product-offer-ladder__card">
+      <p class="product-offer-ladder__label">Fast lane</p>
+      <h3>{{ kitchen_target }}-pack mindset</h3>
+      <p>{{ fast_lane_copy }}</p>
+      <a href="{{ fast_lane_url }}">See {{ fast_lane_label | downcase }}</a>
+    </article>
+  </div>
+</div>

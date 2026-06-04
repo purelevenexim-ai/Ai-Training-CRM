@@ -1,0 +1,338 @@
+{%- assign guide_heading = 'How this pack fits your kitchen' -%}
+{%- assign guide_intro = 'Tap through the quick answers shoppers usually want before they add this to cart.' -%}
+{%- assign fit_title = 'A clean fit for everyday cooking' -%}
+{%- assign fit_body = 'Choose this when you want fresher aroma, easier kitchen decisions, and a spice that earns its shelf space quickly.' -%}
+{%- assign fit_point_1 = 'Better for smaller fresh refills than old stock jars' -%}
+{%- assign fit_point_2 = 'Useful when you cook often enough to notice aroma loss' -%}
+{%- assign fit_point_3 = 'Made for kitchens that want clearer, ingredient-led flavor' -%}
+{%- assign use_title = 'Use a little less, but use it late' -%}
+{%- assign use_body = 'Pureleven whole spices do more of their work closer to cooking time, so a lighter hand usually gives a cleaner result.' -%}
+{%- assign use_point_1 = 'Toast or crush only what you need for the dish' -%}
+{%- assign use_point_2 = 'Start small, then build the aroma upward' -%}
+{%- assign use_point_3 = 'Keep one small jar open and the main pouch sealed' -%}
+{%- assign store_title = 'Protect aroma from steam and light' -%}
+{%- assign store_body = 'The simplest freshness win is separating weekly use from the rest of the pack and keeping both away from heat.' -%}
+{%- assign store_point_1 = 'Decant a small working jar for the counter' -%}
+{%- assign store_point_2 = 'Keep the refill pouch dry, cool, and clipped shut' -%}
+{%- assign store_point_3 = 'Avoid storing near the stove or dishwasher vent' -%}
+{%- assign footer_note = 'Still comparing? The FAQ and comparison sections lower on the page answer the detailed buying questions.' -%}
+{%- assign chip_1 = 'Daily cooking' -%}
+{%- assign chip_2 = 'Cleaner kitchen refill' -%}
+{%- assign chip_3 = 'Fresh aroma first' -%}
+{%- assign guide_link_label = 'Read the spice quality guide' -%}
+{%- assign guide_link_url = '/blogs/cooking-spices/spice-checklist-how-to-check-quality-of-spices' -%}
+
+{%- if product_handle contains 'combo-pack' -%}
+  {%- assign fit_title = 'Best for first kitchen setup or gifting' -%}
+  {%- assign fit_body = 'The combo works best when you want cardamom, pepper, and clove in one purchase without spending time building the basket item by item.' -%}
+  {%- assign fit_point_1 = 'Easy starter set for new kitchens' -%}
+  {%- assign fit_point_2 = 'Useful giftable bundle with real daily utility' -%}
+  {%- assign fit_point_3 = 'Reduces decision fatigue across three core spices' -%}
+  {%- assign use_title = 'Give each pouch a job on day one' -%}
+  {%- assign use_body = 'Treat the combo like a mini kitchen kit so each spice starts earning its place immediately instead of sitting unopened.' -%}
+  {%- assign use_point_1 = 'Keep pepper near the grinder for daily seasoning' -%}
+  {%- assign use_point_2 = 'Reserve cardamom for chai, sweets, and festive rice' -%}
+  {%- assign use_point_3 = 'Use clove in smaller doses for chai, biryani, and masala blends' -%}
+  {%- assign store_title = 'Split the combo into weekly and backup stock' -%}
+  {%- assign store_body = 'The easiest way to make a combo last well is to keep small working jars in rotation and leave the rest sealed until needed.' -%}
+  {%- assign store_point_1 = 'Label each jar before you open the pouches' -%}
+  {%- assign store_point_2 = 'Keep only one week or two of each spice in reach' -%}
+  {%- assign store_point_3 = 'Store the rest together in a dry cabinet, not near the stove' -%}
+  {%- assign chip_1 = 'Starter kitchen' -%}
+  {%- assign chip_2 = 'Easy gifting' -%}
+  {%- assign chip_3 = 'Three-spice setup' -%}
+  {%- assign guide_link_label = 'Read how to store spices in your kitchen' -%}
+  {%- assign guide_link_url = '/blogs/cooking-spices/how-to-store-spices' -%}
+{%- elsif product_handle contains 'cardamom' -%}
+  {%- if product_handle contains '50gm' -%}
+    {%- assign fit_title = 'Best for chai-first kitchens and lighter weekly use' -%}
+    {%- assign fit_body = 'This smaller pack suits buyers who want whole pod aroma without keeping a larger pouch open for too long.' -%}
+    {%- assign fit_point_1 = 'Trial-friendly size for better turnover' -%}
+    {%- assign fit_point_2 = 'Great for chai, sweets, and occasional rice dishes' -%}
+    {%- assign fit_point_3 = 'A low-friction upgrade from tired old pods' -%}
+    {%- assign chip_1 = 'Chai and sweets' -%}
+    {%- assign chip_2 = 'Smaller kitchen' -%}
+    {%- assign chip_3 = 'Whole pod aroma' -%}
+  {%- elsif product_handle contains '500gm' -%}
+    {%- assign fit_title = 'Best for heavy chai drinkers and repeat bakers' -%}
+    {%- assign fit_body = 'Choose the larger refill when cardamom is already part of the weekly rhythm and smaller pouches slow you down.' -%}
+    {%- assign fit_point_1 = 'Refill-led kitchen planning' -%}
+    {%- assign fit_point_2 = 'Better for larger households and frequent use' -%}
+    {%- assign fit_point_3 = 'Strong fit when cardamom is a real staple, not a rare ingredient' -%}
+    {%- assign chip_1 = 'Large household' -%}
+    {%- assign chip_2 = 'Frequent chai' -%}
+    {%- assign chip_3 = 'Refill pack' -%}
+  {%- else -%}
+    {%- assign fit_title = 'Best for everyday chai, desserts, and festive cooking' -%}
+    {%- assign fit_body = 'This size lands in the middle ground: enough for regular use, but still easy to keep moving while the pods stay bright.' -%}
+    {%- assign fit_point_1 = 'Balanced pack size for regular use' -%}
+    {%- assign fit_point_2 = 'Works across chai, kheer, and savory rice dishes' -%}
+    {%- assign fit_point_3 = 'Good step up from tiny trial packs' -%}
+    {%- assign chip_1 = 'Daily chai' -%}
+    {%- assign chip_2 = 'Desserts' -%}
+    {%- assign chip_3 = 'Balanced pack' -%}
+  {%- endif -%}
+  {%- assign use_title = 'Bruise the pods just before they go in' -%}
+  {%- assign use_body = 'Cardamom gives a cleaner lift when the pods are cracked or lightly crushed right before chai, rice, or desserts start cooking.' -%}
+  {%- assign use_point_1 = 'Use one or two pods for small chai servings' -%}
+  {%- assign use_point_2 = 'Open pods only when you want the aroma to bloom' -%}
+  {%- assign use_point_3 = 'Pair with cinnamon or clove in festive dishes, not by default' -%}
+  {%- assign store_title = 'Protect the pods from kitchen steam' -%}
+  {%- assign store_body = 'Whole pods hold aroma well, but they flatten faster when they live beside the kettle or stove.' -%}
+  {%- assign store_point_1 = 'Keep a tiny weekly jar and leave the rest sealed' -%}
+  {%- assign store_point_2 = 'Do not refrigerate after opening' -%}
+  {%- assign store_point_3 = 'Use a dry spoon or dry fingers every time' -%}
+  {%- assign guide_link_label = 'Read how to make cardamom powder' -%}
+  {%- assign guide_link_url = '/blogs/cooking-spices/guide-how-to-make-cardamom-powder' -%}
+{%- elsif product_handle contains 'black-pepper' -%}
+  {%- if product_handle contains '100gm' -%}
+    {%- assign fit_title = 'Best for first grinder refills and lighter-use kitchens' -%}
+    {%- assign fit_body = 'This smaller pepper pack keeps whole-pepper freshness high without asking slower-use kitchens to sit on a larger pouch.' -%}
+    {%- assign fit_point_1 = 'Good entry size for table grinders' -%}
+    {%- assign fit_point_2 = 'Great for weekly home cooking and finishing' -%}
+    {%- assign fit_point_3 = 'Low-commitment way to move from ground pepper to whole' -%}
+    {%- assign chip_1 = 'Table grinder' -%}
+    {%- assign chip_2 = 'Smaller kitchen' -%}
+    {%- assign chip_3 = 'Whole peppercorns' -%}
+  {%- elsif product_handle contains '200gm' -%}
+    {%- assign fit_title = 'Best for daily seasoning and steady grinder refills' -%}
+    {%- assign fit_body = 'This is the everyday pepper pack for cooks who want fresh-grind aroma in regular home cooking without running out too fast.' -%}
+    {%- assign fit_point_1 = 'Strong everyday sweet spot for home kitchens' -%}
+    {%- assign fit_point_2 = 'Enough volume for real weekly use' -%}
+    {%- assign fit_point_3 = 'Cleaner upgrade from flat pre-ground pepper' -%}
+    {%- assign chip_1 = 'Daily seasoning' -%}
+    {%- assign chip_2 = 'Grinder refill' -%}
+    {%- assign chip_3 = 'Everyday pack' -%}
+  {%- else -%}
+    {%- assign fit_title = 'Best for high-use kitchens and larger refill cycles' -%}
+    {%- assign fit_body = 'Go bigger when pepper already moves fast in your kitchen and the goal is better value without giving up whole-pepper freshness.' -%}
+    {%- assign fit_point_1 = 'Useful for families and repeat cooks' -%}
+    {%- assign fit_point_2 = 'Better refill value across the month' -%}
+    {%- assign fit_point_3 = 'Worth it when pepper is a constant, not an occasional finish' -%}
+    {%- assign chip_1 = 'Family kitchen' -%}
+    {%- assign chip_2 = 'High-use kitchen' -%}
+    {%- assign chip_3 = 'Refill value' -%}
+  {%- endif -%}
+  {%- assign use_title = 'Grind it near the plate, not just in the pan' -%}
+  {%- assign use_body = 'Whole pepper does its best work when you crack it close to serving time, especially in soups, eggs, salads, and simple gravies.' -%}
+  {%- assign use_point_1 = 'Go coarse for eggs, salads, and finishing' -%}
+  {%- assign use_point_2 = 'Go fine for marinades, sauces, and pepper-forward rubs' -%}
+  {%- assign use_point_3 = 'Season at the end as well as during cooking' -%}
+  {%- assign store_title = 'Keep one grinder active and the rest sealed' -%}
+  {%- assign store_body = 'Pepper stays happier when only the grinder is exposed to the air and the main pouch stays clipped and dry.' -%}
+  {%- assign store_point_1 = 'Refill the grinder in smaller batches' -%}
+  {%- assign store_point_2 = 'Do not park the pouch beside steam or sunlight' -%}
+  {%- assign store_point_3 = 'Seal immediately after every refill' -%}
+  {%- assign guide_link_label = 'Read Kerala pepper varieties' -%}
+  {%- assign guide_link_url = '/blogs/cooking-spices/spice-of-kings-kerala-black-pepper-varieties' -%}
+{%- elsif product_handle contains 'clove' -%}
+  {%- if product_handle contains '100gm' -%}
+    {%- assign fit_title = 'Best for chai, masala blends, and smaller clove use' -%}
+    {%- assign fit_body = 'This size is a practical fit when clove matters in your kitchen but is used in smaller, more aromatic doses.' -%}
+    {%- assign fit_point_1 = 'Good for households that use clove occasionally but care about quality' -%}
+    {%- assign fit_point_2 = 'Fits chai, biryani, and masala-blend cooking' -%}
+    {%- assign fit_point_3 = 'Easier to rotate while the buds stay lively' -%}
+    {%- assign chip_1 = 'Chai and biryani' -%}
+    {%- assign chip_2 = 'Masala blends' -%}
+    {%- assign chip_3 = 'Smaller pack' -%}
+  {%- else -%}
+    {%- assign fit_title = 'Best for repeat clove use and kitchen refills' -%}
+    {%- assign fit_body = 'Go with the larger pack when whole clove already shows up in the weekly rotation and the smaller bag turns over too fast.' -%}
+    {%- assign fit_point_1 = 'Better fit for heavy chai or festive cooking households' -%}
+    {%- assign fit_point_2 = 'Stronger refill value without changing the ingredient format' -%}
+    {%- assign fit_point_3 = 'Good for cooks who build their own masala often' -%}
+    {%- assign chip_1 = 'Festive cooking' -%}
+    {%- assign chip_2 = 'Repeat use' -%}
+    {%- assign chip_3 = 'Refill pack' -%}
+  {%- endif -%}
+  {%- assign use_title = 'Use fewer buds than you think' -%}
+  {%- assign use_body = 'Clove gets intense quickly, so one or two extra buds can shift the whole dish harder than expected.' -%}
+  {%- assign use_point_1 = 'Use a light hand in chai and pulao' -%}
+  {%- assign use_point_2 = 'Toast gently before grinding into masala' -%}
+  {%- assign use_point_3 = 'Let clove support the blend, not dominate it' -%}
+  {%- assign store_title = 'Keep the buds whole until the dish asks for more' -%}
+  {%- assign store_body = 'Whole clove keeps its aroma longer than ground clove, so only grind when the recipe really needs it.' -%}
+  {%- assign store_point_1 = 'Store whole, grind only in small amounts' -%}
+  {%- assign store_point_2 = 'Keep away from heat and direct light' -%}
+  {%- assign store_point_3 = 'Use an airtight jar for daily access' -%}
+  {%- assign guide_link_label = 'Read clove benefits and uses' -%}
+  {%- assign guide_link_url = '/blogs/cooking-spices/health-benefits-of-clove' -%}
+{%- elsif product_handle contains 'white-pepper' -%}
+  {%- assign fit_title = 'Best for soups, sauces, marinades, and lighter-colored dishes' -%}
+  {%- assign fit_body = 'White pepper is the better fit when you want warmth without the darker, sharper edge and visual speckling of black pepper.' -%}
+  {%- assign fit_point_1 = 'Useful in creamy soups and pale sauces' -%}
+  {%- assign fit_point_2 = 'A smoother pepper note for marinades and stir-fries' -%}
+  {%- assign fit_point_3 = 'Good when a cleaner finish matters' -%}
+  {%- assign use_title = 'Add it for warmth, not a loud finish' -%}
+  {%- assign use_body = 'White pepper builds warmth differently, so it shines in dishes where you want the spice to sit inside the flavor rather than on top of it.' -%}
+  {%- assign use_point_1 = 'Start smaller than black pepper, then adjust' -%}
+  {%- assign use_point_2 = 'Use it in soups, noodles, and white gravies' -%}
+  {%- assign use_point_3 = 'Combine with black pepper only when you want extra range' -%}
+  {%- assign store_title = 'Treat it like a finishing spice, not a countertop staple' -%}
+  {%- assign store_body = 'Because white pepper is often used in more specific dishes, it stays brighter when you keep the pouch sealed between uses.' -%}
+  {%- assign store_point_1 = 'Keep a small spoon jar and seal the rest' -%}
+  {%- assign store_point_2 = 'Store in a cool cabinet, not in open light' -%}
+  {%- assign store_point_3 = 'Avoid steam exposure when seasoning soups' -%}
+  {%- assign chip_1 = 'Soups and sauces' -%}
+  {%- assign chip_2 = 'Smoother heat' -%}
+  {%- assign chip_3 = 'Cleaner finish' -%}
+  {%- assign guide_link_label = 'Read the pepper quality guide' -%}
+  {%- assign guide_link_url = '/blogs/cooking-spices/spice-checklist-how-to-check-quality-of-spices' -%}
+{%- elsif product_handle contains 'premium-cassia-cinnamon' or product_handle contains 'cassia' -%}
+  {%- assign fit_title = 'Best for bold chai, baking, and warmer cinnamon flavor' -%}
+  {%- assign fit_body = 'Cassia is the better choice when you want cinnamon to show up clearly in the cup, pan, or oven instead of staying in the background.' -%}
+  {%- assign fit_point_1 = 'Stronger cinnamon voice for chai and baking' -%}
+  {%- assign fit_point_2 = 'Useful for spice-forward breakfast and dessert recipes' -%}
+  {%- assign fit_point_3 = 'A good fit when gentler cinnamon feels too quiet' -%}
+  {%- assign use_title = 'Snap the bark and let it open slowly' -%}
+  {%- assign use_body = 'Cassia gives a deeper, warmer note when a piece is broken before it hits the pan, pot, or tea.' -%}
+  {%- assign use_point_1 = 'Break into smaller pieces for chai or simmering' -%}
+  {%- assign use_point_2 = 'Use with cardamom in sweeter preparations' -%}
+  {%- assign use_point_3 = 'Toast lightly for richer aroma in baking mixes' -%}
+  {%- assign store_title = 'Keep it crisp, not soft' -%}
+  {%- assign store_body = 'Cinnamon bark stays more expressive when it is kept dry and protected from kitchen humidity.' -%}
+  {%- assign store_point_1 = 'Seal tightly after every use' -%}
+  {%- assign store_point_2 = 'Keep away from moisture-heavy shelves' -%}
+  {%- assign store_point_3 = 'Break only the amount you need for the recipe' -%}
+  {%- assign chip_1 = 'Bold chai' -%}
+  {%- assign chip_2 = 'Baking' -%}
+  {%- assign chip_3 = 'Warmer cinnamon' -%}
+  {%- assign guide_link_label = 'Read how to store cinnamon and spices' -%}
+  {%- assign guide_link_url = '/blogs/cooking-spices/how-to-store-spices' -%}
+{%- elsif product_handle contains 'aromatic-true-cinnamon-ceylon' or product_handle contains 'ceylon' -%}
+  {%- assign fit_title = 'Best for tea, desserts, and a gentler cinnamon profile' -%}
+  {%- assign fit_body = 'Ceylon suits kitchens that want a lighter, sweeter, more delicate cinnamon note instead of the heavier cassia style.' -%}
+  {%- assign fit_point_1 = 'Great for softer desserts and everyday tea' -%}
+  {%- assign fit_point_2 = 'Better when you want finesse over intensity' -%}
+  {%- assign fit_point_3 = 'Useful for buyers who already know they prefer Ceylon' -%}
+  {%- assign use_title = 'Use a touch more and let the sweetness lead' -%}
+  {%- assign use_body = 'Ceylon speaks in a lighter voice, so it rewards a more generous but still measured hand than cassia.' -%}
+  {%- assign use_point_1 = 'Let it steep longer in tea and warm milk' -%}
+  {%- assign use_point_2 = 'Use in desserts where delicate spice matters' -%}
+  {%- assign use_point_3 = 'Pair with cardamom when you want a softer festive profile' -%}
+  {%- assign store_title = 'Preserve the lighter aromatics carefully' -%}
+  {%- assign store_body = 'Because Ceylon is subtler, it benefits even more from dry storage and a tightly sealed pouch.' -%}
+  {%- assign store_point_1 = 'Keep only a small weekly amount exposed' -%}
+  {%- assign store_point_2 = 'Clip the pouch fully shut after each use' -%}
+  {%- assign store_point_3 = 'Do not store beside the kettle or stove' -%}
+  {%- assign chip_1 = 'Tea and desserts' -%}
+  {%- assign chip_2 = 'Gentler profile' -%}
+  {%- assign chip_3 = 'True Ceylon' -%}
+  {%- assign guide_link_label = 'Read how to store cinnamon and spices' -%}
+  {%- assign guide_link_url = '/blogs/cooking-spices/how-to-store-spices' -%}
+{%- endif -%}
+
+{%- assign product_quick_guide_metaobject = product.metafields.custom.product_quick_guide_entry.value -%}
+{%- if product_quick_guide_metaobject != blank -%}
+  {%- assign meta_heading = product_quick_guide_metaobject.heading.value | default: product_quick_guide_metaobject.heading -%}
+  {%- if meta_heading != blank -%}
+    {%- assign guide_heading = meta_heading -%}
+    {%- assign guide_intro = product_quick_guide_metaobject.intro.value | default: product_quick_guide_metaobject.intro -%}
+    {%- assign fit_title = product_quick_guide_metaobject.fit_title.value | default: product_quick_guide_metaobject.fit_title -%}
+    {%- assign fit_body = product_quick_guide_metaobject.fit_body.value | default: product_quick_guide_metaobject.fit_body -%}
+    {%- assign fit_point_1 = product_quick_guide_metaobject.fit_point_1.value | default: product_quick_guide_metaobject.fit_point_1 -%}
+    {%- assign fit_point_2 = product_quick_guide_metaobject.fit_point_2.value | default: product_quick_guide_metaobject.fit_point_2 -%}
+    {%- assign fit_point_3 = product_quick_guide_metaobject.fit_point_3.value | default: product_quick_guide_metaobject.fit_point_3 -%}
+    {%- assign use_title = product_quick_guide_metaobject.use_title.value | default: product_quick_guide_metaobject.use_title -%}
+    {%- assign use_body = product_quick_guide_metaobject.use_body.value | default: product_quick_guide_metaobject.use_body -%}
+    {%- assign use_point_1 = product_quick_guide_metaobject.use_point_1.value | default: product_quick_guide_metaobject.use_point_1 -%}
+    {%- assign use_point_2 = product_quick_guide_metaobject.use_point_2.value | default: product_quick_guide_metaobject.use_point_2 -%}
+    {%- assign use_point_3 = product_quick_guide_metaobject.use_point_3.value | default: product_quick_guide_metaobject.use_point_3 -%}
+    {%- assign store_title = product_quick_guide_metaobject.store_title.value | default: product_quick_guide_metaobject.store_title -%}
+    {%- assign store_body = product_quick_guide_metaobject.store_body.value | default: product_quick_guide_metaobject.store_body -%}
+    {%- assign store_point_1 = product_quick_guide_metaobject.store_point_1.value | default: product_quick_guide_metaobject.store_point_1 -%}
+    {%- assign store_point_2 = product_quick_guide_metaobject.store_point_2.value | default: product_quick_guide_metaobject.store_point_2 -%}
+    {%- assign store_point_3 = product_quick_guide_metaobject.store_point_3.value | default: product_quick_guide_metaobject.store_point_3 -%}
+    {%- assign chip_1 = product_quick_guide_metaobject.chip_1.value | default: product_quick_guide_metaobject.chip_1 -%}
+    {%- assign chip_2 = product_quick_guide_metaobject.chip_2.value | default: product_quick_guide_metaobject.chip_2 -%}
+    {%- assign chip_3 = product_quick_guide_metaobject.chip_3.value | default: product_quick_guide_metaobject.chip_3 -%}
+    {%- assign footer_note = product_quick_guide_metaobject.footer_note.value | default: product_quick_guide_metaobject.footer_note -%}
+    {%- assign guide_link_label = product_quick_guide_metaobject.guide_link_label.value | default: product_quick_guide_metaobject.guide_link_label -%}
+    {%- assign guide_link_url = product_quick_guide_metaobject.guide_link_url.value | default: product_quick_guide_metaobject.guide_link_url -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign guide_uid = section_id | append: '-' | append: block_id -%}
+
+<div class="product-quick-guide__surface">
+  <div class="product-quick-guide__header">
+    <p class="product-quick-guide__eyebrow">3 quick answers</p>
+    <h2 class="product-quick-guide__heading h4">{{ guide_heading }}</h2>
+    <p class="product-quick-guide__intro">{{ guide_intro }}</p>
+  </div>
+
+  <div class="product-quick-guide__tabs" aria-label="Quick kitchen guide">
+    <input
+      class="product-quick-guide__tab-input product-quick-guide__tab-input--fit"
+      type="radio"
+      name="ProductQuickGuide-{{ guide_uid }}"
+      id="ProductQuickGuideFit-{{ guide_uid }}"
+      checked
+    >
+    <label class="product-quick-guide__tab-label" for="ProductQuickGuideFit-{{ guide_uid }}">Best for</label>
+
+    <input
+      class="product-quick-guide__tab-input product-quick-guide__tab-input--use"
+      type="radio"
+      name="ProductQuickGuide-{{ guide_uid }}"
+      id="ProductQuickGuideUse-{{ guide_uid }}"
+    >
+    <label class="product-quick-guide__tab-label" for="ProductQuickGuideUse-{{ guide_uid }}">Use it</label>
+
+    <input
+      class="product-quick-guide__tab-input product-quick-guide__tab-input--store"
+      type="radio"
+      name="ProductQuickGuide-{{ guide_uid }}"
+      id="ProductQuickGuideStore-{{ guide_uid }}"
+    >
+    <label class="product-quick-guide__tab-label" for="ProductQuickGuideStore-{{ guide_uid }}">Keep it fresh</label>
+
+    <div class="product-quick-guide__panels">
+      <article class="product-quick-guide__panel product-quick-guide__panel--fit">
+        <p class="product-quick-guide__panel-kicker">Best for</p>
+        <h3 class="product-quick-guide__panel-title">{{ fit_title }}</h3>
+        <p class="product-quick-guide__panel-text">{{ fit_body }}</p>
+        <ul class="product-quick-guide__list list-unstyled" role="list">
+          <li>{{ fit_point_1 }}</li>
+          <li>{{ fit_point_2 }}</li>
+          <li>{{ fit_point_3 }}</li>
+        </ul>
+      </article>
+
+      <article class="product-quick-guide__panel product-quick-guide__panel--use">
+        <p class="product-quick-guide__panel-kicker">Use it</p>
+        <h3 class="product-quick-guide__panel-title">{{ use_title }}</h3>
+        <p class="product-quick-guide__panel-text">{{ use_body }}</p>
+        <ul class="product-quick-guide__list list-unstyled" role="list">
+          <li>{{ use_point_1 }}</li>
+          <li>{{ use_point_2 }}</li>
+          <li>{{ use_point_3 }}</li>
+        </ul>
+      </article>
+
+      <article class="product-quick-guide__panel product-quick-guide__panel--store">
+        <p class="product-quick-guide__panel-kicker">Keep it fresh</p>
+        <h3 class="product-quick-guide__panel-title">{{ store_title }}</h3>
+        <p class="product-quick-guide__panel-text">{{ store_body }}</p>
+        <ul class="product-quick-guide__list list-unstyled" role="list">
+          <li>{{ store_point_1 }}</li>
+          <li>{{ store_point_2 }}</li>
+          <li>{{ store_point_3 }}</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+
+  <div class="product-quick-guide__footer">
+    <p class="product-quick-guide__footer-label">Good match for</p>
+    <ul class="product-quick-guide__chips list-unstyled" role="list">
+      <li>{{ chip_1 }}</li>
+      <li>{{ chip_2 }}</li>
+      <li>{{ chip_3 }}</li>
+    </ul>
+    {%- if guide_link_label != blank and guide_link_url != blank -%}
+      <a class="product-quick-guide__link" href="{{ guide_link_url }}">{{ guide_link_label }}</a>
+    {%- endif -%}
+    <p class="product-quick-guide__footer-note">{{ footer_note }}</p>
+  </div>
+</div>

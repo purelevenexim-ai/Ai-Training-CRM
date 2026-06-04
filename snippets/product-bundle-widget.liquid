@@ -1,0 +1,177 @@
+{%- assign bundle_heading = 'Frequently bought together' -%}
+{%- assign bundle_intro = 'The strongest baskets usually mix one hero spice with two supporting kitchen staples.' -%}
+{%- assign companion_1_handle = '' -%}
+{%- assign companion_2_handle = '' -%}
+{%- assign combo_handle = '' -%}
+{%- assign cta_label = 'Explore combo packs' -%}
+{%- assign cta_url = routes.all_products_collection_url | append: '?filter.p.tag=combo' -%}
+
+{%- if product.handle contains 'combo-pack' -%}
+  {%- assign bundle_heading = 'Refill the trio without losing the kitchen logic' -%}
+  {%- assign bundle_intro = 'Once the combo proves the category, buyers often move into single-pack refills for the fastest-moving spice.' -%}
+  {%- assign companion_1_handle = 'kerala-cardamom-50gm' -%}
+  {%- assign companion_2_handle = 'kerala-black-pepper-200gm' -%}
+  {%- assign cta_label = 'Keep exploring combos' -%}
+{%- elsif product.handle contains 'cardamom' -%}
+  {%- assign companion_1_handle = 'kerala-black-pepper-200gm' -%}
+  {%- assign companion_2_handle = 'kerala-clove-100gm' -%}
+  {%- assign combo_handle = 'cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack' -%}
+{%- elsif product.handle contains 'black-pepper' -%}
+  {%- assign companion_1_handle = 'kerala-cardamom-50gm' -%}
+  {%- assign companion_2_handle = 'kerala-clove-100gm' -%}
+  {%- if product.handle contains '100gm' -%}
+    {%- assign combo_handle = 'cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack' -%}
+  {%- else -%}
+    {%- assign combo_handle = 'cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack' -%}
+  {%- endif -%}
+{%- elsif product.handle contains 'clove' -%}
+  {%- assign companion_1_handle = 'kerala-cardamom-50gm' -%}
+  {%- assign companion_2_handle = 'kerala-black-pepper-200gm' -%}
+  {%- assign combo_handle = 'cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack' -%}
+{%- elsif product.handle contains 'white-pepper' -%}
+  {%- assign bundle_heading = 'Popular kitchen pair-up' -%}
+  {%- assign bundle_intro = 'White pepper usually converts best when the basket also includes one bold spice and one aromatic lift.' -%}
+  {%- assign companion_1_handle = 'kerala-black-pepper-200gm' -%}
+  {%- assign companion_2_handle = 'kerala-cardamom-50gm' -%}
+  {%- assign cta_label = 'Shop best sellers' -%}
+  {%- assign cta_url = routes.all_products_collection_url -%}
+{%- elsif product.handle contains 'cassia' or product.handle contains 'ceylon' or product.handle contains 'cinnamon' -%}
+  {%- assign bundle_heading = 'Warm-spice kitchen bundle' -%}
+  {%- assign bundle_intro = 'Cinnamon buyers often broaden the basket with one sweet aromatic and one sharper savory spice.' -%}
+  {%- assign companion_1_handle = 'kerala-cardamom-50gm' -%}
+  {%- assign companion_2_handle = 'kerala-clove-100gm' -%}
+  {%- assign cta_label = 'Build your kitchen kit' -%}
+  {%- assign cta_url = routes.all_products_collection_url -%}
+{%- endif -%}
+
+{%- assign companion_1 = all_products[companion_1_handle] -%}
+{%- assign companion_2 = all_products[companion_2_handle] -%}
+{%- assign combo_product = all_products[combo_handle] -%}
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign companion_1_variant = companion_1.selected_or_first_available_variant -%}
+{%- assign companion_2_variant = companion_2.selected_or_first_available_variant -%}
+{%- assign bundle_item_count = 1 -%}
+{%- assign individual_total = current_variant.price -%}
+{%- if companion_1 != blank -%}
+  {%- assign bundle_item_count = bundle_item_count | plus: 1 -%}
+  {%- assign individual_total = individual_total | plus: companion_1.selected_or_first_available_variant.price -%}
+{%- endif -%}
+{%- if companion_2 != blank -%}
+  {%- assign bundle_item_count = bundle_item_count | plus: 1 -%}
+  {%- assign individual_total = individual_total | plus: companion_2.selected_or_first_available_variant.price -%}
+{%- endif -%}
+{%- assign savings = 0 -%}
+{%- if combo_product != blank -%}
+  {%- assign savings = individual_total | minus: combo_product.selected_or_first_available_variant.price -%}
+  {%- assign cta_label = 'Add all 3 to cart' -%}
+  {%- assign cta_url = combo_product.url -%}
+{%- endif -%}
+{%- assign can_add_bundle = false -%}
+{%- if companion_1 != blank and companion_2 != blank and current_variant.available and companion_1_variant.available and companion_2_variant.available -%}
+  {%- assign can_add_bundle = true -%}
+{%- endif -%}
+
+<div class="product-bundle-widget" {{ block.shopify_attributes }}>
+  <div class="product-bundle-widget__copy">
+    <p class="product-bundle-widget__eyebrow">Basket builder</p>
+    <h2 class="product-bundle-widget__heading">{{ bundle_heading }}</h2>
+    <p class="product-bundle-widget__intro">{{ bundle_intro }}</p>
+  </div>
+  <div class="product-bundle-widget__overview">
+    <div class="product-bundle-widget__overview-copy">
+      <span class="product-bundle-widget__overview-label">{{ bundle_item_count }} current-size picks</span>
+      <strong class="product-bundle-widget__overview-total">{{ individual_total | money }}</strong>
+    </div>
+    {%- if savings > 0 -%}
+      <span class="product-bundle-widget__overview-save">Save {{ savings | money }}</span>
+    {%- endif -%}
+  </div>
+  <div class="product-bundle-widget__lineup">
+    <article class="product-bundle-widget__item product-bundle-widget__item--current">
+      {%- if product.featured_media -%}
+        <img
+          src="{{ product.featured_media | image_url: width: 180 }}"
+          alt="{{ product.featured_media.alt | default: product.title | escape }}"
+          width="90"
+          height="90"
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low"
+        >
+      {%- endif -%}
+      <div class="product-bundle-widget__item-copy">
+        <p class="product-bundle-widget__item-tag">Now viewing</p>
+        <strong>{{ product.title }}</strong>
+      </div>
+      <span class="product-bundle-widget__item-price">{{ current_variant.price | money }}</span>
+    </article>
+
+    {%- if companion_1 != blank -%}
+      <span class="product-bundle-widget__plus">+</span>
+      <article class="product-bundle-widget__item">
+        {%- if companion_1.featured_media -%}
+          <img
+            src="{{ companion_1.featured_media | image_url: width: 180 }}"
+            alt="{{ companion_1.featured_media.alt | default: companion_1.title | escape }}"
+            width="90"
+            height="90"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+          >
+        {%- endif -%}
+          <div class="product-bundle-widget__item-copy">
+            <p class="product-bundle-widget__item-tag">Pairing</p>
+            <strong>{{ companion_1.title }}</strong>
+          </div>
+          <span class="product-bundle-widget__item-price">{{ companion_1_variant.price | money }}</span>
+      </article>
+    {%- endif -%}
+
+    {%- if companion_2 != blank -%}
+      <span class="product-bundle-widget__plus">+</span>
+      <article class="product-bundle-widget__item">
+        {%- if companion_2.featured_media -%}
+          <img
+            src="{{ companion_2.featured_media | image_url: width: 180 }}"
+            alt="{{ companion_2.featured_media.alt | default: companion_2.title | escape }}"
+            width="90"
+            height="90"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+          >
+        {%- endif -%}
+          <div class="product-bundle-widget__item-copy">
+            <p class="product-bundle-widget__item-tag">Companion</p>
+            <strong>{{ companion_2.title }}</strong>
+          </div>
+          <span class="product-bundle-widget__item-price">{{ companion_2_variant.price | money }}</span>
+      </article>
+    {%- endif -%}
+  </div>
+  <div class="product-bundle-widget__summary">
+      <p class="product-bundle-widget__summary-text">
+        Ships as {{ bundle_item_count }} separate item{% if bundle_item_count > 1 %}s{% endif %} with one tap.
+        {%- if combo_product != blank -%}
+          <a class="product-bundle-widget__secondary-link" href="{{ combo_product.url }}">View the larger combo pack</a>
+        {%- endif -%}
+      </p>
+    {%- if companion_1 != blank and companion_2 != blank -%}
+      <button
+        type="button"
+        class="product-bundle-widget__cta button button--primary"
+        data-bundle-add
+        data-current-variant-id="{{ current_variant.id }}"
+        data-companion-one-variant-id="{{ companion_1_variant.id }}"
+        data-companion-two-variant-id="{{ companion_2_variant.id }}"
+        {% unless can_add_bundle %}disabled aria-disabled="true"{% endunless %}
+      >
+        <span data-bundle-add-label>{% if can_add_bundle %}{{ cta_label }}{% else %}Bundle unavailable{% endif %}</span>
+      </button>
+    {%- else -%}
+      <a class="product-bundle-widget__cta button button--primary" href="{{ cta_url }}">{{ cta_label }}</a>
+    {%- endif -%}
+    <span class="product-bundle-widget__message" data-bundle-add-message role="status" aria-live="polite"></span>
+  </div>
+</div>

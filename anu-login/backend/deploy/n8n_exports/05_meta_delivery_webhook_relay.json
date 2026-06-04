@@ -1,0 +1,91 @@
+{
+  "name": "05 - Meta Delivery Webhook Relay",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "meta-whatsapp-relay",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      },
+      "id": "meta-webhook",
+      "name": "Meta Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        260,
+        260
+      ],
+      "webhookId": "meta-delivery-relay-webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/webhooks/meta/whatsapp",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.body}}",
+        "options": {}
+      },
+      "id": "forward-meta",
+      "name": "Forward to Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-meta",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        260
+      ]
+    }
+  ],
+  "connections": {
+    "Meta Webhook": {
+      "main": [
+        [
+          {
+            "node": "Forward to Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forward to Backend": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "versionId": "05-meta-relay-v1",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "id": "05-meta-delivery-webhook-relay",
+  "tags": []
+}

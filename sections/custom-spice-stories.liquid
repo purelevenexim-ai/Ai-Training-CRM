@@ -1,0 +1,444 @@
+{%- liquid
+  assign reviews_label = section.settings.heading | strip_html | strip
+  if reviews_label == blank
+    assign reviews_label = 'Customer reviews'
+  endif
+-%}
+
+{%- if section.blocks.size > 0 or request.design_mode -%}
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    }
+
+    .custom-spice-stories-{{ section.id }} {
+      padding-left: 1.6rem;
+      padding-right: 1.6rem;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-section-divider {
+      max-width: 76rem;
+      margin: 0 auto 2.8rem;
+      text-align: center;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-section-divider__tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.8rem;
+      padding: 0.5rem 1.4rem;
+      border-radius: 999px;
+      background: #d4821a;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-section-divider__title {
+      margin: 1.4rem 0 1rem;
+      font-family: var(--font-heading-family, 'Playfair Display', serif);
+      font-size: clamp(2.6rem, 4vw, 3.6rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: #1b3a30;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-section-divider__ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.4rem;
+      margin: 0 0 1rem;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-section-divider__ornament-line {
+      flex: 1;
+      max-width: 10rem;
+      height: 0.1rem;
+      background: linear-gradient(to right, transparent, #b8ddd9);
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-section-divider__ornament-line:last-child {
+      background: linear-gradient(to left, transparent, #b8ddd9);
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-section-divider__ornament-svg {
+      color: #1b5e56;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-section-divider__subtitle {
+      margin: 0;
+      font-size: 1.5rem;
+      line-height: 1.6;
+      color: #5a6b67;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-reviews-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.6rem;
+      max-width: 128rem;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-card {
+      display: grid;
+      gap: 1.4rem;
+      height: 100%;
+      padding: 2rem;
+      border: 0.15rem solid #eee9e0;
+      border-radius: 1.5rem;
+      background: #fff;
+      box-shadow: 0 0.2rem 1.2rem rgba(0, 0, 0, 0.08);
+      text-align: left;
+      align-content: start;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-avatar {
+      width: 5rem;
+      height: 5rem;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-author-meta {
+      display: grid;
+      gap: 0.35rem;
+      min-width: 0;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-reviewer-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1b3a30;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-time {
+      font-size: 1.2rem;
+      color: #888;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-verified {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      width: fit-content;
+      font-size: 1.1rem;
+      color: #5a6b67;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-verified svg {
+      width: 1.2rem;
+      height: 1.2rem;
+      fill: #1b5e56;
+      flex-shrink: 0;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-stars {
+      display: inline-flex;
+      gap: 0.15rem;
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      color: rgba(212, 130, 26, 0.28);
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-stars .is-filled {
+      color: #d4821a;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-body {
+      margin: 0;
+      font-size: 1.4rem;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-reactions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.3rem;
+      color: #666;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-reactions-separator {
+      opacity: 0.45;
+    }
+
+    .custom-spice-stories-{{ section.id }} .pl-review-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 0.1rem solid #e8e8e8;
+      font-size: 1.3rem;
+      color: #888;
+    }
+
+    @media screen and (min-width: 750px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+      }
+
+      .custom-spice-stories-{{ section.id }} {
+        padding-left: 2.4rem;
+        padding-right: 2.4rem;
+      }
+
+      .custom-spice-stories-{{ section.id }} .pl-reviews-wrap {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media screen and (min-width: 1100px) {
+      .custom-spice-stories-{{ section.id }} .pl-reviews-wrap {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .custom-spice-stories-{{ section.id }} .pl-review-card:nth-child(even) {
+        transform: translateY(1.6rem);
+      }
+    }
+  {%- endstyle -%}
+
+  <section class="custom-spice-stories-{{ section.id }} section-{{ section.id }}-padding" aria-label="{{ reviews_label | escape }}">
+    {% render 'pureleven-section-divider',
+      eyebrow: section.settings.eyebrow,
+      heading: section.settings.heading,
+      subtitle: section.settings.subtitle,
+      icon: section.settings.icon,
+      show_ornament: section.settings.show_ornament
+    %}
+
+    <div class="pl-reviews-wrap">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign review_alt = block.settings.author_name
+          if review_alt == blank
+            assign review_alt = 'Review author'
+          endif
+        -%}
+        <article class="pl-review-card" itemscope itemtype="https://schema.org/Review" {{ block.shopify_attributes }}>
+          <div class="pl-review-header">
+            {%- if block.settings.author_image != blank -%}
+              {{
+                block.settings.author_image
+                | image_url: width: 100
+                | image_tag:
+                  class: 'pl-review-avatar',
+                  widths: '50, 100',
+                  width: 50,
+                  height: 50,
+                  loading: 'lazy',
+                  alt: review_alt
+              }}
+            {%- elsif block.settings.author_image_url != blank -%}
+              <img src="{{ block.settings.author_image_url | escape }}" alt="{{ review_alt | escape }}" class="pl-review-avatar" loading="lazy" width="50" height="50">
+            {%- endif -%}
+
+            <div class="pl-review-author-meta">
+              <div class="pl-reviewer-name" itemprop="author" itemscope itemtype="https://schema.org/Person">
+                <span itemprop="name">{{ block.settings.author_name }}</span>
+              </div>
+              {%- if block.settings.review_time != blank -%}
+                <div class="pl-review-time">{{ block.settings.review_time }}</div>
+              {%- endif -%}
+              {%- if block.settings.show_verified_badge -%}
+                <span class="pl-review-verified">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg>
+                  {{ block.settings.verified_label }}
+                </span>
+              {%- endif -%}
+            </div>
+          </div>
+
+          <div class="pl-review-stars" aria-hidden="true">
+            {%- for i in (1..5) -%}
+              <span{% if i <= block.settings.star_rating %} class="is-filled"{% endif %}>★</span>
+            {%- endfor -%}
+          </div>
+
+          <div class="visually-hidden" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+            <meta itemprop="ratingValue" content="{{ block.settings.star_rating }}">
+            <meta itemprop="bestRating" content="5">
+          </div>
+
+          <p class="pl-review-body" itemprop="reviewBody">{{ block.settings.review_text }}</p>
+
+          {%- if block.settings.reaction_summary != blank or block.settings.reaction_count != blank or block.settings.comments_count != blank -%}
+            <div class="pl-review-reactions" aria-label="Review engagement">
+              {%- if block.settings.reaction_summary != blank -%}
+                <span>{{ block.settings.reaction_summary }}</span>
+              {%- endif -%}
+              {%- if block.settings.reaction_count != blank -%}
+                <span>{{ block.settings.reaction_count }}</span>
+              {%- endif -%}
+              {%- if block.settings.comments_count != blank -%}
+                <span class="pl-review-reactions-separator">|</span>
+                <span>{{ block.settings.comments_count }}</span>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          <div class="pl-review-footer" aria-hidden="true">
+            <span>Like</span>
+            <span>Comment</span>
+            <span>Share</span>
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.aggregate_product_name != blank and section.settings.aggregate_rating_value != blank and section.settings.aggregate_review_count != blank -%}
+      <div itemscope itemtype="https://schema.org/Product" class="visually-hidden">
+        <meta itemprop="name" content="{{ section.settings.aggregate_product_name | escape }}">
+        <div itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+          <meta itemprop="ratingValue" content="{{ section.settings.aggregate_rating_value | escape }}">
+          <meta itemprop="reviewCount" content="{{ section.settings.aggregate_review_count | escape }}">
+          <meta itemprop="bestRating" content="{{ section.settings.aggregate_best_rating | escape }}">
+        </div>
+      </div>
+    {%- endif -%}
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Spice Stories",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Our Customer Reviews"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Stories from our Kitchens"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Fresh, farm-direct reviews from home kitchens across India."
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Ornament icon",
+      "default": "star",
+      "options": [
+        { "value": "star", "label": "Star" },
+        { "value": "seed", "label": "Seed" },
+        { "value": "leaf", "label": "Leaf" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_ornament",
+      "label": "Show ornament",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "aggregate_product_name",
+      "label": "Schema product name",
+      "default": "Kerala Spices - Pureleven"
+    },
+    {
+      "type": "text",
+      "id": "aggregate_rating_value",
+      "label": "Aggregate rating value",
+      "default": "4.9"
+    },
+    {
+      "type": "text",
+      "id": "aggregate_review_count",
+      "label": "Aggregate review count",
+      "default": "45"
+    },
+    {
+      "type": "text",
+      "id": "aggregate_best_rating",
+      "label": "Aggregate best rating",
+      "default": "5"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review Card",
+      "settings": [
+        { "type": "textarea", "id": "review_text", "label": "Review", "default": "The aroma hit me as soon as I opened the cardamom pack. So fresh!" },
+        { "type": "text", "id": "author_name", "label": "Author name", "default": "Priya S." },
+        { "type": "image_picker", "id": "author_image", "label": "Author image" },
+        { "type": "url", "id": "author_image_url", "label": "Author image URL" },
+        { "type": "text", "id": "review_time", "label": "Review time label", "default": "15h ago" },
+        { "type": "range", "id": "star_rating", "min": 1, "max": 5, "step": 1, "label": "Star rating", "default": 5 },
+        { "type": "checkbox", "id": "show_verified_badge", "label": "Show verified badge", "default": true },
+        { "type": "text", "id": "verified_label", "label": "Verified badge label", "default": "Verified Buyer" },
+        { "type": "text", "id": "reaction_summary", "label": "Reaction summary", "default": "👍❤😮" },
+        { "type": "text", "id": "reaction_count", "label": "Reaction count", "default": "124" },
+        { "type": "text", "id": "comments_count", "label": "Comments label", "default": "25 Comments" }
+      ]
+    }
+  ],
+  "presets": [
+    { 
+      "name": "Spice Stories Testimonials",
+      "blocks": [
+        { "type": "review", "settings": { "review_text": "Very happy with this combo. Fresh spices and good quantity. Saves me time buying separately.", "author_name": "Thomas Varkey", "review_time": "15h ago", "star_rating": 5, "verified_label": "Verified Buyer", "reaction_summary": "👍❤😮", "reaction_count": "124", "comments_count": "25 Comments" } },
+        { "type": "review", "settings": { "review_text": "Fresh pepper with real heat. The aroma was noticeable the moment I opened it.", "author_name": "Mary", "review_time": "8h ago", "star_rating": 5, "verified_label": "Verified Buyer", "reaction_summary": "👍❤😮", "reaction_count": "27", "comments_count": "5 Comments" } },
+        { "type": "review", "settings": { "review_text": "Very fresh cardamom. Nice aroma, just like we need for tea. Happy with the quality.", "author_name": "Kuriakose K.P", "review_time": "1h ago", "star_rating": 5, "verified_label": "Verified Buyer", "reaction_summary": "👍❤😮", "reaction_count": "27", "comments_count": "15 Comments" } },
+        { "type": "review", "settings": { "review_text": "The combo is excellent. Every spice felt fresh and full of aroma.", "author_name": "Sabuji K", "review_time": "5h ago", "star_rating": 5, "verified_label": "Verified Buyer", "reaction_summary": "👍❤😮", "reaction_count": "13", "comments_count": "25 Comments" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,283 @@
+from __future__ import annotations
+
+import sqlite3
+
+from app.config import settings
+
+
+def get_db_connection() -> sqlite3.Connection:
+    """Lightweight runtime DB connector without importing the full storage layer."""
+    connection = sqlite3.connect(settings.database_path, timeout=30)
+    connection.row_factory = sqlite3.Row
+    connection.execute("PRAGMA busy_timeout = 30000")
+    connection.execute("PRAGMA journal_mode = WAL")
+    return connection
+
+
+def _table_exists(connection: sqlite3.Connection, table_name: str) -> bool:
+    row = connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+        (table_name,),
+    ).fetchone()
+    return row is not None
+
+
+def _table_columns(connection: sqlite3.Connection, table_name: str) -> set[str]:
+    if not _table_exists(connection, table_name):
+        return set()
+    return {row[1] for row in connection.execute(f"PRAGMA table_info({table_name})").fetchall()}
+
+
+def _ensure_column(connection: sqlite3.Connection, table_name: str, column_definition: str) -> None:
+    column_name = column_definition.split()[0]
+    if column_name in _table_columns(connection, table_name):
+        return
+    try:
+        connection.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_definition}")
+    except Exception:
+        pass
+
+
+def ensure_runtime_tables() -> None:
+    """Create only the tables needed by lightweight AI runtime paths."""
+    with get_db_connection() as connection:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS conversation_state (
+                phone TEXT PRIMARY KEY,
+                owner TEXT NOT NULL DEFAULT 'ai',
+                owner_reason TEXT,
+                flow_id TEXT,
+                flow_step TEXT,
+                expected_responses TEXT,
+                started_at TEXT,
+                expires_at TEXT,
+                last_activity TEXT,
+                context_json TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS product_journey_followups (
+                id TEXT PRIMARY KEY,
+                phone TEXT NOT NULL,
+                conversation_phone TEXT NOT NULL,
+                product_key TEXT,
+                scenario TEXT NOT NULL,
+                reply_style TEXT NOT NULL DEFAULT 'english',
+                customer_reference TEXT,
+                followup_stage TEXT NOT NULL,
+                scheduled_at TEXT NOT NULL,
+                sent INTEGER NOT NULL DEFAULT 0,
+                sent_at TEXT,
+                reply_text TEXT,
+                send_status TEXT NOT NULL DEFAULT 'queued',
+                send_error TEXT,
+                message_mode TEXT NOT NULL DEFAULT 'text',
+                media_json TEXT,
+                context_json TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ai_outgoing_replies (
+                id TEXT PRIMARY KEY,
+                conversation_id TEXT NOT NULL,
+                customer_phone TEXT NOT NULL,
+                reply_text TEXT NOT NULL,
+                intent TEXT NOT NULL,
+                escalated INTEGER NOT NULL DEFAULT 0,
+                send_status TEXT NOT NULL DEFAULT 'pending',
+                message_mode TEXT NOT NULL DEFAULT 'text',
+                media_json TEXT,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS processed_events (
+                id TEXT PRIMARY KEY,
+                source TEXT NOT NULL,
+                event_id TEXT NOT NULL,
+                conversation_id TEXT,
+                customer_phone TEXT,
+                event_type TEXT,
+                payload_hash TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                UNIQUE(source, event_id),
+                UNIQUE(source, payload_hash)
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ai_conversation_sessions (
+                id TEXT PRIMARY KEY,
+                conversation_id TEXT NOT NULL,
+                customer_phone TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'learning',
+                session_started_at TEXT NOT NULL,
+                last_customer_message_at TEXT,
+                last_ai_response_at TEXT,
+                expires_at TEXT NOT NULL,
+                context_summary TEXT,
+                last_language TEXT,
+                last_tone TEXT,
+                last_intent TEXT,
+                last_product TEXT,
+                last_quantity TEXT,
+                customer_stage TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ai_reply_jobs (
+                id TEXT PRIMARY KEY,
+                conversation_id TEXT NOT NULL,
+                customer_phone TEXT NOT NULL,
+                customer_name TEXT NOT NULL DEFAULT 'Customer',
+                source_message_id TEXT NOT NULL,
+                source_message TEXT NOT NULL,
+                message_type TEXT NOT NULL DEFAULT 'text',
+                status TEXT NOT NULL DEFAULT 'pending',
+                delay_type TEXT NOT NULL,
+                scheduled_at TEXT NOT NULL,
+                locked_at TEXT,
+                sent_at TEXT,
+                skipped_reason TEXT,
+                result_json TEXT NOT NULL DEFAULT '{}',
+                metadata_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ai_decision_logs (
+                id TEXT PRIMARY KEY,
+                conversation_id TEXT,
+                customer_phone TEXT,
+                incoming_message TEXT,
+                normalized_message TEXT,
+                detected_language TEXT,
+                detected_product TEXT,
+                detected_intent TEXT,
+                matched_template TEXT,
+                generated_response TEXT,
+                final_route_owner TEXT,
+                wabis_state_transition TEXT,
+                metadata_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS customer_journeys (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT NOT NULL DEFAULT '',
+                status TEXT NOT NULL DEFAULT 'draft',
+                applies_to TEXT NOT NULL DEFAULT 'all_products',
+                selected_products_json TEXT NOT NULL DEFAULT '[]',
+                trigger_type TEXT NOT NULL DEFAULT 'product_interest',
+                stop_on_reply INTEGER NOT NULL DEFAULT 1,
+                stop_on_order INTEGER NOT NULL DEFAULT 1,
+                stop_on_not_interested INTEGER NOT NULL DEFAULT 1,
+                stop_on_stop INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS customer_journey_steps (
+                id TEXT PRIMARY KEY,
+                journey_id TEXT NOT NULL,
+                step_order INTEGER NOT NULL,
+                delay_value INTEGER NOT NULL,
+                delay_unit TEXT NOT NULL DEFAULT 'minutes',
+                message_type TEXT NOT NULL DEFAULT 'text',
+                message_text TEXT NOT NULL DEFAULT '',
+                active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS customer_journey_assignments (
+                id TEXT PRIMARY KEY,
+                journey_id TEXT NOT NULL,
+                customer_phone TEXT NOT NULL,
+                product_key TEXT,
+                status TEXT NOT NULL DEFAULT 'active',
+                started_at TEXT NOT NULL,
+                stopped_at TEXT,
+                stop_reason TEXT,
+                context_json TEXT NOT NULL DEFAULT '{}'
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS customer_journey_logs (
+                id TEXT PRIMARY KEY,
+                journey_id TEXT,
+                step_id TEXT,
+                customer_phone TEXT NOT NULL,
+                product_key TEXT,
+                event_type TEXT NOT NULL,
+                message_text TEXT,
+                metadata_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS monitoring_alerts (
+                id TEXT PRIMARY KEY,
+                alert_type TEXT NOT NULL,
+                severity TEXT NOT NULL,
+                message TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_conversation_state_owner ON conversation_state(owner)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_conversation_state_expires ON conversation_state(expires_at)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_product_followups_phone ON product_journey_followups(phone, scheduled_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_product_followups_due ON product_journey_followups(sent, scheduled_at)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_outgoing_phone ON ai_outgoing_replies(customer_phone, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_outgoing_conversation ON ai_outgoing_replies(conversation_id, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_outgoing_status ON ai_outgoing_replies(send_status, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_processed_events_phone ON processed_events(customer_phone, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_sessions_phone ON ai_conversation_sessions(customer_phone, expires_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_jobs_due ON ai_reply_jobs(status, scheduled_at)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_jobs_phone ON ai_reply_jobs(customer_phone, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_decisions_phone ON ai_decision_logs(customer_phone, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_customer_journeys_status ON customer_journeys(status, trigger_type)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_customer_journey_steps ON customer_journey_steps(journey_id, step_order)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_customer_journey_assignments ON customer_journey_assignments(customer_phone, status)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_customer_journey_logs ON customer_journey_logs(customer_phone, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_monitoring_alerts_created ON monitoring_alerts(created_at DESC)")
+
+        _ensure_column(connection, "product_journey_followups", "message_mode TEXT NOT NULL DEFAULT 'text'")
+        _ensure_column(connection, "product_journey_followups", "media_json TEXT")
+        _ensure_column(connection, "ai_outgoing_replies", "message_mode TEXT NOT NULL DEFAULT 'text'")
+        _ensure_column(connection, "ai_outgoing_replies", "media_json TEXT")
+        connection.commit()

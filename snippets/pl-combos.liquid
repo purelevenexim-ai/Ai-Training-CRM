@@ -1,0 +1,68 @@
+{% comment %} pl-combos.liquid — Spice Combo packs horizontal slider {% endcomment %}
+
+{% if settings.cart_combos_enabled %}
+  {%- assign combos_handle = settings.cart_combos_collection | default: '' -%}
+  {%- assign combos_limit  = settings.cart_combos_limit | default: 4 -%}
+  {%- assign combo_coll    = collections[combos_handle] -%}
+
+  {% if combo_coll and combo_coll.products.size > 0 %}
+<div class="pl-combos-card">
+  <div class="pl-combo-header">
+    <p class="pl-combo-header-title">
+      Spice Combos
+      <span class="pl-combo-badge">✦ Free Shipping</span>
+    </p>
+    <p class="pl-combo-header-sub">Bundle packs · Up to 20% off</p>
+  </div>
+
+  <div class="pl-combo-scroll-wrap">
+    <div class="pl-combo-scroll" id="pl-combo-scroll" role="list" aria-label="Spice combo packs">
+      {%- assign sorted_combos = combo_coll.products | sort: 'price' -%}
+      {%- for p in sorted_combos limit: combos_limit -%}
+        {%- assign save_pct = 0 -%}
+        {%- if p.compare_at_price > p.price -%}
+          {%- assign save_pct = p.compare_at_price | minus: p.price | times: 100 | divided_by: p.compare_at_price | round -%}
+        {%- endif -%}
+        <div class="pl-combo-card" role="listitem">
+          <a href="{{ p.url }}" class="pl-combo-img-link" tabindex="-1" aria-hidden="true">
+            {% if p.featured_image %}
+              <img class="pl-combo-img"
+                   src="{{ p.featured_image | image_url: width: 200 }}"
+                   alt="{{ p.title | escape }}"
+                   loading="lazy">
+            {% else %}
+              <div class="pl-combo-img-ph" aria-hidden="true">🌿</div>
+            {% endif %}
+          </a>
+          <div class="pl-combo-body">
+            <p class="pl-combo-name">{{ p.title | escape | truncate: 50 }}</p>
+            {% if p.description != blank %}
+              <p class="pl-combo-desc">{{ p.description | strip_html | truncate: 55 }}</p>
+            {% endif %}
+            <div class="pl-combo-price-row">
+              <span class="pl-combo-price">₹{{ p.price | divided_by: 100 }}</span>
+              {% if p.compare_at_price > p.price %}
+                <span class="pl-combo-was">₹{{ p.compare_at_price | divided_by: 100 }}</span>
+                {% if save_pct > 0 %}
+                  <span class="pl-combo-pct">{{ save_pct }}% off</span>
+                {% endif %}
+              {% endif %}
+            </div>
+            <p class="pl-combo-ship">✓ Free shipping included</p>
+            <button class="pl-combo-add"
+                    type="button"
+                    data-variant="{{ p.variants.first.id }}"
+                    data-name="{{ p.title | escape }}"
+                    aria-label="Add {{ p.title | escape }} to cart"
+                    onclick="plAddCombo(this)">
+              + Add to Cart
+            </button>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+    <div class="pl-combo-grad" aria-hidden="true"></div>
+  </div>
+</div>
+  {% endif %}
+{% endif %}

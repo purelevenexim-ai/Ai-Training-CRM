@@ -1,0 +1,20 @@
+.product-form__submit.button.button--full-width {
+  background: #fce477 !important;
+  color: #1b3a30 !important;
+  border: none !important;
+  box-shadow: 0 12px 28px rgba(252, 228, 119, 0.32) !important;
+}
+
+.product-form__submit.button.button--full-width:hover {
+  background: #f6db56 !important;
+  color: #1b3a30 !important;
+  border: none !important;
+  box-shadow: 0 8px 24px rgba(246, 219, 86, 0.38) !important;
+}
+
+.product-form__submit.button.button--full-width:focus,
+.product-form__submit.button.button--full-width:focus-visible,
+.product-form__submit.button.button--full-width:after,
+.product-form__submit.button.button--full-width:hover:after {
+  border: none !important;
+}

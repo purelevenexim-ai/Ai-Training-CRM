@@ -1,0 +1,8 @@
+{
+  "source_file": "/Users/bthomas/Documents/pureleven_dev/WHATSAPP_TOP_1000_QUESTIONS.json",
+  "train_rows": 700,
+  "validation_rows": 200,
+  "gold_rows": 100,
+  "wabis_rows": 1000,
+  "catalog_products": 5
+}

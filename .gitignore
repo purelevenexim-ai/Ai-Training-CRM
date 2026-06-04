@@ -1,0 +1,63 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.plunk.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Temporary and reports
+.DS_Store
+tmp/
+tmp_*/
+tmp_*.py
+*.tmp
+*.temp
+playwright-report/
+test-results/
+*.log
+*.sqlite3
+*.db
+.tmp/
+.tmp_*/
+.pytest_cache/
+scale-test-report/
+scale-test-results.json
+screenshots/
+customer_chats/
+customer_chats_v2/
+load_test*.csv
+load_test*.json
+load_test*.html
+*_cards*.png
+_cards*.png
+_home_cards*.png
+_coll_cards.png
+badge_replacement.txt
+temp_variables.json
+
+# Local operational data and customer/audit exports
+LIVE_MESSAGE_AUDIT_RAW_*.json
+TODAY_WABIS_CONVERSATION_AUDIT_*.md
+LIVE_MESSAGE_AUDIT_AND_FIX_REPORT_*.md
+TODAY_WABIS_AI_AUDIT_*.md
+
+# Deployment scripts that may contain local credentials
+configure_vps_env.sh
+setup_audit_system.sh
+deploy_flow_fixes.sh
+
+# Nested repository backups
+.git.nested-backup/

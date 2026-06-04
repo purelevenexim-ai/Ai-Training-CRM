@@ -1,0 +1,803 @@
+.banner {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  z-index: auto;
+  isolation: isolate;
+}
+
+.banner__box {
+  text-align: center;
+}
+
+/* Needed for gradient continuity with or without animation, the transform scopes the gradient to its container which happens already when animation are turned on */
+.banner__box.gradient {
+  transform: perspective(0);
+}
+
+@media only screen and (max-width: 749px) {
+  .banner--content-align-mobile-right .banner__box {
+    text-align: right;
+  }
+
+  .banner--content-align-mobile-left .banner__box {
+    text-align: left;
+  }
+}
+
+@media only screen and (min-width: 750px) {
+  .banner--content-align-right .banner__box {
+    text-align: right;
+  }
+
+  .banner--content-align-left .banner__box {
+    text-align: left;
+  }
+
+  .banner--content-align-left.banner--desktop-transparent .banner__box,
+  .banner--content-align-right.banner--desktop-transparent .banner__box,
+  .banner--medium.banner--desktop-transparent .banner__box {
+    max-width: 68rem;
+  }
+}
+
+.banner__media.animate--zoom-in {
+  clip-path: inset(0px);
+}
+
+.banner__media.animate--zoom-in > img:not(.zoom):not(.deferred-media__poster-button),
+.banner__media.animate--zoom-in > svg:not(.zoom):not(.deferred-media__poster-button) {
+  position: fixed;
+  height: 100vh;
+}
+
+@media screen and (max-width: 749px) {
+  .banner--small.banner--mobile-bottom:not(.banner--adapt) .banner__media,
+  .banner--small.banner--stacked:not(.banner--mobile-bottom):not(.banner--adapt) > .banner__media {
+    height: 28rem;
+  }
+
+  .banner--medium.banner--mobile-bottom:not(.banner--adapt) .banner__media,
+  .banner--medium.banner--stacked:not(.banner--mobile-bottom):not(.banner--adapt) > .banner__media {
+    height: 34rem;
+  }
+
+  .banner--large.banner--mobile-bottom:not(.banner--adapt) .banner__media,
+  .banner--large.banner--stacked:not(.banner--mobile-bottom):not(.banner--adapt) > .banner__media {
+    height: 39rem;
+  }
+
+  .banner--small:not(.banner--mobile-bottom):not(.banner--adapt) .banner__content {
+    min-height: 28rem;
+  }
+
+  .banner--medium:not(.banner--mobile-bottom):not(.banner--adapt) .banner__content {
+    min-height: 34rem;
+  }
+
+  .banner--large:not(.banner--mobile-bottom):not(.banner--adapt) .banner__content {
+    min-height: 39rem;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .banner {
+    flex-direction: row;
+  }
+
+  .banner--small:not(.banner--adapt) {
+    min-height: 42rem;
+  }
+
+  .banner--medium:not(.banner--adapt) {
+    min-height: 56rem;
+  }
+
+  .banner--large:not(.banner--adapt) {
+    min-height: 72rem;
+  }
+
+  .banner__content.banner__content--top-left {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .banner__content.banner__content--top-center {
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .banner__content.banner__content--top-right {
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  .banner__content.banner__content--middle-left {
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .banner__content.banner__content--middle-center {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .banner__content.banner__content--middle-right {
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .banner__content.banner__content--bottom-left {
+    align-items: flex-end;
+    justify-content: flex-start;
+  }
+
+  .banner__content.banner__content--bottom-center {
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .banner__content.banner__content--bottom-right {
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .banner:not(.banner--stacked) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .banner--stacked {
+    height: auto;
+  }
+
+  .banner--stacked .banner__media {
+    flex-direction: column;
+  }
+}
+
+.banner__media {
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+
+.banner__media-half {
+  width: 50%;
+}
+
+.banner__media-half + .banner__media-half {
+  right: 0;
+  left: auto;
+}
+
+.banner__media-half.animate--fixed:first-child > img,
+.banner__media-half.animate--zoom-in:first-child > img {
+  width: 50%;
+}
+
+.banner__media-half.animate--fixed:nth-child(2) > img,
+.banner__media-half.animate--zoom-in:nth-child(2) > img {
+  left: 50%;
+  width: 50%;
+}
+
+@media screen and (max-width: 749px) {
+  .banner--stacked .animate--fixed:first-child > img,
+  .banner--stacked .animate--zoom-in:first-child > img {
+    width: 100%;
+  }
+
+  .banner--stacked .banner__media-half.animate--fixed:nth-child(2) > img,
+  .banner--stacked .banner__media-half.animate--zoom-in:nth-child(2) > img {
+    left: 0;
+    width: 100%;
+  }
+
+  .banner--stacked .banner__media-half {
+    width: 100%;
+  }
+
+  .banner--stacked .banner__media-half + .banner__media-half {
+    order: 1;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .banner__media {
+    height: 100%;
+  }
+}
+
+.banner--adapt,
+.banner--adapt_image.banner--mobile-bottom .banner__media:not(.placeholder) {
+  height: auto;
+}
+
+@media screen and (max-width: 749px) {
+  .banner--mobile-bottom .banner__media,
+  .banner--stacked:not(.banner--mobile-bottom) .banner__media {
+    position: relative;
+  }
+
+  .banner--stacked.banner--adapt .banner__content {
+    height: auto;
+  }
+
+  .banner:not(.banner--mobile-bottom):not(.email-signup-banner) .banner__box {
+    background: transparent;
+  }
+
+  .banner:not(.banner--mobile-bottom) .banner__box {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .banner:not(.banner--mobile-bottom) .button--secondary {
+    --alpha-button-background: 0;
+  }
+
+  .banner--stacked:not(.banner--mobile-bottom):not(.banner--adapt) .banner__content {
+    position: absolute;
+    height: auto;
+  }
+
+  .banner--stacked.banner--adapt:not(.banner--mobile-bottom) .banner__content {
+    max-height: 100%;
+    overflow: hidden;
+    position: absolute;
+  }
+
+  .banner--stacked:not(.banner--adapt) .banner__media {
+    position: relative;
+  }
+
+  .banner::before {
+    display: none !important;
+  }
+
+  .banner--stacked .banner__media-image-half {
+    width: 100%;
+  }
+}
+
+.banner__content {
+  padding: 0;
+  display: flex;
+  position: relative;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+@media screen and (min-width: 750px) {
+  .banner__content {
+    padding: 5rem;
+  }
+
+  .banner__content--top-left {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .banner__content--top-center {
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .banner__content--top-right {
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  .banner__content--middle-left {
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .banner__content--middle-center {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .banner__content--middle-right {
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .banner__content--bottom-left {
+    align-items: flex-end;
+    justify-content: flex-start;
+  }
+
+  .banner__content--bottom-center {
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .banner__content--bottom-right {
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .banner--mobile-bottom:not(.banner--stacked) .banner__content {
+    order: 2;
+  }
+
+  .banner:not(.banner--mobile-bottom) .field__input,
+  .banner--mobile-bottom:not(.banner--stacked) .banner__box.color-scheme-1 {
+    background: transparent;
+  }
+}
+
+.banner__box {
+  padding: 6rem 1.5rem;
+  position: relative;
+  height: fit-content;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  word-wrap: break-word;
+  z-index: 1;
+}
+
+.banner--mobile-bottom .banner__box {
+  padding: 4rem 3.5rem;
+}
+
+@media screen and (min-width: 750px) {
+  .banner__box {
+    padding: 8rem 3.5rem;
+  }
+
+  .banner--desktop-transparent .banner__box {
+    padding: 4rem 0;
+    background: transparent;
+    max-width: 89rem;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .banner--desktop-transparent .button--secondary {
+    --alpha-button-background: 0;
+  }
+
+  .banner--desktop-transparent .content-container:after {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .banner--mobile-bottom::after,
+  .banner--mobile-bottom .banner__media::after {
+    display: none;
+  }
+}
+
+.banner::after,
+.banner__media::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  background: #000000;
+  opacity: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.banner__box > * + .banner__text {
+  margin-top: 1.5rem;
+}
+
+@media screen and (min-width: 750px) {
+  .banner__box > * + .banner__text {
+    margin-top: 2rem;
+  }
+}
+
+.banner__box > * + * {
+  margin-top: 1rem;
+}
+
+.banner__box > *:first-child {
+  margin-top: 0;
+}
+
+@media screen and (max-width: 749px) {
+  .banner--stacked .banner__box {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .banner__box {
+    width: auto;
+    max-width: 71rem;
+    min-width: 45rem;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .banner__box {
+    max-width: 90rem;
+  }
+}
+
+/* Override Pureleven banner color scheme */
+#Banner-template--27183973138725__image_banner_DiNdUj,
+.banner {
+  --color-button: 27, 94, 86 !important;
+  --color-button-text: 255, 255, 255 !important;
+}
+
+.banner__heading {
+  margin-bottom: 0;
+  font-family: var(--font-heading-family, 'Bodoni Moda', Georgia, serif) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.banner__heading.h1 {
+  font-size: clamp(3.2rem, 6.5vw, 5.6rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.03em !important;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
+}
+
+.banner__text p {
+  font-size: clamp(1.55rem, 2.2vw, 1.9rem) !important;
+  line-height: 1.65 !important;
+  opacity: 0.92;
+  max-width: 56ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+}
+
+.banner__box .banner__heading + * {
+  margin-top: 1rem;
+}
+
+.banner__buttons {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+/* Pureleven Brand Colors - Override Button Styling */
+.banner__buttons .button,
+.banner__buttons button,
+.banner__buttons a.button,
+.banner__buttons a {
+  background-color: var(--pl-primary, #1B5E56) !important;
+  color: #FFFFFF !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  padding: 1rem 1.6rem !important;
+  font-weight: 600 !important;
+  font-size: 1.45rem !important;
+  letter-spacing: 0.01em !important;
+  border-radius: var(--pl-radius-button, 1.6rem) !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  white-space: normal;
+  flex: 0 1 auto;
+  text-align: center;
+  text-transform: none !important;
+  line-height: 1.1 !important;
+  min-height: 4.6rem;
+  min-width: 14rem;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, border-color 0.22s ease !important;
+}
+
+.banner__buttons .button:after,
+.banner__buttons button:after,
+.banner__buttons a.button:after,
+.banner__buttons a:after,
+.banner__buttons .button:before,
+.banner__buttons button:before,
+.banner__buttons a.button:before,
+.banner__buttons a:before {
+  display: none !important;
+}
+
+.banner__buttons .button:hover,
+.banner__buttons button:hover,
+.banner__buttons a.button:hover,
+.banner__buttons a:hover {
+  background-color: var(--pl-primary-dark, #154039) !important;
+  border-color: var(--pl-primary-dark, #154039) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Fallback for rgba button colors */
+.banner__buttons {
+  --color-button: 27, 94, 86 !important;
+  --color-button-text: 255, 255, 255 !important;
+}
+
+/* Mobile optimization */
+@media (max-width: 640px) {
+  .banner__buttons {
+    gap: 0.5rem;
+  }
+  
+  .banner__buttons .button,
+  .banner__buttons button,
+  .banner__buttons a.button,
+  .banner__buttons a {
+    padding: 0.95rem 1.2rem !important;
+    font-size: 1.38rem !important;
+    min-height: 4.4rem;
+    min-width: 12rem;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .banner--content-align-mobile-right .banner__buttons--multiple {
+    justify-content: flex-end;
+  }
+
+  .banner--content-align-mobile-center .banner__buttons--multiple > * {
+    flex-grow: 1;
+    min-width: 22rem;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .banner--content-align-center .banner__buttons--multiple > * {
+    flex-grow: 1;
+    min-width: 22rem;
+  }
+
+  .banner--content-align-right .banner__buttons--multiple {
+    justify-content: flex-end;
+  }
+}
+
+.banner__box > * + .banner__buttons {
+  margin-top: 2rem;
+}
+
+@media screen and (max-width: 749px) {
+  .banner:not(.slideshow) .rte a,
+  .banner:not(.slideshow) .inline-richtext a:hover,
+  .banner:not(.slideshow) .rte a:hover {
+    color: currentColor;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .banner--desktop-transparent .rte a,
+  .banner--desktop-transparent .inline-richtext a:hover,
+  .banner--desktop-transparent .rte a:hover {
+    color: currentColor;
+  }
+}
+
+.banner--pureleven-home-hero .banner__content {
+  padding: clamp(2.4rem, 4vw, 5.2rem);
+  justify-content: flex-start;
+}
+
+.banner--pureleven-home-hero .banner__box {
+  width: min(100%, 58rem);
+  min-width: 0;
+  max-width: 58rem;
+  padding: clamp(3.2rem, 3.5vw, 4.8rem);
+  border: 1px solid rgba(74, 52, 39, 0.14);
+  border-radius: 2rem;
+  background: #ffffff;
+  box-shadow: 0 2rem 4.8rem rgba(55, 43, 32, 0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  text-align: left;
+}
+
+.banner--pureleven-home-hero .banner__box.gradient {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+
+.banner--pureleven-home-hero .banner__heading,
+.banner--pureleven-home-hero .banner__heading.h1,
+.banner--pureleven-home-hero .banner__text,
+.banner--pureleven-home-hero .banner__text p,
+.banner--pureleven-home-hero .banner__buttons,
+.banner--pureleven-home-hero .banner__buttons a,
+.banner--pureleven-home-hero .banner__buttons .button {
+  color: #1e2f2b !important;
+  text-shadow: none !important;
+}
+
+.banner--pureleven-home-hero .banner__heading.h1 {
+  max-width: 12.4ch;
+  margin-left: 0;
+  margin-right: 0;
+  font-size: clamp(4rem, 3.8vw, 5.8rem) !important;
+  font-weight: 600 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.04em !important;
+  text-wrap: balance;
+}
+
+.banner--pureleven-home-hero .banner__text p {
+  max-width: 34ch;
+  margin-left: 0;
+  margin-right: 0;
+  font-size: clamp(1.65rem, 0.8vw, 1.9rem) !important;
+  line-height: 1.65 !important;
+  letter-spacing: 0;
+  color: rgba(31, 31, 31, 0.78) !important;
+}
+
+.banner--pureleven-home-hero .banner__box > * + .banner__text {
+  margin-top: 1.6rem;
+}
+
+.banner--pureleven-home-hero .banner__buttons {
+  width: auto;
+  max-width: 100%;
+  gap: 0.8rem;
+}
+
+.banner--pureleven-home-hero .banner__buttons .button,
+.banner--pureleven-home-hero .banner__buttons button,
+.banner--pureleven-home-hero .banner__buttons a.button,
+.banner--pureleven-home-hero .banner__buttons a {
+  background: var(--pl-primary, #1B5E56) !important;
+  color: #ffffff !important;
+  border: 1px solid transparent !important;
+  border-radius: 1.4rem !important;
+  min-height: 4.8rem;
+  min-width: 15rem;
+  padding: 1rem 1.6rem !important;
+  font-size: 1.45rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  box-shadow: none !important;
+}
+
+.banner--pureleven-home-hero .banner__buttons > *:nth-child(2) {
+  background: rgba(27, 94, 86, 0.08) !important;
+  color: var(--pl-primary-dark, #154039) !important;
+  border: 1px solid rgba(21, 64, 57, 0.16) !important;
+  box-shadow: none !important;
+}
+
+.banner--pureleven-home-hero .banner__buttons > *:nth-child(2):hover {
+  background: rgba(27, 94, 86, 0.12) !important;
+}
+
+@media screen and (max-width: 749px) {
+  .banner--pureleven-home-hero:not(.banner--mobile-bottom) .banner__content {
+    min-height: clamp(42rem, 112vw, 55rem);
+    align-items: flex-end;
+    padding: 1.6rem;
+  }
+
+  .banner--pureleven-home-hero.banner:not(.banner--mobile-bottom) .banner__box {
+    width: 100%;
+    max-width: none;
+    padding: 2.2rem 1.8rem 2rem;
+    border: 1px solid rgba(74, 52, 39, 0.14) !important;
+    border-radius: 1.8rem !important;
+    background: #ffffff !important;
+    box-shadow: 0 1.4rem 3.4rem rgba(55, 43, 32, 0.12) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .banner--pureleven-home-hero.banner:not(.banner--mobile-bottom) .banner__box.gradient {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__content {
+    display: block;
+    min-height: auto;
+    margin-top: -3.2rem;
+    padding: 0 1.6rem 2.2rem;
+  }
+
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__box {
+    width: 100%;
+    max-width: none;
+    margin: 0 auto;
+    padding: 2.3rem 1.9rem 2.1rem;
+    border: 1px solid rgba(74, 52, 39, 0.13) !important;
+    border-radius: 2rem !important;
+    background: #ffffff !important;
+    box-shadow: 0 1.6rem 3.8rem rgba(55, 43, 32, 0.12) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    text-align: center;
+  }
+
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__box.gradient {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+
+  .banner--pureleven-home-hero .banner__heading.h1 {
+    font-size: clamp(2.8rem, 9vw, 3.8rem) !important;
+  }
+
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__heading.h1 {
+    max-width: 11.5ch;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: clamp(3rem, 9vw, 4.1rem) !important;
+    line-height: 1.02 !important;
+    letter-spacing: -0.034em !important;
+    text-wrap: balance;
+  }
+
+  .banner--pureleven-home-hero .banner__text p {
+    font-size: 1.5rem !important;
+    line-height: 1.58 !important;
+  }
+
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__text p {
+    max-width: 30ch;
+    font-size: 1.6rem !important;
+    line-height: 1.58 !important;
+  }
+
+  .banner--pureleven-home-hero .banner__buttons {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .banner--pureleven-home-hero .banner__buttons--multiple > * {
+    min-width: 0 !important;
+  }
+
+  .banner--pureleven-home-hero .banner__buttons .button,
+  .banner--pureleven-home-hero .banner__buttons button,
+  .banner--pureleven-home-hero .banner__buttons a.button,
+  .banner--pureleven-home-hero .banner__buttons a {
+    width: 100%;
+    min-width: 0;
+    min-height: 4.4rem;
+    padding: 0.95rem 1rem !important;
+    border-radius: 1.4rem !important;
+    font-size: 1.35rem !important;
+  }
+
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__buttons .button,
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__buttons button,
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__buttons a.button,
+  .banner--pureleven-home-hero.banner--mobile-bottom .banner__buttons a {
+    min-height: 4.4rem;
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+  }
+}
+
+@media screen and (max-width: 359px) {
+  .banner--pureleven-home-hero .banner__buttons {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

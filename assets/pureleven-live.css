@@ -1,0 +1,286 @@
+/**
+ * PURELEVEN LIVE DESIGN SYSTEM
+ * Warmth, rhythm, and visual life for the full site
+ * Inspired by SimplyOrganic.com design language
+ */
+
+/* ── CSS Custom Properties ──────────────────────────────────────────────── */
+:root {
+  --pl-amber: #D4821A;
+  --pl-amber-light: #F5E6CF;
+  --pl-amber-hover: #BF7015;
+  --pl-green: #1B5E56;
+  --pl-green-deep: #1B3A30;
+  --pl-green-mid: #4D9B93;
+  --pl-green-pale: #E8F5F3;
+  --pl-green-tint: #F0FAF8;
+  --pl-cream: #F8F5EE;
+  --pl-cream-dark: #EEEAE0;
+  --pl-white: #FFFFFF;
+  --pl-text: #1B3A30;
+  --pl-text-mid: #5A6B67;
+  --pl-text-light: #8A9B97;
+  --pl-border: #DDD9CF;
+  --pl-shadow-card: 0 4px 20px rgba(27, 58, 48, 0.09);
+  --pl-shadow-hover: 0 12px 40px rgba(27, 58, 48, 0.16);
+  --pl-radius-card: 16px;
+  --pl-radius-btn: 100px;
+  --pl-transition: 0.22s ease;
+}
+
+/* ── Body / Global ──────────────────────────────────────────────────────── */
+body {
+  background-color: #FFFFFF;
+  color: var(--pl-text);
+}
+
+/* ── Page-wide section rhythm ───────────────────────────────────────────── */
+/* Alternate every other section for visual depth */
+.shopify-section:nth-child(even):not(.shopify-section-header):not(.shopify-section-footer) > section,
+.shopify-section:nth-child(even):not(.shopify-section-header):not(.shopify-section-footer) > div:not([class*="pl-trust"]):not(.announcement-bar-minimal) {
+  background: #FFFFFF;
+}
+
+/* ── Headings with depth ────────────────────────────────────────────────── */
+.featured-collection h2.title,
+.featured-collection .collection__title {
+  font-size: clamp(2.4rem, 3.5vw, 3.4rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.015em !important;
+  color: var(--pl-green-deep) !important;
+  line-height: 1.2 !important;
+  position: relative;
+}
+
+.featured-collection h2.title::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pl-amber), #E8A52A);
+  border-radius: 2px;
+  margin-top: 1rem;
+}
+
+/* Collection subtitle (description) */
+.featured-collection .collection__description p {
+  font-size: 1.5rem !important;
+  color: var(--pl-text-mid) !important;
+  line-height: 1.65 !important;
+  max-width: 60ch;
+}
+
+/* Rich-text section headings */
+.rich-text .rich-text__heading,
+.section-rich-text .title {
+  font-size: clamp(2.6rem, 4vw, 3.8rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--pl-green-deep) !important;
+  line-height: 1.2 !important;
+}
+
+/* ── Product Cards — Lift & Life ────────────────────────────────────────── */
+.card-wrapper,
+.product-card-wrapper {
+  transition: transform var(--pl-transition), box-shadow var(--pl-transition);
+}
+.card-wrapper:hover,
+.product-card-wrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pl-shadow-hover);
+}
+
+.card .card__inner,
+.card__information {
+  border-radius: var(--pl-radius-card);
+  overflow: hidden;
+}
+
+/* Product card title */
+.card .card__heading a,
+.card-information .card__heading a {
+  color: var(--pl-green-deep) !important;
+  font-weight: 500 !important;
+  transition: color var(--pl-transition);
+}
+.card .card__heading a:hover,
+.card-information .card__heading a:hover {
+  color: var(--pl-green) !important;
+  text-decoration: none !important;
+}
+
+.pl-fc-badges,
+.pl-fc-badges__label,
+.pl-fc-badges__items,
+.pl-fc-badge {
+  display: none !important;
+}
+
+.recommend-card .button {
+  padding-inline: 2.6rem !important;
+}
+
+/* Price */
+.price .price__regular .price-item--regular,
+.price-item {
+  color: var(--pl-green) !important;
+  font-weight: 600 !important;
+}
+
+/* ── Image With Text section ────────────────────────────────────────────── */
+.image-with-text__heading {
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem) !important;
+  font-weight: 400 !important;
+  color: var(--pl-green-deep) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.18 !important;
+}
+
+.image-with-text__text p {
+  font-size: 1.5rem !important;
+  color: var(--pl-text-mid) !important;
+  line-height: 1.75 !important;
+}
+
+/* ── Featured Product section ───────────────────────────────────────────── */
+.featured-product .product__title h1,
+.featured-product .product__title h2 {
+  font-size: clamp(2.2rem, 3.5vw, 3.2rem) !important;
+  font-weight: 400 !important;
+  color: var(--pl-green-deep) !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* ── Video section heading ──────────────────────────────────────────────── */
+.section-video .title,
+.video-section__heading {
+  font-size: clamp(2.4rem, 4vw, 3.8rem) !important;
+  font-weight: 400 !important;
+  color: var(--pl-green-deep) !important;
+}
+
+/* ── Collection list (category tiles) ──────────────────────────────────── */
+.collection-list__item .card__heading,
+.collection-list .card__heading {
+  font-family: var(--font-heading-family, 'Bodoni Moda', serif) !important;
+  font-size: 1.9rem !important;
+  font-weight: 500 !important;
+  color: #FFFFFF !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Collection cards overlay */
+.collection-list .card--media .card__inner:after {
+  background: linear-gradient(
+    to top,
+    rgba(27, 58, 48, 0.75) 0%,
+    rgba(27, 58, 48, 0.2) 60%,
+    transparent 100%
+  ) !important;
+}
+
+/* ── Star ratings ───────────────────────────────────────────────────────── */
+.rating-star svg,
+.star-rating svg,
+.product-badge--star {
+  color: #FBBF24 !important;
+  fill: #FBBF24 !important;
+}
+
+/* ── Announcement bar ───────────────────────────────────────────────────── */
+.announcement-bar {
+  background: var(--pl-green) !important;
+}
+
+/* ── Header subtle shadow ───────────────────────────────────────────────── */
+.header-wrapper {
+  box-shadow: 0 2px 16px rgba(27, 58, 48, 0.08);
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.footer {
+  background: var(--pl-green-deep) !important;
+  color: rgba(248, 245, 238, 0.9) !important;
+}
+.footer a {
+  color: rgba(248, 245, 238, 0.8) !important;
+  transition: color var(--pl-transition);
+}
+.footer a:hover {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+}
+.footer .footer__heading {
+  color: #FFFFFF !important;
+  font-family: var(--font-heading-family, 'Bodoni Moda', serif) !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ── Section titles with warm underline accent ──────────────────────────── */
+.section__title,
+.collection-list__title {
+  font-size: clamp(2.4rem, 4vw, 3.6rem) !important;
+  font-weight: 400 !important;
+  color: var(--pl-green-deep) !important;
+  letter-spacing: -0.015em !important;
+}
+
+/* ── Image-with-text overlap layout override ────────────────────────────── */
+.image-with-text__content.color-scheme-1 {
+  background: #FFFFFF !important;
+  border-radius: var(--pl-radius-card) !important;
+  box-shadow: var(--pl-shadow-card) !important;
+}
+
+/* ── Reviews section ────────────────────────────────────────────────────── */
+.pl-reviews-wrap {
+  padding: 16px 24px 24px !important;
+}
+.pl-review-card {
+  border: 1.5px solid #EEE9E0 !important;
+}
+.pl-review-card:hover {
+  box-shadow: var(--pl-shadow-hover) !important;
+  border-color: #B8DDD9 !important;
+}
+.pl-reviewer-name {
+  color: var(--pl-green-deep) !important;
+}
+.pl-review-body {
+  color: var(--pl-text-mid) !important;
+}
+
+/* ── Scroll reveal smoothing ────────────────────────────────────────────── */
+.scroll-trigger.animate--slide-in {
+  animation-duration: 0.55s !important;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.scroll-trigger.animate--fade-in {
+  animation-duration: 0.6s !important;
+}
+
+/* ── Page width containers ──────────────────────────────────────────────── */
+.page-width {
+  padding-left: max(2.4rem, env(safe-area-inset-left));
+  padding-right: max(2.4rem, env(safe-area-inset-right));
+}
+@media (min-width: 750px) {
+  .page-width {
+    padding-left: max(4rem, env(safe-area-inset-left));
+    padding-right: max(4rem, env(safe-area-inset-right));
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FEATURED PRODUCT COMBO - CLEARFIX
+   (Layout styles are injected inline via featured-product.liquid)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Clear floats after the two combo product cards */
+@media screen and (min-width: 990px) {
+  #shopify-section-homepage_faq_MX2P8R {
+    clear: both;
+  }
+}

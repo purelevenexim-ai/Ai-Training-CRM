@@ -1,0 +1,324 @@
+/* Pureleven mobile-commerce refinement layer */
+
+@media screen and (max-width: 749px) {
+  .announcement-bar-minimal__message {
+    font-size: 1.15rem;
+    line-height: 1.35;
+    padding: 0.7rem 1.4rem;
+  }
+
+  .header-wrapper {
+    border-bottom: 0.1rem solid rgba(27, 58, 48, 0.08);
+  }
+
+  .header {
+    min-height: 5.8rem;
+    padding-left: 1.6rem;
+    padding-right: 1.2rem;
+  }
+
+  body.template-index .banner--medium:not(.banner--mobile-bottom):not(.banner--pureleven-home-hero) {
+    min-height: 78svh;
+  }
+
+  body.template-index .banner:not(.banner--pureleven-home-hero)::after {
+    background: linear-gradient(180deg, rgba(16, 43, 35, 0.18), rgba(16, 43, 35, 0.66));
+  }
+
+  body.template-index .banner:not(.banner--pureleven-home-hero) .banner__box {
+    padding: 0;
+    background: transparent;
+    color: #fff;
+  }
+
+  body.template-index .banner:not(.banner--pureleven-home-hero) .banner__heading {
+    max-width: 11ch;
+    margin: 0 auto 1.2rem;
+    color: #fff;
+    font-size: clamp(3rem, 11vw, 4.4rem);
+    line-height: 0.98;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  body.template-index .banner:not(.banner--pureleven-home-hero) .banner__text {
+    max-width: 31rem;
+    margin: 0 auto 1.8rem;
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  body.template-index .banner:not(.banner--pureleven-home-hero) .banner__text p {
+    font-size: 1.45rem;
+    line-height: 1.55;
+  }
+
+  body.template-index .banner:not(.banner--pureleven-home-hero) .banner__buttons {
+    gap: 0.9rem;
+  }
+
+  body.template-index .banner:not(.banner--pureleven-home-hero) .banner__buttons .button {
+    min-height: 4.8rem;
+    padding-inline: 1.8rem;
+    border-radius: 999px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  body.template-index .banner:not(.banner--pureleven-home-hero) .banner__buttons .button + .button {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border: 0.1rem solid rgba(255, 255, 255, 0.36);
+  }
+
+  body.template-index .banner--pureleven-home-hero:not(.banner--mobile-bottom) .banner__content {
+    min-height: clamp(50rem, 118vw, 62rem);
+    align-items: flex-end;
+    padding: 1.6rem;
+  }
+
+  body.template-index .banner--pureleven-home-hero:not(.banner--mobile-bottom) .banner__box {
+    width: 100%;
+    max-width: none;
+    padding: 2.4rem 1.8rem 2rem !important;
+    border: 1px solid rgba(27, 94, 86, 0.16) !important;
+    border-radius: 2.4rem !important;
+    background: rgba(250, 247, 241, 0.96) !important;
+    box-shadow: 0 1.8rem 4.2rem rgba(23, 46, 42, 0.18) !important;
+    color: #1e2f2b !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  body.template-index .banner--pureleven-home-hero.banner--mobile-bottom .banner__content {
+    display: block;
+    min-height: auto;
+    margin-top: -4.8rem;
+    padding: 0 1.6rem 1.8rem;
+  }
+
+  body.template-index .banner--pureleven-home-hero.banner--mobile-bottom .banner__box {
+    width: 100%;
+    max-width: none;
+    margin: 0 auto;
+    padding: 2.6rem 2rem 2.2rem !important;
+    border: 1px solid rgba(27, 94, 86, 0.12) !important;
+    border-radius: 2.8rem !important;
+    background: linear-gradient(180deg, rgba(252, 250, 245, 0.98), rgba(247, 243, 235, 0.96)) !important;
+    box-shadow: 0 2rem 4.8rem rgba(23, 46, 42, 0.14) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  body.template-index .banner--pureleven-home-hero.banner--mobile-bottom .banner__heading.h1 {
+    max-width: 9.2ch;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: clamp(3.6rem, 10.8vw, 4.8rem) !important;
+    line-height: 0.94 !important;
+    letter-spacing: -0.038em !important;
+    text-wrap: balance;
+  }
+
+  body.template-index .banner--pureleven-home-hero.banner--mobile-bottom .banner__text p {
+    max-width: 24ch;
+    font-size: 1.75rem !important;
+    line-height: 1.5 !important;
+  }
+
+  body.template-index .banner--pureleven-home-hero .banner__buttons {
+    display: grid !important;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  body.template-index .banner--pureleven-home-hero .banner__buttons > * {
+    min-width: 0 !important;
+  }
+
+  body.template-index .banner--pureleven-home-hero .banner__buttons > *:nth-child(2) {
+    background: rgba(27, 94, 86, 0.08) !important;
+    color: #1b5e56 !important;
+    border: 1px solid rgba(27, 94, 86, 0.18) !important;
+    box-shadow: none !important;
+  }
+
+  body.template-index .banner--pureleven-home-hero .banner__buttons .button,
+  body.template-index .banner--pureleven-home-hero .banner__buttons button,
+  body.template-index .banner--pureleven-home-hero .banner__buttons a.button,
+  body.template-index .banner--pureleven-home-hero .banner__buttons a {
+    width: 100% !important;
+    min-width: 0;
+    min-height: 4.4rem;
+    border-radius: 1.4rem !important;
+    padding: 0.95rem 1rem !important;
+  }
+
+  body.template-index .banner--pureleven-home-hero.banner--mobile-bottom .banner__buttons .button,
+  body.template-index .banner--pureleven-home-hero.banner--mobile-bottom .banner__buttons button,
+  body.template-index .banner--pureleven-home-hero.banner--mobile-bottom .banner__buttons a.button,
+  body.template-index .banner--pureleven-home-hero.banner--mobile-bottom .banner__buttons a {
+    min-height: 4.4rem;
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+  }
+
+  body.template-index .idukki-origin {
+    gap: 2.2rem;
+    padding: 3.2rem 1.8rem;
+  }
+
+  body.template-index .idukki-origin__image-box {
+    border-radius: 1.4rem;
+    box-shadow: 0 1.4rem 3rem rgba(27, 58, 48, 0.1);
+  }
+
+  body.template-index .idukki-origin__badge {
+    margin-bottom: 1.2rem;
+  }
+
+  body.template-index .idukki-origin__heading {
+    margin-bottom: 1.2rem;
+    font-size: 2.7rem;
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  body.template-index .idukki-origin__text {
+    max-width: none;
+    margin-bottom: 1.8rem;
+    font-size: 1.42rem;
+    line-height: 1.58;
+  }
+
+  body.template-index .collection {
+    padding-top: 2.8rem;
+  }
+
+  body.template-index .collection__title {
+    margin-bottom: 1.4rem;
+  }
+
+  body.template-index .collection__title .title {
+    font-size: 2.6rem;
+    line-height: 1.12;
+    margin-bottom: 1rem;
+  }
+
+  body.template-index .pl-fc-badges {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    margin: 0 0 1.4rem;
+    padding-bottom: 0.2rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  body.template-index .pl-fc-badges::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.template-index .product-grid.grid--2-col-tablet-down {
+    gap: 10px;
+  }
+
+  body.template-index .product-grid.grid--2-col-tablet-down > .grid__item {
+    width: calc(50% - 5px);
+    max-width: calc(50% - 5px);
+    flex: 0 0 calc(50% - 5px);
+  }
+
+  body.template-index .collection .page-width,
+  body.template-index .collection .slider-mobile-gutter {
+    padding-inline: 12px;
+  }
+
+  body.template-index .product-grid.grid--2-col-tablet-down .card-wrapper,
+  body.template-index .product-grid.grid--2-col-tablet-down .card,
+  body.template-index .product-grid.grid--2-col-tablet-down .card__content {
+    width: 100%;
+  }
+
+  body.template-index .featured-product .product__info-wrapper {
+    padding-top: 1.2rem;
+  }
+
+  body.template-index .featured-product .product__info-container {
+    border-radius: 1.6rem;
+  }
+
+  body.template-index .pl-values__container {
+    padding-inline: 1.8rem;
+  }
+
+  body.template-index .pl-values__header {
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  body.template-index .pl-values__heading {
+    font-size: 2.6rem;
+    line-height: 1.12;
+  }
+
+  body.template-index .pl-values__grid {
+    display: flex;
+    gap: 1.2rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.2rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  body.template-index .pl-values__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.template-index .pl-values__card {
+    min-width: min(82vw, 32rem);
+    scroll-snap-align: start;
+    padding: 2rem;
+  }
+
+  body.template-product .product__inventory {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    background: rgba(27, 94, 86, 0.08);
+    color: #1b5e56;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  body.template-product .product__inventory .svg-wrapper {
+    color: #1b5e56 !important;
+  }
+
+  body.template-product .product__info-container > * + * {
+    margin-top: 1.15rem;
+    margin-bottom: 0;
+  }
+
+  body.template-product .product__quick-guide,
+  body.template-product .product-quick-guide {
+    scroll-margin-top: 8rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body.template-index .card-wrapper,
+  body.template-product product-info[id^='MainProduct-'] .product-quick-guide__surface,
+  body.template-product product-info[id^='MainProduct-'] .product-bundle-widget {
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  body.template-index .card-wrapper:hover,
+  body.template-product product-info[id^='MainProduct-'] .product-quick-guide__surface:hover,
+  body.template-product product-info[id^='MainProduct-'] .product-bundle-widget:hover {
+    transform: translateY(-0.1rem);
+  }
+}

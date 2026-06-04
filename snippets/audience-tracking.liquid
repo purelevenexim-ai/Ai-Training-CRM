@@ -1,0 +1,237 @@
+<!-- audience-tracking: interest + behavioral signals for GTM/GA4 remarketing audiences -->
+
+{%- liquid
+  assign _pt = product.type | downcase
+  assign _ph = product.handle | downcase
+  assign pl_interest = 'general_spice'
+
+  if _pt contains 'cardamom'
+    assign pl_interest = 'cardamom'
+  elsif _pt contains 'pepper'
+    assign pl_interest = 'pepper'
+  elsif _pt contains 'cinnamon'
+    assign pl_interest = 'cinnamon'
+  elsif _pt contains 'cloves' or _pt contains 'clove'
+    assign pl_interest = 'cloves'
+  elsif _pt contains 'turmeric'
+    assign pl_interest = 'turmeric'
+  elsif _pt contains 'combo'
+    assign pl_interest = 'combo_pack'
+  elsif _pt contains 'honey'
+    assign pl_interest = 'honey'
+  elsif _pt contains 'coffee'
+    assign pl_interest = 'coffee'
+  elsif _ph contains 'cardamom'
+    assign pl_interest = 'cardamom'
+  elsif _ph contains 'pepper'
+    assign pl_interest = 'pepper'
+  elsif _ph contains 'cinnamon'
+    assign pl_interest = 'cinnamon'
+  elsif _ph contains 'clove'
+    assign pl_interest = 'cloves'
+  elsif _ph contains 'combo'
+    assign pl_interest = 'combo_pack'
+  endif
+
+  assign pl_price_cents = product.price
+  assign pl_on_sale = false
+  if product.compare_at_price > product.price
+    assign pl_on_sale = true
+  endif
+-%}
+
+<script>
+(function () {
+  'use strict';
+  window.dataLayer = window.dataLayer || [];
+  var crmEventEndpoint = 'https://track.pureleven.com/api/crm/events/ga4';
+  var customerEmail = {% if customer and customer.email != blank %}{{ customer.email | json }}{% else %}null{% endif %};
+
+  // ── Product context ──────────────────────────────────────────────────────
+  var _pl = {
+    interest:   {{ pl_interest | json }},
+    handle:     {{ product.handle | json }},
+    name:       {{ product.title | json }},
+    type:       {{ product.type | json }},
+    price:      {{ pl_price_cents | times: 0.01 | round: 2 }},
+    id:         {{ product.id }},
+    variantId:  {{ product.selected_or_first_available_variant.id }},
+    onSale:     {{ pl_on_sale | json }},
+    customerEmail: customerEmail
+  };
+
+  function relayToCrm(eventName, eventData) {
+    if (!crmEventEndpoint) {
+      return;
+    }
+
+    var payload = {
+      source: 'ga4',
+      email: _pl.customerEmail,
+      event_type: eventName,
+      event_data: Object.assign({
+        page_url: window.location.href,
+        page_title: document.title,
+        page_path: window.location.pathname + window.location.search,
+        product_handle: _pl.handle,
+        product_name: _pl.name,
+        product_type: _pl.type,
+        product_price: _pl.price,
+        product_id: String(_pl.id),
+        variant_id: String(_pl.variantId)
+      }, eventData || {}),
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(
+          crmEventEndpoint,
+          new Blob([JSON.stringify(payload)], { type: 'application/json' })
+        );
+        return;
+      }
+
+      fetch(crmEventEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        keepalive: true,
+        credentials: 'omit'
+      }).catch(function () {});
+    } catch (error) {}
+  }
+
+  // ── 1. Product interest signal ───────────────────────────────────────────
+  // Fires on every product page view. GTM trigger: event == 'pl_product_interest'
+  window.dataLayer.push({
+    event:              'pl_product_interest',
+    interest_category:  _pl.interest,
+    product_handle:     _pl.handle,
+    product_name:       _pl.name,
+    product_type:       _pl.type,
+    product_price:      _pl.price,
+    product_id:         String(_pl.id),
+    variant_id:         String(_pl.variantId),
+    is_on_sale:         _pl.onSale
+  });
+  relayToCrm('pl_product_interest', {
+    interest_category: _pl.interest,
+    product_handle: _pl.handle,
+    product_name: _pl.name,
+    product_type: _pl.type,
+    product_price: _pl.price,
+    product_id: String(_pl.id),
+    variant_id: String(_pl.variantId),
+    is_on_sale: _pl.onSale
+  });
+
+  // ── Session-level behavior tracking (sessionStorage) ────────────────────
+  try {
+    var _key = 'pl_audience';
+    var _s = JSON.parse(sessionStorage.getItem(_key) || '{}');
+
+    // Track interest category hit count
+    _s[_pl.interest] = (_s[_pl.interest] || 0) + 1;
+
+    // Track unique product handles
+    _s._handles = _s._handles || [];
+    if (_s._handles.indexOf(_pl.handle) === -1) {
+      _s._handles.push(_pl.handle);
+    }
+
+    sessionStorage.setItem(_key, JSON.stringify(_s));
+
+    // ── 2. High intent: 3+ distinct product pages in session ─────────────
+    // GTM trigger: event == 'pl_high_intent'
+    // GA4 audience: pl_high_intent event users → "High Intent Browsers"
+    if (_s._handles.length === 3) {
+      var _topCat = Object.keys(_s)
+        .filter(function (k) { return k[0] !== '_'; })
+        .sort(function (a, b) { return (_s[b] || 0) - (_s[a] || 0); })[0] || 'general_spice';
+
+      window.dataLayer.push({
+        event:           'pl_high_intent',
+        pages_viewed:    _s._handles.length,
+        top_category:    _topCat,
+        all_handles:     _s._handles.join(',')
+      });
+      relayToCrm('pl_high_intent', {
+        pages_viewed: _s._handles.length,
+        top_category: _topCat,
+        all_handles: _s._handles.join(',')
+      });
+    }
+
+    // ── 3. Cross-category: 2+ different spice types in same session ───────
+    // GTM trigger: event == 'pl_cross_category'
+    // GA4 audience: pl_cross_category event users → "Category Explorer"
+    var _cats = Object.keys(_s).filter(function (k) { return k[0] !== '_'; });
+    if (_cats.length === 2) {
+      window.dataLayer.push({
+        event:           'pl_cross_category',
+        categories:      _cats.join(','),
+        category_count:  _cats.length,
+        pages_viewed:    _s._handles.length
+      });
+      relayToCrm('pl_cross_category', {
+        categories: _cats.join(','),
+        category_count: _cats.length,
+        pages_viewed: _s._handles.length
+      });
+    }
+
+    // ── 4. Combo pack signal ─────────────────────────────────────────────
+    // GTM trigger: event == 'pl_combo_interest'
+    // GA4 audience: pl_combo_interest event users → "Combo Pack Shoppers"
+    {% if pl_interest == 'combo_pack' %}
+    window.dataLayer.push({
+      event:          'pl_combo_interest',
+      product_handle: _pl.handle,
+      product_price:  _pl.price
+    });
+    relayToCrm('pl_combo_interest', {
+      product_handle: _pl.handle,
+      product_price: _pl.price
+    });
+    {% endif %}
+
+  } catch (e) { /* sessionStorage may be blocked in incognito */ }
+
+  // ── 5. Add-to-cart with interest context ─────────────────────────────────
+  // Fires when any cart form on this product page is submitted.
+  // GTM trigger: event == 'pl_add_to_cart_interest'
+  // GA4 audience: pl_add_to_cart_interest event users → "Cart Intent — <category>"
+  document.addEventListener('DOMContentLoaded', function () {
+    var _atcForms = document.querySelectorAll(
+      'form[action*="/cart/add"], form[id^="product-form-"]'
+    );
+    _atcForms.forEach(function (form) {
+      form.addEventListener('submit', function () {
+        // Get selected variant at time of click (may have changed from page load)
+        var _vidInput = form.querySelector('[name="id"]');
+        window.dataLayer.push({
+          event:             'pl_add_to_cart_interest',
+          interest_category: _pl.interest,
+          product_handle:    _pl.handle,
+          product_name:      _pl.name,
+          product_price:     _pl.price,
+          product_id:        String(_pl.id),
+          variant_id:        _vidInput ? String(_vidInput.value) : String(_pl.variantId)
+        });
+        relayToCrm('pl_add_to_cart_interest', {
+          interest_category: _pl.interest,
+          product_handle: _pl.handle,
+          product_name: _pl.name,
+          product_price: _pl.price,
+          product_id: String(_pl.id),
+          variant_id: _vidInput ? String(_vidInput.value) : String(_pl.variantId)
+        });
+      });
+    });
+  });
+
+})();
+</script>

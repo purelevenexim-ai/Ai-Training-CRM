@@ -1,0 +1,197 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-blog",
+      "settings": {
+        "layout": "collage",
+        "show_image": true,
+        "image_height": "medium",
+        "show_date": true,
+        "show_author": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "blog_featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "all",
+        "products_to_show": 8,
+        "title": "Shop while you browse",
+        "heading_size": "h2",
+        "description": "<p>Turn blog traffic into product discovery with square cards, quick-add CTAs, and a direct route into Kerala staples, bundles, and gifting picks.</p>",
+        "show_description": true,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 12,
+        "padding_bottom": 12
+      }
+    },
+    "blog_trust_multicolumn": {
+      "type": "multicolumn",
+      "blocks": {
+        "trust_1": {
+          "type": "column",
+          "settings": {
+            "image": "",
+            "title": "Farm-origin sourcing",
+            "text": "<p>Readers get a direct path from educational content into Kerala products with clearer sourcing than generic resale catalogs.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "trust_2": {
+          "type": "column",
+          "settings": {
+            "image": "",
+            "title": "Small-batch aroma retention",
+            "text": "<p>Packaging and handling stay focused on freshness so the product cards on the journal page feel like real buying options, not filler.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "trust_3": {
+          "type": "column",
+          "settings": {
+            "image": "",
+            "title": "Giftable and repeat-buy packs",
+            "text": "<p>Product modules support first orders, kitchen refills, and higher-intent customers who want more than a single read.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "trust_4": {
+          "type": "column",
+          "settings": {
+            "image": "",
+            "title": "Sales CTAs that stay visible",
+            "text": "<p>The default blog theme now keeps discovery, product cards, and conversion prompts active before and after the article grid.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": ["trust_1", "trust_2", "trust_3", "trust_4"],
+      "settings": {
+        "title": "Why readers buy from Pureleven",
+        "heading_size": "h2",
+        "image_width": "third",
+        "image_ratio": "square",
+        "button_label": "See all products",
+        "button_link": "/collections/all",
+        "columns_desktop": 4,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "color_scheme": "scheme-1",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    "blog_newsletter": {
+      "type": "newsletter",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Join the Pureleven Spice Journal",
+            "heading_size": "h2"
+          }
+        },
+        "paragraph": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Get fresh guides, Kerala farming stories, cooking ideas, and offers so blog visits keep turning into repeat product discovery.</p>"
+          }
+        },
+        "email_form": {
+          "type": "email_form",
+          "settings": {}
+        }
+      },
+      "block_order": ["heading", "paragraph", "email_form"],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "full_width": false,
+        "padding_top": 20,
+        "padding_bottom": 40
+      }
+    },
+    "blog_closing_cta": {
+      "type": "rich-text",
+      "blocks": {
+        "caption": {
+          "type": "caption",
+          "settings": {
+            "caption": "From Kerala soil to your kitchen.",
+            "text_style": "caption-with-letter-spacing",
+            "text_size": "medium"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Keep the journal working like a storefront",
+            "heading_size": "h2"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Browse the full catalog, return to the homepage, or keep moving from guides into collections and bundles without letting the browse session stall.</p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Shop all products",
+            "button_link": "/collections/all",
+            "button_style_secondary": false,
+            "button_label_2": "Visit homepage",
+            "button_link_2": "/",
+            "button_style_secondary_2": true
+          }
+        }
+      },
+      "block_order": ["caption", "heading", "text", "button"],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "scheme-1",
+        "full_width": false,
+        "padding_top": 12,
+        "padding_bottom": 48
+      }
+    }
+  },
+  "order": [
+    "main",
+    "blog_featured_collection",
+    "blog_trust_multicolumn",
+    "blog_newsletter",
+    "blog_closing_cta"
+  ]
+}

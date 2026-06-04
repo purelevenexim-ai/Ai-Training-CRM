@@ -1,0 +1,15 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="tickShadow" x="8" y="8" width="112" height="112" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0E5C36" flood-opacity="0.18"/>
+    </filter>
+    <linearGradient id="tickGreen" x1="64" y1="20" x2="64" y2="108" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#62CB67"/>
+      <stop offset="1" stop-color="#0E9C43"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#tickShadow)">
+    <circle cx="64" cy="58" r="38" fill="url(#tickGreen)"/>
+    <path d="M47 58L58 69L82 45" stroke="#F7F5EE" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

@@ -1,0 +1,230 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="pl-values section-{{ section.id }}-padding" aria-label="Why Choose PureLeven">
+  <div class="pl-values__container page-width">
+
+    <div class="pl-values__header">
+      <p class="pl-values__eyebrow">A simpler way</p>
+      <h2 class="pl-values__heading">A simpler way to buy better spices</h2>
+    </div>
+
+    <div class="pl-values__grid">
+
+      <div class="pl-values__card">
+        <div class="pl-values__card-top">
+          <div class="pl-values__icon-wrap" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="pl-values__badge">Whole spice</div>
+        </div>
+        <h3 class="pl-values__title">Whole over overworked</h3>
+        <p class="pl-values__text">We lean toward whole spices wherever possible, so the aroma stays in the ingredient until your kitchen wakes it up.</p>
+        <div class="pl-values__accent-line"></div>
+      </div>
+
+      <div class="pl-values__card">
+        <div class="pl-values__card-top">
+          <div class="pl-values__icon-wrap" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 8C8 10 5.9 16.17 3.82 19.24a2 2 0 0 0 3.27 2.26C9 19 15 18 17 8z"/>
+              <path d="M17 8c0 0 .5 4-5 6"/>
+            </svg>
+          </div>
+          <div class="pl-values__badge">Cleaner source</div>
+        </div>
+        <h3 class="pl-values__title">Closer to origin</h3>
+        <p class="pl-values__text">We buy closer to farms and keep the route cleaner, so the ingredient story stays clear from source to shelf.</p>
+        <div class="pl-values__accent-line"></div>
+      </div>
+
+      <div class="pl-values__card">
+        <div class="pl-values__card-top">
+          <div class="pl-values__icon-wrap" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="6"/>
+              <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+            </svg>
+          </div>
+          <div class="pl-values__badge">Small batch</div>
+        </div>
+        <h3 class="pl-values__title">Packed before character fades</h3>
+        <p class="pl-values__text">Smaller packing cycles help preserve the smell, oils, and fullness that make a spice feel alive in the pan.</p>
+        <div class="pl-values__accent-line"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+.pl-values {
+  background: #FFFFFF;
+  position: relative;
+}
+.pl-values__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2.4rem;
+}
+.pl-values__header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+.pl-values__eyebrow {
+  display: inline-block;
+  font-family: var(--font-body-family, 'Inter', sans-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #D4821A;
+  margin: 0 0 1rem 0;
+}
+.pl-values__heading {
+  font-family: var(--font-heading-family, 'Bodoni Moda', serif);
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  font-weight: 400;
+  color: #1B3A30;
+  margin: 0;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.pl-values__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media screen and (min-width: 750px) {
+  .pl-values__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.4rem;
+  }
+}
+.pl-values__card {
+  background: #FFFFFF;
+  border: 1.5px solid #E8E5DC;
+  border-radius: 16px;
+  padding: 2.8rem 2.4rem 2.4rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.pl-values__card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1B5E56, #4D9B93);
+  border-radius: 16px 16px 0 0;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.pl-values__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(27, 94, 86, 0.12);
+  border-color: #B8D8D5;
+}
+.pl-values__card:hover::before {
+  opacity: 1;
+}
+.pl-values__card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.8rem;
+}
+.pl-values__icon-wrap {
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, #1B5E56, #4D9B93);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(27, 94, 86, 0.25);
+}
+.pl-values__badge {
+  font-family: var(--font-body-family, 'Inter', sans-serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1B5E56;
+  background: #E8F5F3;
+  border-radius: 100px;
+  padding: 0.35rem 1rem;
+  letter-spacing: 0.02em;
+}
+.pl-values__title {
+  font-family: var(--font-heading-family, 'Bodoni Moda', serif);
+  font-size: 2rem;
+  font-weight: 500;
+  color: #1B3A30;
+  margin: 0 0 0.9rem 0;
+  letter-spacing: 0em;
+  line-height: 1.25;
+}
+.pl-values__text {
+  font-family: var(--font-body-family, 'Inter', sans-serif);
+  font-size: 1.45rem;
+  color: #5A6B67;
+  line-height: 1.7;
+  margin: 0 0 1.5rem 0;
+}
+.pl-values__accent-line {
+  width: 32px;
+  height: 3px;
+  background: linear-gradient(90deg, #D4821A, #E8A52A);
+  border-radius: 2px;
+}
+</style>
+
+{% schema %}
+{
+  "name": "Value Propositions",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Value Propositions"
+    }
+  ]
+}
+{% endschema %}

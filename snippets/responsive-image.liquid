@@ -1,0 +1,55 @@
+{%- comment -%}
+  WebP Image Format Helper
+  This snippet outputs images in modern format (WebP) with fallback support
+  Usage: {% render 'responsive-image', image: my_image, alt: 'text', sizes: '(max-width: 600px) 100vw, 50vw' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign image = image | default: false
+  assign alt_text = alt | default: image.alt
+  assign sizes = sizes | default: false
+  assign loading_attr = loading | default: 'lazy'
+  assign classes = class | default: ''
+  
+  if image == false
+    comment
+      Return early if no image provided
+    endcomment
+  endif
+-%}
+
+{%- if image -%}
+  <picture>
+    {%- comment -%} WebP format for modern browsers {%- endcomment -%}
+    <source
+      type="image/webp"
+      srcset="
+        {%- if image.width >= 320 -%}{{ image | image_url: width: 320, format: 'webp' }} 320w{%- endif -%}
+        {%- if image.width >= 550 -%},{{ image | image_url: width: 550, format: 'webp' }} 550w{%- endif -%}
+        {%- if image.width >= 750 -%},{{ image | image_url: width: 750, format: 'webp' }} 750w{%- endif -%}
+        {%- if image.width >= 1100 -%},{{ image | image_url: width: 1100, format: 'webp' }} 1100w{%- endif -%}
+        {%- if image.width >= 1500 -%},{{ image | image_url: width: 1500, format: 'webp' }} 1500w{%- endif -%}
+        ,{{ image | image_url: format: 'webp' }} {{ image.width }}w
+      "
+      {%- if sizes %} sizes="{{ sizes }}"{% endif %}
+    >
+
+    {%- comment -%} Fallback JPEG format {%- endcomment -%}
+    <img
+      {%- if loading_attr %} loading="{{ loading_attr }}"{% endif %}
+      class="{{ classes }}"
+      srcset="
+        {%- if image.width >= 320 -%}{{ image | image_url: width: 320 }} 320w{%- endif -%}
+        {%- if image.width >= 550 -%},{{ image | image_url: width: 550 }} 550w{%- endif -%}
+        {%- if image.width >= 750 -%},{{ image | image_url: width: 750 }} 750w{%- endif -%}
+        {%- if image.width >= 1100 -%},{{ image | image_url: width: 1100 }} 1100w{%- endif -%}
+        {%- if image.width >= 1500 -%},{{ image | image_url: width: 1500 }} 1500w{%- endif -%}
+        ,{{ image | image_url }} {{ image.width }}w
+      "
+      {%- if sizes %} sizes="{{ sizes }}"{% endif %}
+      src="{{ image | image_url: width: 750 }}"
+      alt="{{ alt_text }}"
+      {%- if image.width and image.height %} width="{{ image.width }}" height="{{ image.height }}"{% endif %}
+    >
+  </picture>
+{%- endif -%}

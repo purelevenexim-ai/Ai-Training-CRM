@@ -1,0 +1,27 @@
+workstream,item,status,owner,eta,evidence,go_live_signoff,notes
+Backend Readiness,API health endpoint,Done,Backend,2026-05-21,"GET /api/health -> 200",Approved,Stable
+Backend Readiness,Monitoring health endpoint,Done,Backend,2026-05-21,"GET /api/monitoring/health -> status ok",Approved,Stable
+Backend Readiness,Shopify sync and catalog,Done,Backend,2026-05-21,"run_full_sync + GET /api/ai/catalog",Approved,12 products synced
+Backend Readiness,Journey orchestrator preview,Done,Backend,2026-05-21,"POST /api/journey/orchestrate/preview",Approved,Returns stage counts
+Backend Readiness,Journey orchestrator status endpoint,Done,Backend,2026-05-21,"GET /api/journey/orchestrate/status",Approved,Returns last 24h by_stage
+Backend Readiness,AI session open and dispatch,Done,Backend,2026-05-21,"POST /api/ai/session/open + POST /api/ai/dispatch",Approved,Session and followups work
+Template Ops,Submit 27 templates in Meta,Pending,Marketing/Ops,2026-05-22,"deploy/meta_template_registry_v2.csv",Pending Approval,Need template IDs and approval statuses
+Template Ops,Attach final approved body copy,Pending,Marketing/Ops,2026-05-22,"deploy/meta_templates_prefilled_27.md",Pending Approval,Validate category and variables per template
+Template Ops,Map template IDs into operations sheet,Pending,Marketing/Ops,2026-05-22,"Update this CSV with template_id and status",Pending Approval,Required before production scale
+N8N Ops,Import 8 workflow exports,Pending,Automation,2026-05-22,"deploy/n8n_exports/*.json",Pending Approval,Use import order file
+N8N Ops,Activate wf_01 shopify sync,Pending,Automation,2026-05-22,"Workflow activation screenshot/log",Pending Approval,Every 30 minutes
+N8N Ops,Activate wf_02 journey preview,Pending,Automation,2026-05-22,"Workflow run log",Pending Approval,Daily 09:55 IST
+N8N Ops,Activate wf_03 journey orchestrate,Pending,Automation,2026-05-22,"Workflow run log",Pending Approval,Daily 10:00 IST
+N8N Ops,Activate webhook relays wf_05/06/07,Pending,Automation,2026-05-22,"Webhook test payload logs",Pending Approval,Meta/Wabis/Delhivery sources
+N8N Ops,Activate wf_08 health and daily report,Pending,Automation,2026-05-22,"Workflow run log",Pending Approval,Daily midnight
+Webhooks,Meta webhook production verification,Pending,Ops,2026-05-22,"hub.challenge verify + delivered event",Pending Approval,Endpoint /api/webhooks/meta/whatsapp
+Webhooks,Delhivery webhook registration,Pending,Ops,2026-05-22,"Delhivery dashboard test event",Pending Approval,Endpoint /api/delhivery/webhook
+Webhooks,Reply relay verification,Pending,Ops,2026-05-22,"POST /api/tracking/whatsapp-reply test",Pending Approval,From Wabis or Meta relay
+Security,Production .env completeness,Pending,DevOps,2026-05-22,"Secret checklist complete",Pending Approval,META/SHOPIFY/OPENROUTER/DELHIVERY vars
+Security,Delhivery signature secret enabled,Pending,DevOps,2026-05-22,"DELHIVERY_WEBHOOK_SECRET set",Pending Approval,Required before live webhook traffic
+Rollout,Soft launch 100 customers,Pending,Product/Ops,2026-05-23,"24h metrics report",Pending Approval,Gate A
+Rollout,Scale to 500 customers,Pending,Product/Ops,2026-05-24,"24h metrics report",Pending Approval,Gate B only if stable
+Rollout,Full rollout,Pending,Product/Ops,2026-05-25,"Go-live signoff",Pending Approval,Gate C
+Observability,Daily dashboard review,Pending,Ops,2026-05-22,"/api/monitoring/dashboard",Pending Approval,Check failure and unsubscribe trends
+Observability,Owner alert test,Pending,Ops,2026-05-22,"POST /api/monitoring/test-alert",Pending Approval,Verify WhatsApp owner phone receives alert
+Signoff,Final production signoff,Pending,Leadership,2026-05-25,"All critical rows Approved",Pending Approval,Approve only after 3 rollout gates

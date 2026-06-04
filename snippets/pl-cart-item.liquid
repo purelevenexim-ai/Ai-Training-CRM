@@ -1,0 +1,139 @@
+{% comment %} pl-cart-item.liquid — Pure Leven Cart {% endcomment %}
+{% comment %} Called with: {% render 'pl-cart-item', item: item %} {% endcomment %}
+{% comment %} Uses Dawn's quantity-input + cart-remove-button web components for AJAX {% endcomment %}
+
+{% assign unit_price_rupees    = item.price | divided_by: 100 %}
+{% assign compare_price_rupees = item.original_price | divided_by: 100 %}
+{% assign line_price_rupees    = item.line_price | divided_by: 100 %}
+{% assign has_discount = false %}
+{% if item.original_price > item.price %}
+  {% assign has_discount = true %}
+  {% assign save_rupees = item.original_price | minus: item.price | divided_by: 100 %}
+{% endif %}
+{% assign packed_month   = item.product.metafields.custom.packed_month   | default: 'May 2026' %}
+{% assign harvest_season = item.product.metafields.custom.harvest_season | default: 'Nov 2025 harvest' %}
+
+<li class="pl-ci cart-item" id="CartItem-{{ item.index | plus: 1 }}" data-pl-key="{{ item.key }}">
+
+  <!-- Freshness badges — compact single line at the top -->
+  <div class="pl-ci-badges">
+    <span class="pl-tag pl-tag-fresh">&#128197; Packed: {{ packed_month }}</span>
+    <span class="pl-tag pl-tag-harvest">&#127807; {{ harvest_season }}</span>
+  </div>
+
+  <!-- 2-col row: image | body -->
+  <div class="pl-ci-row">
+
+    <!-- Image -->
+    <div class="pl-ci-img-wrap">
+      {% if item.image %}
+        <a href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+          <img class="pl-ci-img"
+               src="{{ item.image | image_url: width: 200 }}"
+               alt="{{ item.product.title | escape }}"
+               width="88" height="88"
+               loading="lazy">
+        </a>
+      {% else %}
+        <div class="pl-ci-img" style="display:flex;align-items:center;justify-content:center;font-size:28px;" aria-hidden="true">&#127807;</div>
+      {% endif %}
+    </div>
+
+    <!-- Body: name + tags + hot + price + actions -->
+    <div class="pl-ci-body">
+
+      <p class="pl-ci-name">
+        <a href="{{ item.url }}" style="color:inherit;text-decoration:none;">{{ item.product.title | escape }}</a>
+      </p>
+
+      <div class="pl-ci-meta">
+        {% unless item.product.has_only_default_variant %}
+          <span>{{ item.variant.title }}</span>
+        {% endunless %}
+        {% for tag in item.product.tags %}
+          {% case tag %}
+            {% when 'fssai-certified' %}
+              <span class="pl-tag pl-tag-g">FSSAI Certified</span>
+            {% when '100-natural' %}
+              <span class="pl-tag pl-tag-g">100% Natural</span>
+            {% when 'organic' %}
+              <span class="pl-tag pl-tag-g">Organic</span>
+          {% endcase %}
+        {% endfor %}
+        {% if item.variant.inventory_quantity <= 10 and item.variant.inventory_policy == 'deny' %}
+          <span class="pl-tag pl-tag-w">&#9888; Only {{ item.variant.inventory_quantity }} left</span>
+        {% endif %}
+      </div>
+
+      <!-- Price row -->
+      <div class="pl-ci-price-row">
+        <span class="pl-ci-price">&#8377;{{ unit_price_rupees }}</span>
+        {% if has_discount %}
+          <span class="pl-ci-compare">&#8377;{{ compare_price_rupees }}</span>
+          <span class="pl-ci-save">Save &#8377;{{ save_rupees }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Per-item line total (qty > 1) -->
+      <div class="pl-ci-linetotal"
+           id="lt-{{ item.key }}"
+           {% if item.quantity <= 1 %}style="display:none"{% endif %}>
+        = &#8377;{{ unit_price_rupees }} &times;
+        <span class="pl-qty-n" aria-live="polite" aria-label="Quantity: {{ item.quantity }}">{{ item.quantity }}</span>
+        = <strong>&#8377;{{ line_price_rupees }}</strong>
+      </div>
+
+      <!-- Actions: qty + remove -->
+      <div class="pl-ci-actions">
+        <quantity-input class="pl-qty cart-quantity">
+          <button class="pl-qty-btn quantity__button" name="minus" type="button"
+                  aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title | escape }}">&#8722;</button>
+          <input class="pl-qty-n quantity__input"
+                 type="number"
+                 name="updates[]"
+                 value="{{ item.quantity }}"
+                 data-quantity-variant-id="{{ item.variant.id }}"
+                 data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
+                 min="0"
+                 data-min="{{ item.variant.quantity_rule.min }}"
+                 {% if item.variant.quantity_rule.max != null %}max="{{ item.variant.quantity_rule.max }}"{% endif %}
+                 step="{{ item.variant.quantity_rule.increment }}"
+                 aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}"
+                 id="Quantity-{{ item.index | plus: 1 }}"
+                 data-index="{{ item.index | plus: 1 }}"
+                 style="width:38px;text-align:center;">
+          <button class="pl-qty-btn quantity__button" name="plus" type="button"
+                  aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title | escape }}">&#43;</button>
+        </quantity-input>
+
+        <cart-remove-button id="Remove-{{ item.index | plus: 1 }}" data-index="{{ item.index | plus: 1 }}">
+          <a href="{{ item.url_to_remove }}"
+             class="pl-ci-remove"
+             aria-label="Remove {{ item.product.title | escape }} from cart">Remove</a>
+        </cart-remove-button>
+      </div>
+
+      <div class="cart-item__error" id="Line-item-error-{{ item.index | plus: 1 }}" role="alert">
+        <small class="cart-item__error-text"></small>
+      </div>
+
+      {% assign upgrade_variant_id = item.product.metafields.custom.upgrade_variant_id %}
+      {% assign upgrade_label = item.product.metafields.custom.upgrade_label %}
+      {% if upgrade_variant_id != blank and upgrade_label != blank %}
+        <div class="pl-upgrade-nudge">
+          <span class="pl-upgrade-icon" aria-hidden="true">&#128200;</span>
+          <span class="pl-upgrade-text">{{ upgrade_label }}</span>
+          <button class="pl-upgrade-btn"
+                  type="button"
+                  onclick="plAddUpsell(this)"
+                  data-variant="{{ upgrade_variant_id }}"
+                  aria-label="Upgrade to {{ upgrade_label }}">
+            Upgrade
+          </button>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</li>

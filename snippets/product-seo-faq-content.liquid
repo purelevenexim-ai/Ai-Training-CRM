@@ -1,0 +1,490 @@
+{%- assign faq_group = '' -%}
+{%- assign pack_label = '' -%}
+{%- assign pack_fit = '' -%}
+{%- assign combo_contents = '' -%}
+{%- assign combo_fit = '' -%}
+
+{%- case product_handle -%}
+  {%- when 'kerala-cardamom-online-100gm' -%}
+    {%- assign faq_group = 'cardamom' -%}
+    {%- assign pack_label = '200gm' -%}
+    {%- assign pack_fit = 'households that use cardamom regularly and want a larger kitchen refill pack' -%}
+  {%- when 'kerala-cardamom-200gm' -%}
+    {%- assign faq_group = 'cardamom' -%}
+    {%- assign pack_label = '100gm' -%}
+    {%- assign pack_fit = 'buyers who want a smaller pack for daily home use or a first purchase' -%}
+  {%- when 'kerala-black-pepper-200gm' -%}
+    {%- assign faq_group = 'black_pepper' -%}
+    {%- assign pack_label = '200gm' -%}
+    {%- assign pack_fit = 'regular home kitchens that want whole peppercorns for daily seasoning and grinding' -%}
+  {%- when 'kerala-black-pepper-350gm' -%}
+    {%- assign faq_group = 'black_pepper' -%}
+    {%- assign pack_label = 'value pack' -%}
+    {%- assign pack_fit = 'families and frequent cooks who want a larger refill pack for active kitchens' -%}
+  {%- when 'kerala-clove-100gm' -%}
+    {%- assign faq_group = 'clove' -%}
+    {%- assign pack_label = '100gm' -%}
+    {%- assign pack_fit = 'households that want a smaller clove pack for chai, rice dishes, and masala blends' -%}
+  {%- when 'kerala-clove-200gm' -%}
+    {%- assign faq_group = 'clove' -%}
+    {%- assign pack_label = '200gm' -%}
+    {%- assign pack_fit = 'regular kitchens that use whole cloves often and want a larger refill pack' -%}
+  {%- when 'kerala-white-pepper' -%}
+    {%- assign faq_group = 'white_pepper' -%}
+  {%- when 'cardamom-pepper-clove-combo-pack-special-offer-100-off' -%}
+    {%- assign faq_group = 'combo' -%}
+    {%- assign pack_label = 'starter combo' -%}
+    {%- assign combo_contents = 'Cardamom 50g, Black Pepper 100g, and Clove 100g' -%}
+    {%- assign combo_fit = 'gifting, first-time buyers, and kitchens that want three essential spices in one purchase' -%}
+  {%- when 'cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack-copy' -%}
+    {%- assign faq_group = 'combo' -%}
+    {%- assign pack_label = 'larger combo' -%}
+    {%- assign combo_contents = 'Cardamom 100g, Black Pepper 200g, and Clove 100g' -%}
+    {%- assign combo_fit = 'families and frequent cooks who want a bigger kitchen bundle with better refill value' -%}
+  {%- when 'premium-cassia-cinnamon-100g' -%}
+    {%- assign faq_group = 'cassia' -%}
+  {%- when 'aromatic-true-cinnamon-ceylon-100g' -%}
+    {%- assign faq_group = 'ceylon' -%}
+{%- endcase -%}
+
+{%- if mode == 'items' -%}
+  {%- case faq_group -%}
+    {%- when 'cardamom' -%}
+      <details class="product-faq__item" {% if open_first_item %}open{% endif %}>
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">What does 8mm cardamom mean?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>8mm refers to larger whole cardamom pods. Larger pods generally hold stronger aroma and are preferred for chai, desserts, and premium whole-spice use.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Where is this cardamom sourced from?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This cardamom is positioned as a Kerala cardamom product sourced from the high ranges of Munnar and packed as whole pods to protect freshness.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Who is this {{ pack_label }} pack best for?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This {{ pack_label }} pack suits {{ pack_fit }}.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How should whole cardamom be stored?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Keep whole cardamom sealed in an airtight container away from heat, light, and moisture. Crush pods only when needed so the aroma stays fresher for longer.</p></div>
+      </details>
+    {%- when 'black_pepper' -%}
+      <details class="product-faq__item" {% if open_first_item %}open{% endif %}>
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Why buy whole black pepper instead of ground pepper?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Whole peppercorns keep their aroma and heat longer than pre-ground pepper. You get better flavor when you grind only what you need.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Where is this black pepper sourced from?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This pepper is presented as a Kerala black pepper product sourced from spice-growing regions in Kerala and sold as whole peppercorns for freshness.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Who is this {{ pack_label }} best for?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This pack is best for {{ pack_fit }}.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How should peppercorns be stored?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Store peppercorns in a sealed jar or pouch away from light, humidity, and direct heat. Whole pepper usually stays more aromatic than ground pepper during storage.</p></div>
+      </details>
+    {%- when 'clove' -%}
+      <details class="product-faq__item" {% if open_first_item %}open{% endif %}>
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">What makes Adimali cloves different?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>These cloves are positioned around Kerala farm sourcing and whole-bud quality, with a focus on strong aroma and everyday culinary use.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Are these whole cloves or clove powder?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This product is framed as whole clove buds, which are useful for chai, rice dishes, spice blends, and slow cooking.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Who is this {{ pack_label }} pack best for?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This {{ pack_label }} pack works well for {{ pack_fit }}.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How can I check clove freshness?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Fresh whole cloves should smell strong and spicy when pressed or broken. If the aroma is weak, the cloves are usually older or less potent.</p></div>
+      </details>
+    {%- when 'white_pepper' -%}
+      <details class="product-faq__item" {% if open_first_item %}open{% endif %}>
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How is white pepper different from black pepper?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>White pepper usually gives smoother heat and a more earthy finish than black pepper. It is often chosen for soups, sauces, marinades, and lighter-colored dishes.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Where does this white pepper come from?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This product is presented as a Kerala white pepper sourced from the Western Ghats and positioned as a premium whole-spice ingredient.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">What dishes is white pepper best for?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>White pepper works especially well in soups, sauces, marinades, noodles, and dishes where you want pepper warmth without the appearance of dark pepper specks.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How should I store white pepper?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Store whole white pepper in a tightly sealed container away from moisture and sunlight. Grind it closer to use time for a cleaner aroma.</p></div>
+      </details>
+    {%- when 'combo' -%}
+      <details class="product-faq__item" {% if open_first_item %}open{% endif %}>
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">What is included in this combo pack?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This {{ pack_label }} includes {{ combo_contents }}.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Who is this combo best for?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>This bundle is built for {{ combo_fit }}.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Are the spices in this combo sourced from Kerala?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>The combo is positioned as a Kerala spice bundle and is meant to bring together core spices associated with Kerala sourcing and everyday kitchen use.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Why buy the combo instead of separate packs?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>A combo pack reduces decision friction, bundles common kitchen spices together, and makes gifting or kitchen setup easier in a single purchase.</p></div>
+      </details>
+    {%- when 'cassia' -%}
+      <details class="product-faq__item" {% if open_first_item %}open{% endif %}>
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">What is cassia cinnamon best used for?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Cassia cinnamon is best for chai, baking, and savory recipes where you want a bolder, warmer cinnamon note.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How is cassia different from Ceylon cinnamon?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Cassia cinnamon usually has a stronger, warmer, and more assertive flavor profile, while Ceylon cinnamon is generally lighter and softer in taste.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">Can this cinnamon be used for chai and baking?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Yes. Cassia cinnamon works well in chai, cakes, cookies, breakfast recipes, and savory spice blends that need a stronger cinnamon character.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How should cinnamon be stored?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Store cinnamon in a sealed container away from moisture, heat, and direct light. Good storage helps retain aroma whether you are using quills or powder.</p></div>
+      </details>
+    {%- when 'ceylon' -%}
+      <details class="product-faq__item" {% if open_first_item %}open{% endif %}>
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">What makes Ceylon cinnamon true cinnamon?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>True Ceylon cinnamon is known for a lighter, sweeter, and more delicate cinnamon profile than cassia, which is why it is often preferred for tea and softer dessert flavors.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How is it different from cassia cinnamon?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Ceylon cinnamon is generally lighter and sweeter, while cassia tends to be bolder and warmer. The two suit different taste preferences and recipes.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">What is this cinnamon best used for?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Ceylon cinnamon works especially well in tea, desserts, fruit-based recipes, and baking where you want a softer and more refined cinnamon note.</p></div>
+      </details>
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          <span class="product-faq__question-text">How should true cinnamon be stored?</span>
+          <span class="product-faq__icon">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div class="product-faq__answer rte"><p>Keep cinnamon sealed and away from humidity, sunlight, and strong kitchen heat. That helps preserve its sweetness and aroma for longer.</p></div>
+      </details>
+  {%- endcase -%}
+{%- elsif mode == 'schema' -%}
+  {%- case faq_group -%}
+    {%- when 'cardamom' -%}
+      {
+        "@type": "Question",
+        "name": "What does 8mm cardamom mean?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "8mm refers to larger whole cardamom pods. Larger pods generally hold stronger aroma and are preferred for chai, desserts, and premium whole-spice use."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Where is this cardamom sourced from?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This cardamom is positioned as a Kerala cardamom product sourced from the high ranges of Munnar and packed as whole pods to protect freshness."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who is this {{ pack_label }} pack best for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This {{ pack_label }} pack suits {{ pack_fit }}."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How should whole cardamom be stored?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Keep whole cardamom sealed in an airtight container away from heat, light, and moisture. Crush pods only when needed so the aroma stays fresher for longer."
+        }
+      }
+    {%- when 'black_pepper' -%}
+      {
+        "@type": "Question",
+        "name": "Why buy whole black pepper instead of ground pepper?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Whole peppercorns keep their aroma and heat longer than pre-ground pepper. You get better flavor when you grind only what you need."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Where is this black pepper sourced from?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This pepper is presented as a Kerala black pepper product sourced from spice-growing regions in Kerala and sold as whole peppercorns for freshness."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who is this {{ pack_label }} best for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This pack is best for {{ pack_fit }}."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How should peppercorns be stored?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Store peppercorns in a sealed jar or pouch away from light, humidity, and direct heat. Whole pepper usually stays more aromatic than ground pepper during storage."
+        }
+      }
+    {%- when 'clove' -%}
+      {
+        "@type": "Question",
+        "name": "What makes Adimali cloves different?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "These cloves are positioned around Kerala farm sourcing and whole-bud quality, with a focus on strong aroma and everyday culinary use."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are these whole cloves or clove powder?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This product is framed as whole clove buds, which are useful for chai, rice dishes, spice blends, and slow cooking."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who is this {{ pack_label }} pack best for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This {{ pack_label }} pack works well for {{ pack_fit }}."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I check clove freshness?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Fresh whole cloves should smell strong and spicy when pressed or broken. If the aroma is weak, the cloves are usually older or less potent."
+        }
+      }
+    {%- when 'white_pepper' -%}
+      {
+        "@type": "Question",
+        "name": "How is white pepper different from black pepper?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "White pepper usually gives smoother heat and a more earthy finish than black pepper. It is often chosen for soups, sauces, marinades, and lighter-colored dishes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Where does this white pepper come from?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This product is presented as a Kerala white pepper sourced from the Western Ghats and positioned as a premium whole-spice ingredient."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What dishes is white pepper best for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "White pepper works especially well in soups, sauces, marinades, noodles, and dishes where you want pepper warmth without the appearance of dark pepper specks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How should I store white pepper?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Store whole white pepper in a tightly sealed container away from moisture and sunlight. Grind it closer to use time for a cleaner aroma."
+        }
+      }
+    {%- when 'combo' -%}
+      {
+        "@type": "Question",
+        "name": "What is included in this combo pack?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This {{ pack_label }} includes {{ combo_contents }}."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who is this combo best for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This bundle is built for {{ combo_fit }}."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are the spices in this combo sourced from Kerala?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The combo is positioned as a Kerala spice bundle and is meant to bring together core spices associated with Kerala sourcing and everyday kitchen use."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why buy the combo instead of separate packs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A combo pack reduces decision friction, bundles common kitchen spices together, and makes gifting or kitchen setup easier in a single purchase."
+        }
+      }
+    {%- when 'cassia' -%}
+      {
+        "@type": "Question",
+        "name": "What is cassia cinnamon best used for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Cassia cinnamon is best for chai, baking, and savory recipes where you want a bolder, warmer cinnamon note."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is cassia different from Ceylon cinnamon?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Cassia cinnamon usually has a stronger, warmer, and more assertive flavor profile, while Ceylon cinnamon is generally lighter and softer in taste."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can this cinnamon be used for chai and baking?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Cassia cinnamon works well in chai, cakes, cookies, breakfast recipes, and savory spice blends that need a stronger cinnamon character."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How should cinnamon be stored?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Store cinnamon in a sealed container away from moisture, heat, and direct light. Good storage helps retain aroma whether you are using quills or powder."
+        }
+      }
+    {%- when 'ceylon' -%}
+      {
+        "@type": "Question",
+        "name": "What makes Ceylon cinnamon true cinnamon?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "True Ceylon cinnamon is known for a lighter, sweeter, and more delicate cinnamon profile than cassia, which is why it is often preferred for tea and softer dessert flavors."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is it different from cassia cinnamon?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ceylon cinnamon is generally lighter and sweeter, while cassia tends to be bolder and warmer. The two suit different taste preferences and recipes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is this cinnamon best used for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ceylon cinnamon works especially well in tea, desserts, fruit-based recipes, and baking where you want a softer and more refined cinnamon note."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How should true cinnamon be stored?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Keep cinnamon sealed and away from humidity, sunlight, and strong kitchen heat. That helps preserve its sweetness and aroma for longer."
+        }
+      }
+  {%- endcase -%}
+{%- endif -%}

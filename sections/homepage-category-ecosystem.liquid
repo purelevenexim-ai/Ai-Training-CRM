@@ -1,0 +1,713 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} {
+    --pl-eco-ink: #153c37;
+    --pl-eco-muted: #4f6c66;
+    --pl-eco-accent: #bf6f1d;
+    --pl-eco-border: rgba(21, 60, 55, 0.12);
+    --pl-eco-cream: #f6f0e4;
+    --pl-eco-surface: rgba(255, 251, 244, 0.92);
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at top left, rgba(191, 111, 29, 0.12), transparent 32%),
+      radial-gradient(circle at bottom right, rgba(27, 94, 86, 0.14), transparent 40%),
+      linear-gradient(180deg, #fffaf3 0%, #f4ecdf 100%);
+    color: var(--pl-eco-ink);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }}::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(21, 60, 55, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(21, 60, 55, 0.03) 1px, transparent 1px);
+    background-size: 2.4rem 2.4rem;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco {
+    position: relative;
+    z-index: 1;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__intro {
+    max-width: 72rem;
+    margin: 0 auto 3.2rem;
+    text-align: center;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__eyebrow {
+    margin: 0 0 0.8rem;
+    font-family: var(--font-body-family, 'Sora', sans-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pl-eco-accent);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__title {
+    margin: 0;
+    font-family: var(--font-heading-family, 'Cormorant Garamond', serif);
+    font-size: clamp(3.2rem, 6vw, 5.2rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__lead {
+    max-width: 64rem;
+    margin: 1.2rem auto 0;
+    font-size: 1.65rem;
+    line-height: 1.7;
+    color: var(--pl-eco-muted);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero {
+    display: grid;
+    gap: 1.8rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-card,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__cluster-card,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-card {
+    border: 0.1rem solid var(--pl-eco-border);
+    border-radius: 2.2rem;
+    background: var(--pl-eco-surface);
+    box-shadow: 0 2rem 4.4rem rgba(21, 60, 55, 0.08);
+    backdrop-filter: blur(0.8rem);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-card {
+    display: grid;
+    gap: 2rem;
+    padding: 2.4rem;
+    background: linear-gradient(145deg, rgba(21, 60, 55, 0.97), rgba(27, 94, 86, 0.92));
+    color: #f8f5ee;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__label {
+    margin: 0 0 0.8rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f0c28d;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-title {
+    margin: 0;
+    font-family: var(--font-heading-family, 'Cormorant Garamond', serif);
+    font-size: clamp(2.8rem, 4vw, 4.4rem);
+    line-height: 1;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-copy {
+    margin: 1rem 0 0;
+    font-size: 1.6rem;
+    line-height: 1.75;
+    color: rgba(248, 245, 238, 0.84);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-links,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__card-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.6rem;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-link,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__card-link,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-link {
+    min-height: 4.4rem;
+    padding: 0 1.7rem;
+    background: #f4c285;
+    color: #153c37;
+    font-size: 1.35rem;
+    font-weight: 700;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-link--ghost {
+    background: transparent;
+    color: #f8f5ee;
+    border: 0.1rem solid rgba(248, 245, 238, 0.28);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-link:hover,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__card-link:hover,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-link:hover {
+    transform: translateY(-0.2rem);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-content: start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero-tags li {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3.8rem;
+    padding: 0 1.25rem;
+    border-radius: 999px;
+    border: 0.1rem solid rgba(248, 245, 238, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: #f8f5ee;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__cluster-grid,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-grid,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guides-grid {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__cluster-card,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card,
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-card {
+    padding: 2rem 1.8rem;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.8rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    background: rgba(191, 111, 29, 0.12);
+    color: var(--pl-eco-accent);
+    font-size: 1.08rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__card-title {
+    margin: 1rem 0 0;
+    font-family: var(--font-heading-family, 'Cormorant Garamond', serif);
+    font-size: 2.4rem;
+    line-height: 1.02;
+    color: var(--pl-eco-ink);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__card-copy {
+    margin: 1rem 0 0;
+    font-size: 1.48rem;
+    line-height: 1.72;
+    color: var(--pl-eco-muted);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__card-link {
+    min-height: 4rem;
+    padding: 0 1.4rem;
+    background: rgba(21, 60, 55, 0.06);
+    color: var(--pl-eco-ink);
+    border: 0.1rem solid rgba(21, 60, 55, 0.08);
+    font-size: 1.28rem;
+    font-weight: 700;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__card-link--guide {
+    background: transparent;
+    border-color: rgba(191, 111, 29, 0.22);
+    color: var(--pl-eco-accent);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-shell {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2.2rem;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-copy {
+    max-width: 56rem;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-title {
+    margin: 0.9rem 0 0;
+    font-family: var(--font-heading-family, 'Cormorant Garamond', serif);
+    font-size: 2.8rem;
+    line-height: 1.05;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-text {
+    margin: 1rem 0 0;
+    font-size: 1.5rem;
+    line-height: 1.72;
+    color: var(--pl-eco-muted);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    min-height: 100%;
+    padding: 2.2rem 1.8rem 1.8rem;
+    background: linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(246, 238, 224, 0.94));
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card::before {
+    content: '';
+    width: 6rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(191, 111, 29, 0.95), rgba(21, 60, 55, 0.48));
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card .pl-eco__kicker {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card .pl-eco__card-title {
+    margin-top: 0.1rem;
+    font-size: clamp(2.4rem, 3vw, 3rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card .pl-eco__card-copy {
+    margin-top: 0;
+    max-width: 28rem;
+    font-size: 1.42rem;
+    line-height: 1.65;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card .pl-eco__card-links {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 1.1rem;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card .pl-eco__card-link {
+    width: 100%;
+    justify-content: space-between;
+    min-height: 0;
+    padding: 1rem 1.35rem;
+    border-radius: 1.6rem;
+    background: rgba(21, 60, 55, 0.05);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-card .pl-eco__card-link--guide {
+    background: rgba(255, 255, 255, 0.74);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-shell {
+    margin-top: 1.8rem;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: linear-gradient(180deg, rgba(255, 251, 244, 0.96), rgba(247, 240, 228, 0.96));
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-title {
+    margin: 0;
+    font-family: var(--font-heading-family, 'Cormorant Garamond', serif);
+    font-size: 2rem;
+    line-height: 1.08;
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-copy {
+    margin: 0;
+    font-size: 1.38rem;
+    line-height: 1.68;
+    color: var(--pl-eco-muted);
+  }
+
+  .homepage-category-ecosystem-{{ section.id }} .pl-eco__guide-link {
+    align-self: flex-start;
+    min-height: 3.8rem;
+    padding: 0 1.3rem;
+    background: transparent;
+    border: 0.1rem solid rgba(21, 60, 55, 0.14);
+    color: var(--pl-eco-ink);
+    font-size: 1.22rem;
+    font-weight: 700;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+
+    .homepage-category-ecosystem-{{ section.id }} .pl-eco__hero {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    }
+
+    .homepage-category-ecosystem-{{ section.id }} .pl-eco__cluster-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-grid,
+    .homepage-category-ecosystem-{{ section.id }} .pl-eco__guides-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .homepage-category-ecosystem-{{ section.id }} .pl-eco__support-shell {
+      grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+      align-items: start;
+      gap: 2.2rem;
+    }
+
+    .homepage-category-ecosystem-{{ section.id }} .pl-eco__cluster-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .homepage-category-ecosystem-{{ section.id }} .pl-eco__guides-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+{%- endstyle -%}
+
+<section class="homepage-category-ecosystem-{{ section.id }}" aria-labelledby="CategoryMap-{{ section.id }}">
+  <div class="page-width section-{{ section.id }}-padding pl-eco">
+    <div class="pl-eco__intro">
+      <p class="pl-eco__eyebrow">Featured categories</p>
+      <h2 class="pl-eco__title" id="CategoryMap-{{ section.id }}">Start with the ingredients you use most.</h2>
+      <p class="pl-eco__lead">Black pepper, cardamom, cloves, cinnamon, honey, coffee, and pantry staples chosen for everyday cooking that still smells alive when the pack opens.</p>
+    </div>
+
+    <div class="pl-eco__hero">
+      <article class="pl-eco__hero-card">
+        <div>
+          <p class="pl-eco__label">Spice first</p>
+          <h3 class="pl-eco__hero-title">Fresh Kerala spices still lead the shelf.</h3>
+          <p class="pl-eco__hero-copy">This is where Pureleven feels most like itself: pepper, cardamom, cinnamon, cloves, and useful bundles chosen for the moment aroma rises back into the kitchen.</p>
+          <div class="pl-eco__hero-links">
+            <a class="pl-eco__hero-link" href="/collections/all">Shop Kerala Spices</a>
+            <a class="pl-eco__hero-link pl-eco__hero-link--ghost" href="/blogs/cooking-spices">Explore Ingredient Guides</a>
+          </div>
+        </div>
+        <ul class="pl-eco__hero-tags" role="list" aria-label="Primary spice entities">
+          <li>Black Pepper</li>
+          <li>Cardamom</li>
+          <li>Cinnamon</li>
+          <li>Cloves</li>
+          <li>Combo Packs</li>
+        </ul>
+      </article>
+    </div>
+
+    <nav class="pl-eco__cluster-grid" aria-label="Primary spice categories">
+      <article class="pl-eco__cluster-card">
+        <span class="pl-eco__kicker">Primary spice cluster</span>
+        <h3 class="pl-eco__card-title">Black Pepper</h3>
+        <p class="pl-eco__card-copy">Bold, fragrant pepper from the hills of Kerala. Crack it fresh over curries, eggs, soups, and grilled dishes.</p>
+        <div class="pl-eco__card-links">
+          <a class="pl-eco__card-link" href="/collections/spiciest-black-pepper">Shop Black Pepper</a>
+          <a class="pl-eco__card-link pl-eco__card-link--guide" href="/blogs/cooking-spices/spice-of-kings-kerala-black-pepper-varieties">Read the Pepper Guide</a>
+        </div>
+      </article>
+
+      <article class="pl-eco__cluster-card">
+        <span class="pl-eco__kicker">Primary spice cluster</span>
+        <h3 class="pl-eco__card-title">Cardamom</h3>
+        <p class="pl-eco__card-copy">Naturally sweet and deeply aromatic. Good for chai, biryani, desserts, and the spice box you open every day.</p>
+        <div class="pl-eco__card-links">
+          <a class="pl-eco__card-link" href="/collections/export-quality-cardamom">Explore Cardamom</a>
+          <a class="pl-eco__card-link pl-eco__card-link--guide" href="/blogs/cooking-spices/difference-between-green-and-black-cardamom">Read the Cardamom Guide</a>
+        </div>
+      </article>
+
+      <article class="pl-eco__cluster-card">
+        <span class="pl-eco__kicker">Primary spice cluster</span>
+        <h3 class="pl-eco__card-title">Cinnamon</h3>
+        <p class="pl-eco__card-copy">Warm, fragrant bark chosen for cleaner sweetness and better balance in tea, baking, and everyday cooking.</p>
+        <div class="pl-eco__card-links">
+          <a class="pl-eco__card-link" href="/collections/cinnamon">Browse Cinnamon</a>
+          <a class="pl-eco__card-link pl-eco__card-link--guide" href="/blogs/cooking-spices/spice-checklist-how-to-check-quality-of-spices">Read the Spice Checklist</a>
+        </div>
+      </article>
+
+      <article class="pl-eco__cluster-card">
+        <span class="pl-eco__kicker">Primary spice cluster</span>
+        <h3 class="pl-eco__card-title">Cloves</h3>
+        <p class="pl-eco__card-copy">Whole cloves selected for warmth, depth, and the kind of kitchen aroma you notice as soon as they hit heat.</p>
+        <div class="pl-eco__card-links">
+          <a class="pl-eco__card-link" href="/collections/cloves">Browse Cloves</a>
+          <a class="pl-eco__card-link pl-eco__card-link--guide" href="/blogs/cooking-spices/how-to-store-spices">Read the Storage Guide</a>
+        </div>
+      </article>
+
+      <article class="pl-eco__cluster-card">
+        <span class="pl-eco__kicker">Primary spice cluster</span>
+        <h3 class="pl-eco__card-title">Combo Packs</h3>
+        <p class="pl-eco__card-copy">An easier way to start a better spice shelf, whether you are restocking the kitchen or giving a useful gift.</p>
+        <div class="pl-eco__card-links">
+          <a class="pl-eco__card-link" href="/collections/combo">Shop Combo Packs</a>
+          <a class="pl-eco__card-link pl-eco__card-link--guide" href="/blogs/cooking-spices/best-kerala-spice-brands-online-india">Read the Kerala Spice Guide</a>
+        </div>
+      </article>
+    </nav>
+
+    <div class="pl-eco__support-shell">
+      <div class="pl-eco__support-copy">
+        <p class="pl-eco__eyebrow">Coffee, honey &amp; more</p>
+        <h3 class="pl-eco__support-title">The wider pantry, kept simple.</h3>
+        <p class="pl-eco__support-text">Honey, coffee, herbs, and pantry comforts belong here when they make everyday cooking smell better and feel more grounded.</p>
+      </div>
+
+      <nav class="pl-eco__support-grid" aria-label="Supporting ingredient categories">
+        <article class="pl-eco__support-card">
+          <span class="pl-eco__kicker">Supporting category</span>
+          <h3 class="pl-eco__card-title">Raw Honey</h3>
+          <p class="pl-eco__card-copy">Unhurried sweetness with floral character and a pantry presence that feels closer to the source.</p>
+          <div class="pl-eco__card-links">
+            <a class="pl-eco__card-link" href="/blogs/honey">Discover Honey</a>
+            <a class="pl-eco__card-link pl-eco__card-link--guide" href="/blogs/honey/ultimate-honey-purity-test-guide">Read the Purity Test</a>
+          </div>
+        </article>
+
+        <article class="pl-eco__support-card">
+          <span class="pl-eco__kicker">Supporting category</span>
+          <h3 class="pl-eco__card-title">Coffee</h3>
+          <p class="pl-eco__card-copy">Coffee keeps the morning side of the pantry warm, bitter, and familiar without pulling focus from the spices.</p>
+          <div class="pl-eco__card-links">
+            <a class="pl-eco__card-link" href="/pages/coffee-page">Explore Coffee</a>
+            <a class="pl-eco__card-link pl-eco__card-link--guide" href="/collections/products">Browse Pantry Products</a>
+          </div>
+        </article>
+
+        <article class="pl-eco__support-card">
+          <span class="pl-eco__kicker">Supporting category</span>
+          <h3 class="pl-eco__card-title">Herbs</h3>
+          <p class="pl-eco__card-copy">Herb guides bring pairing ideas, everyday cooking rhythm, and a little more range to the shelf.</p>
+          <div class="pl-eco__card-links">
+            <a class="pl-eco__card-link" href="/blogs/herbs">Explore Herb Guides</a>
+            <a class="pl-eco__card-link pl-eco__card-link--guide" href="/blogs/herbs/culinary-journey-with-aromatic-herbs">Read the Herbs Guide</a>
+          </div>
+        </article>
+
+        <article class="pl-eco__support-card">
+          <span class="pl-eco__kicker">Supporting category</span>
+          <h3 class="pl-eco__card-title">Natural Foods</h3>
+          <p class="pl-eco__card-copy">Tea, coffee, honey, and pantry staples round out the kitchen without crowding the spices.</p>
+          <div class="pl-eco__card-links">
+            <a class="pl-eco__card-link" href="/collections/products">Browse Natural Foods</a>
+            <a class="pl-eco__card-link pl-eco__card-link--guide" href="/blogs/cooking-spices/how-to-store-spices">Read the Freshness Guide</a>
+          </div>
+        </article>
+      </nav>
+    </div>
+
+    <div class="pl-eco__guide-shell">
+      <div class="pl-eco__support-copy">
+        <p class="pl-eco__eyebrow">Kitchen reading</p>
+        <h3 class="pl-eco__support-title">Ingredient Guides &amp; Kitchen Reading</h3>
+        <p class="pl-eco__support-text">Learn how to choose better spices, store them well, compare varieties, and understand what freshness actually smells like in the kitchen.</p>
+      </div>
+
+      <nav class="pl-eco__guides-grid" aria-label="Popular ingredient guides">
+        <article class="pl-eco__guide-card">
+          <h4 class="pl-eco__guide-title">Why fresh spices smell stronger</h4>
+          <p class="pl-eco__guide-copy">A farm-origin explanation for why fresher spices speak louder the moment they are opened.</p>
+          <a class="pl-eco__guide-link" href="/blogs/cooking-spices/kerala-spices-farm-origin-vs-retail">Read the Farm-Origin Spice Guide</a>
+        </article>
+
+        <article class="pl-eco__guide-card">
+          <h4 class="pl-eco__guide-title">How to identify authentic spices</h4>
+          <p class="pl-eco__guide-copy">A practical checklist for color, aroma, texture, and the visual signs of good spice quality.</p>
+          <a class="pl-eco__guide-link" href="/blogs/cooking-spices/spice-checklist-how-to-check-quality-of-spices">Read the Spice Quality Checklist</a>
+        </article>
+
+        <article class="pl-eco__guide-card">
+          <h4 class="pl-eco__guide-title">Kerala black pepper guide</h4>
+          <p class="pl-eco__guide-copy">A closer look at pepper varieties, region, and why Kerala pepper tastes the way it does.</p>
+          <a class="pl-eco__guide-link" href="/blogs/cooking-spices/spice-of-kings-kerala-black-pepper-varieties">Read the Kerala Black Pepper Guide</a>
+        </article>
+
+        <article class="pl-eco__guide-card">
+          <h4 class="pl-eco__guide-title">Why storage changes flavor</h4>
+          <p class="pl-eco__guide-copy">A practical storage guide for keeping aroma, natural oils, and warmth in the jar longer.</p>
+          <a class="pl-eco__guide-link" href="/blogs/cooking-spices/how-to-store-spices">Read the Spice Storage Guide</a>
+        </article>
+      </nav>
+    </div>
+  </div>
+
+  {% if template.name == 'index' %}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ItemList",
+            "name": "Pureleven primary spice categories",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Kerala spices",
+                "url": "{{ shop.secure_url }}/collections/all"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Black pepper",
+                "url": "{{ shop.secure_url }}/collections/spiciest-black-pepper"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Cardamom",
+                "url": "{{ shop.secure_url }}/collections/export-quality-cardamom"
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Cinnamon",
+                "url": "{{ shop.secure_url }}/collections/cinnamon"
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "name": "Cloves",
+                "url": "{{ shop.secure_url }}/collections/cloves"
+              },
+              {
+                "@type": "ListItem",
+                "position": 6,
+                "name": "Combo packs",
+                "url": "{{ shop.secure_url }}/collections/combo"
+              }
+            ]
+          },
+          {
+            "@type": "ItemList",
+            "name": "Pureleven supporting ingredient categories",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Raw honey",
+                "url": "{{ shop.secure_url }}/blogs/honey"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Coffee",
+                "url": "{{ shop.secure_url }}/pages/coffee-page"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Herbs",
+                "url": "{{ shop.secure_url }}/blogs/herbs"
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Natural foods and pantry picks",
+                "url": "{{ shop.secure_url }}/collections/products"
+              }
+            ]
+          },
+          {
+            "@type": "ItemList",
+            "name": "Pureleven ingredient guides",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Why fresh spices smell stronger",
+                "url": "{{ shop.secure_url }}/blogs/cooking-spices/kerala-spices-farm-origin-vs-retail"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "How to identify authentic spices",
+                "url": "{{ shop.secure_url }}/blogs/cooking-spices/spice-checklist-how-to-check-quality-of-spices"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Kerala black pepper guide",
+                "url": "{{ shop.secure_url }}/blogs/cooking-spices/spice-of-kings-kerala-black-pepper-varieties"
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "How to store spices",
+                "url": "{{ shop.secure_url }}/blogs/cooking-spices/how-to-store-spices"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Category Ecosystem",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 52
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Ecosystem"
+    }
+  ]
+}
+{% endschema %}

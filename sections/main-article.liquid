@@ -1,0 +1,1158 @@
+{{ 'section-blog-post.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-article-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-article-merch-card.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign article_summary = article.excerpt | strip_html | strip_newlines | replace: '  ', ' ' | strip
+  if article_summary == blank
+    assign article_summary = article.content | strip_html | strip_newlines | replace: '  ', ' ' | strip | truncatewords: 42
+  endif
+
+  assign article_word_count_source = article.content | strip_html | strip_newlines | replace: '&nbsp;', ' ' | replace: '  ', ' ' | strip
+  assign article_word_count = 0
+  if article_word_count_source != blank
+    assign article_word_count = article_word_count_source | split: ' ' | size
+  endif
+  assign article_read_time = article_word_count | plus: 219 | divided_by: 220
+  if article_read_time < 1
+    assign article_read_time = 1
+  endif
+
+  assign article_home_url = shop.secure_url | append: '/'
+  assign article_blog_url = shop.secure_url | append: blog.url
+  assign article_current_url = shop.secure_url | append: article.url
+
+  assign article_tags_string = article.tags | join: ' '
+  assign article_topic_source = article.handle | append: ' ' | append: article.title | append: ' ' | append: article_tags_string | downcase
+
+  assign primary_product_handle = 'cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack'
+  assign secondary_product_handle = 'kerala-black-pepper-200gm'
+  assign tertiary_product_handle = 'kerala-cardamom-8mm-fruit-100gm'
+  assign primary_collection_handle = ''
+  assign hero_kicker = 'Pureleven spice journal'
+  assign hero_subtitle = 'Answer-first guidance with a faster path to farm-origin Kerala products you can buy today.'
+  assign collection_cta_label = 'Explore Kerala spices'
+  assign product_cta_label = 'Shop this guide'
+  assign spotlight_text = 'Start with a best-selling Pureleven product picked to match the buying intent behind this article.'
+  assign spotlight_point_one = 'Farm-direct Kerala sourcing'
+  assign spotlight_point_two = 'Small-batch packing for stronger aroma'
+  assign spotlight_point_three = 'A fast path from reading to shopping'
+  assign trust_point_one = '30 years of farming experience in Kerala'
+  assign trust_point_two = 'Farm-origin sourcing with stronger aroma retention'
+  assign trust_point_three = 'Small-batch packs designed for repeat kitchen use'
+
+  if article_topic_source contains 'best kerala spice' or article_topic_source contains 'kerala spice brands' or article_topic_source contains 'kerala spices online'
+    assign primary_product_handle = 'cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack'
+    assign secondary_product_handle = 'kerala-black-pepper-200gm'
+    assign tertiary_product_handle = 'kerala-cardamom-8mm-fruit-100gm'
+    assign primary_collection_handle = ''
+    assign hero_kicker = 'Kerala spice brands guide'
+    assign hero_subtitle = 'Compare origin, aroma, freshness, and farm transparency, then move directly into Kerala spices with a premium buying path.'
+    assign collection_cta_label = 'Explore Kerala spices'
+    assign product_cta_label = 'Shop the featured pick'
+    assign spotlight_text = 'A premium Pureleven entry point for readers comparing Kerala spice brands, with farm-connected sourcing and a curated pantry-starting mix.'
+    assign spotlight_point_one = 'Farm-connected Kerala sourcing'
+    assign spotlight_point_two = 'Small-batch packing for stronger aroma'
+    assign spotlight_point_three = 'Built for premium everyday kitchens and gifting'
+    assign trust_point_one = 'Kerala-origin sourcing with farming depth behind the brand'
+    assign trust_point_two = 'Freshness-led handling focused on aroma and clarity'
+    assign trust_point_three = 'A guide-to-product journey designed for confident buying'
+  elsif article_topic_source contains 'cardamom'
+    assign primary_product_handle = 'kerala-cardamom-8mm-fruit-100gm'
+    assign secondary_product_handle = 'kerala-cardamom-8mm-200gm'
+    assign tertiary_product_handle = 'kerala-cardamom-50gm'
+    assign primary_collection_handle = 'export-quality-cardamom'
+    assign hero_kicker = 'Kerala cardamom guide'
+    assign hero_subtitle = 'Compare pod size, aroma strength, and practical pack sizes before you buy.'
+    assign collection_cta_label = 'Shop Kerala cardamom'
+    assign product_cta_label = 'Shop this cardamom'
+    assign spotlight_text = 'Export-grade Kerala cardamom with strong aroma for chai, desserts, and everyday cooking.'
+    assign spotlight_point_one = 'Bright 8mm pods with premium aroma'
+    assign spotlight_point_two = 'Reliable pick for home and gifting'
+    assign spotlight_point_three = 'Available in everyday and larger packs'
+  elsif article_topic_source contains 'black pepper' or article_topic_source contains 'pepper'
+    assign primary_product_handle = 'kerala-black-pepper-200gm'
+    assign secondary_product_handle = 'kerala-black-pepper-300gm'
+    assign tertiary_product_handle = 'kerala-white-pepper-100gm'
+    assign primary_collection_handle = 'spiciest-black-pepper'
+    assign hero_kicker = 'Kerala pepper guide'
+    assign hero_subtitle = 'Move from comparison content into bold, kitchen-ready Kerala pepper with a cleaner buying path.'
+    assign collection_cta_label = 'Shop Kerala black pepper'
+    assign product_cta_label = 'Shop this pepper'
+    assign spotlight_text = 'Whole Kerala peppercorns with high aroma and a straightforward upgrade from generic supermarket stock.'
+    assign spotlight_point_one = 'Strong aroma for finishing and grinding'
+    assign spotlight_point_two = 'Whole berries stay fresher for longer'
+    assign spotlight_point_three = 'Value packs available for repeat kitchens'
+  elsif article_topic_source contains 'clove'
+    assign primary_product_handle = 'kerala-clove-100gm'
+    assign secondary_product_handle = 'kerala-clove-200gm'
+    assign tertiary_product_handle = 'cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack'
+    assign primary_collection_handle = 'cloves'
+    assign hero_kicker = 'Kerala clove guide'
+    assign hero_subtitle = 'Use the article as your buying bridge from clove education to stronger aroma and better pack selection.'
+    assign collection_cta_label = 'Shop Kerala cloves'
+    assign product_cta_label = 'Shop this clove pack'
+    assign spotlight_text = 'Kerala cloves selected for richer aroma, kitchen usefulness, and better value than commodity-grade alternatives.'
+    assign spotlight_point_one = 'High-aroma whole cloves'
+    assign spotlight_point_two = 'Useful for chai, masala, and desserts'
+    assign spotlight_point_three = 'Simple upgrade from generic kitchen stock'
+  elsif article_topic_source contains 'cinnamon'
+    assign primary_product_handle = 'aromatic-true-cinnamon-ceylon-100g'
+    assign secondary_product_handle = 'premium-cassia-cinnamon-100g'
+    assign tertiary_product_handle = 'cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack'
+    assign primary_collection_handle = 'cinnamon'
+    assign hero_kicker = 'Cinnamon buying guide'
+    assign hero_subtitle = 'Compare daily-use cinnamon options and move directly into a product shortlist without leaving the article cold.'
+    assign collection_cta_label = 'Shop cinnamon'
+    assign product_cta_label = 'Shop this cinnamon'
+    assign spotlight_text = 'Choose between lighter Ceylon character and fuller cassia warmth with a cleaner conversion path.'
+    assign spotlight_point_one = 'Ceylon and cassia options available'
+    assign spotlight_point_two = 'Good fit for drinks, baking, and masala'
+    assign spotlight_point_three = 'Easy next step after a comparison read'
+  elsif article_topic_source contains 'turmeric' or article_topic_source contains 'immunity' or article_topic_source contains 'wellness'
+    assign primary_product_handle = 'cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack'
+    assign secondary_product_handle = 'aromatic-true-cinnamon-ceylon-100g'
+    assign tertiary_product_handle = 'kerala-black-pepper-200gm'
+    assign primary_collection_handle = 'combo'
+    assign hero_kicker = 'Daily wellness spice guide'
+    assign hero_subtitle = 'Turn informational reading into a practical kitchen buy with a shortlist built for daily Kerala-style cooking.'
+    assign collection_cta_label = 'Shop wellness-ready spices'
+    assign product_cta_label = 'Shop this combo'
+    assign spotlight_text = 'A practical entry point for readers who want multiple Kerala staples in one order instead of one-off trial buying.'
+    assign spotlight_point_one = 'Covers multiple everyday spice needs'
+    assign spotlight_point_two = 'Useful for routine kitchen refills'
+    assign spotlight_point_three = 'Strong option for first-time Pureleven orders'
+  elsif article_topic_source contains 'honey'
+    assign primary_product_handle = 'cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack'
+    assign secondary_product_handle = 'aromatic-true-cinnamon-ceylon-100g'
+    assign tertiary_product_handle = 'kerala-black-pepper-200gm'
+    assign primary_collection_handle = 'combo'
+    assign hero_kicker = 'Everyday kitchen guide'
+    assign hero_subtitle = 'This article now carries a direct path into Pureleven kitchen best sellers so reading intent can convert without friction.'
+    assign collection_cta_label = 'Shop best-selling spices'
+    assign product_cta_label = 'Shop this bestseller'
+    assign spotlight_text = 'Pair this guide with Pureleven best sellers for everyday kitchen buying, gifting, and repeat kitchen use.'
+    assign spotlight_point_one = 'Best-seller fallback for non-spice topics'
+    assign spotlight_point_two = 'Built around broad kitchen demand'
+    assign spotlight_point_three = 'Clear route into the current live catalog'
+  elsif article_topic_source contains 'rosemary' or article_topic_source contains 'herb'
+    assign primary_product_handle = 'aromatic-true-cinnamon-ceylon-100g'
+    assign secondary_product_handle = 'kerala-black-pepper-200gm'
+    assign tertiary_product_handle = 'cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack'
+    assign hero_kicker = 'Kitchen aroma guide'
+    assign hero_subtitle = 'Use this read as the top of the funnel, then move into aromatic staples that fit herb-led cooking and seasoning.'
+    assign collection_cta_label = 'Explore all products'
+    assign product_cta_label = 'Shop this kitchen pick'
+    assign spotlight_text = 'Aromatic kitchen staples that complement herb-led cooking, infusions, and flavor layering.'
+    assign spotlight_point_one = 'Works across sweet and savory cooking'
+    assign spotlight_point_two = 'Pairs naturally with herb-heavy recipes'
+    assign spotlight_point_three = 'Useful entry point into the catalog'
+  endif
+
+  assign collection_cta_url = routes.all_products_collection_url
+  if primary_collection_handle != blank
+    assign collection_cta_url = '/collections/' | append: primary_collection_handle
+  endif
+
+  assign featured_product = all_products[primary_product_handle]
+  assign secondary_product = all_products[secondary_product_handle]
+  assign tertiary_product = all_products[tertiary_product_handle]
+
+  if featured_product == blank
+    assign featured_product = all_products['cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack']
+  endif
+  if secondary_product == blank
+    assign secondary_product = all_products['kerala-black-pepper-200gm']
+  endif
+  if tertiary_product == blank
+    assign tertiary_product = all_products['kerala-cardamom-8mm-fruit-100gm']
+  endif
+
+  assign article_featured_product_metafield = article.metafields.custom.featured_product.value
+  assign article_secondary_product_metafield = article.metafields.custom.secondary_product.value
+  assign article_tertiary_product_metafield = article.metafields.custom.tertiary_product.value
+  assign article_featured_collection_metafield = article.metafields.custom.featured_collection.value
+  assign article_hero_kicker_metafield = article.metafields.custom.hero_kicker.value | strip
+  assign article_hero_subtitle_metafield = article.metafields.custom.hero_subtitle.value | strip
+  assign article_product_cta_label_metafield = article.metafields.custom.product_cta_label.value | strip
+  assign article_collection_cta_label_metafield = article.metafields.custom.collection_cta_label.value | strip
+  assign article_spotlight_text_metafield = article.metafields.custom.spotlight_text.value | strip
+  assign article_spotlight_point_one_metafield = article.metafields.custom.spotlight_point_one.value | strip
+  assign article_spotlight_point_two_metafield = article.metafields.custom.spotlight_point_two.value | strip
+  assign article_spotlight_point_three_metafield = article.metafields.custom.spotlight_point_three.value | strip
+  assign article_trust_point_one_metafield = article.metafields.custom.trust_point_one.value | strip
+  assign article_trust_point_two_metafield = article.metafields.custom.trust_point_two.value | strip
+  assign article_trust_point_three_metafield = article.metafields.custom.trust_point_three.value | strip
+
+  if article_featured_product_metafield != blank
+    assign featured_product = article_featured_product_metafield
+  endif
+
+  if article_secondary_product_metafield != blank
+    assign secondary_product = article_secondary_product_metafield
+  endif
+
+  if article_tertiary_product_metafield != blank
+    assign tertiary_product = article_tertiary_product_metafield
+  endif
+
+  if article_featured_collection_metafield != blank
+    assign collection_cta_url = article_featured_collection_metafield.url
+  endif
+
+  if article_hero_kicker_metafield != blank
+    assign hero_kicker = article_hero_kicker_metafield
+  endif
+
+  if article_hero_subtitle_metafield != blank
+    assign hero_subtitle = article_hero_subtitle_metafield
+  endif
+
+  if article_product_cta_label_metafield != blank
+    assign product_cta_label = article_product_cta_label_metafield
+  endif
+
+  if article_collection_cta_label_metafield != blank
+    assign collection_cta_label = article_collection_cta_label_metafield
+  endif
+
+  if article_spotlight_text_metafield != blank
+    assign spotlight_text = article_spotlight_text_metafield
+  endif
+
+  if article_spotlight_point_one_metafield != blank
+    assign spotlight_point_one = article_spotlight_point_one_metafield
+  endif
+
+  if article_spotlight_point_two_metafield != blank
+    assign spotlight_point_two = article_spotlight_point_two_metafield
+  endif
+
+  if article_spotlight_point_three_metafield != blank
+    assign spotlight_point_three = article_spotlight_point_three_metafield
+  endif
+
+  if article_trust_point_one_metafield != blank
+    assign trust_point_one = article_trust_point_one_metafield
+  endif
+
+  if article_trust_point_two_metafield != blank
+    assign trust_point_two = article_trust_point_two_metafield
+  endif
+
+  if article_trust_point_three_metafield != blank
+    assign trust_point_three = article_trust_point_three_metafield
+  endif
+
+  assign show_date = true
+  assign show_author = false
+  assign featured_image_block = blank
+  assign title_block = blank
+  assign content_block = blank
+  assign share_block = blank
+
+  for block in section.blocks
+    case block.type
+      when 'featured_image'
+        assign featured_image_block = block
+      when 'title'
+        assign title_block = block
+      when 'content'
+        assign content_block = block
+      when 'share'
+        assign share_block = block
+    endcase
+  endfor
+
+  if title_block != blank
+    assign show_date = title_block.settings.blog_show_date
+    assign show_author = title_block.settings.blog_show_author
+  endif
+-%}
+
+{%- style -%}
+  .article-template__breadcrumbs {
+    margin: 0;
+    color: rgba(var(--color-foreground), 0.7);
+  }
+
+  .article-template__breadcrumbs a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .article-template__kicker {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.18rem;
+    text-transform: uppercase;
+    color: rgba(var(--color-foreground), 0.72);
+  }
+
+  .article-template__subtitle {
+    margin: 0;
+    font-size: 1.7rem;
+    line-height: 1.7;
+    color: rgba(var(--color-foreground), 0.84);
+  }
+
+  .article-template__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem 1.4rem;
+    color: rgba(var(--color-foreground), 0.72);
+  }
+
+  .article-template__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .article-template__cta-row .button,
+  .article-template__spotlight-actions .button,
+  .article-template__related-actions .button,
+  .article-template__rail-card .button {
+    min-width: 16rem;
+  }
+
+  .article-template__trust-strip {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
+
+  .article-template__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1.1rem 1.3rem;
+    border-radius: 1.4rem;
+    background: rgba(var(--color-background), 0.72);
+    border: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  }
+
+  .article-template__trust-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 999px;
+    background: rgba(var(--color-foreground), 0.08);
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .article-template__summary {
+    margin: 0;
+    padding: 1.8rem 2rem;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+    border-radius: 1.6rem;
+    background: rgba(var(--color-background), 0.86);
+  }
+
+  .article-template__summary-title {
+    margin: 0 0 0.8rem;
+    font-size: 1.2rem;
+    letter-spacing: 0.18rem;
+    text-transform: uppercase;
+    color: rgba(var(--color-foreground), 0.7);
+  }
+
+  .article-template__summary-text {
+    margin: 0;
+    font-size: 1.6rem;
+    line-height: 1.75;
+    color: rgba(var(--color-foreground), 0.9);
+  }
+
+  .article-template__tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .article-template__tag-list a {
+    display: inline-flex;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+    text-decoration: none;
+    color: rgb(var(--color-foreground));
+    background: rgb(var(--color-background));
+  }
+
+  .article-template__section-intro {
+    display: grid;
+    gap: 1rem;
+    max-width: 72rem;
+  }
+{%- endstyle -%}
+
+<article class="article-template">
+  {%- for block in section.blocks -%}
+    {%- if block.type == '@app' -%}
+      <div class="page-width page-width--narrow">
+        {% render block %}
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+
+  <section class="article-template__hero page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+    <div class="article-template__hero-shell">
+      <div class="article-template__hero-media"{% if featured_image_block %} {{ featured_image_block.shopify_attributes }}{% endif %}>
+        <div class="article-template__hero-media-card">
+          {%- if article.image -%}
+            <img
+              srcset="
+                {% if article.image.width >= 320 %}{{ article.image | image_url: width: 320 }} 320w,{% endif %}
+                {% if article.image.width >= 550 %}{{ article.image | image_url: width: 550 }} 550w,{% endif %}
+                {% if article.image.width >= 750 %}{{ article.image | image_url: width: 750 }} 750w,{% endif %}
+                {% if article.image.width >= 1100 %}{{ article.image | image_url: width: 1100 }} 1100w,{% endif %}
+                {{ article.image | image_url }} {{ article.image.width }}w
+              "
+              sizes="(min-width: 990px) 32rem, (min-width: 750px) 35vw, calc(100vw - 6rem)"
+              src="{{ article.image | image_url: width: 750 }}"
+              loading="eager"
+              fetchpriority="high"
+              width="{{ article.image.width }}"
+              height="{{ article.image.height }}"
+              alt="{{ article.image.alt | default: article.title | escape }}"
+            >
+          {%- else -%}
+            <div class="article-template__hero-media-fallback">
+              <p class="article-template__kicker">Pureleven journal</p>
+              <h2>{{ blog.title | escape }}</h2>
+              <p>From Kerala soil to your kitchen.</p>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="article-template__hero-copy"{% if title_block %} {{ title_block.shopify_attributes }}{% endif %}>
+        <nav class="article-template__breadcrumbs caption-with-letter-spacing" aria-label="Breadcrumb">
+          <a href="{{ routes.root_url }}">Home</a>
+          <span aria-hidden="true"> / </span>
+          <a href="{{ blog.url }}">{{ blog.title | escape }}</a>
+          <span aria-hidden="true"> / </span>
+          <span>{{ article.title | escape }}</span>
+        </nav>
+
+        <p class="article-template__kicker">{{ hero_kicker }}</p>
+        <h1 class="article-template__title">{{ article.title | escape }}</h1>
+
+        <div class="article-template__meta caption-with-letter-spacing">
+          {%- if show_date -%}
+            <span class="circle-divider">{{- article.published_at | time_tag: format: 'date' -}}</span>
+          {%- endif -%}
+          {%- if show_author -%}
+            <span>{{ article.author }}</span>
+          {%- endif -%}
+          <span>{{ article_read_time }} min read</span>
+        </div>
+
+        {%- if featured_product != blank -%}
+          <aside class="article-template__spotlight">
+            <div class="article-template__spotlight-header">
+              <p class="article-template__summary-title">Featured product</p>
+              <a href="{{ collection_cta_url }}" class="article-template__spotlight-link link">{{ collection_cta_label }}</a>
+            </div>
+            <div class="article-template__spotlight-grid">
+              {%- if featured_product.featured_media -%}
+                <a href="{{ featured_product.url }}" class="article-template__spotlight-media">
+                  <img
+                    srcset="
+                      {%- if featured_product.featured_media.width >= 200 -%}{{ featured_product.featured_media | image_url: width: 200 }} 200w,{%- endif -%}
+                      {%- if featured_product.featured_media.width >= 320 -%}{{ featured_product.featured_media | image_url: width: 320 }} 320w,{%- endif -%}
+                      {%- if featured_product.featured_media.width >= 533 -%}{{ featured_product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+                      {{ featured_product.featured_media | image_url }} {{ featured_product.featured_media.width }}w
+                    "
+                    sizes="(min-width: 990px) 11rem, (min-width: 750px) 15vw, 28vw"
+                    src="{{ featured_product.featured_media | image_url: width: 320 }}"
+                    loading="lazy"
+                    width="{{ featured_product.featured_media.width }}"
+                    height="{{ featured_product.featured_media.height }}"
+                    alt="{{ featured_product.featured_media.alt | default: featured_product.title | escape }}"
+                  >
+                </a>
+              {%- endif -%}
+
+              <div class="article-template__spotlight-copy">
+                <h2 class="article-template__spotlight-title">
+                  <a href="{{ featured_product.url }}">{{ featured_product.title | escape }}</a>
+                </h2>
+                <p class="article-template__spotlight-text">{{ spotlight_text }}</p>
+                <ul class="article-template__spotlight-points" role="list">
+                  <li>{{ spotlight_point_one }}</li>
+                  <li>{{ spotlight_point_two }}</li>
+                  <li>{{ spotlight_point_three }}</li>
+                </ul>
+                <div class="article-template__spotlight-price">{% render 'price', product: featured_product, show_compare_at_price: true %}</div>
+                <div class="article-template__spotlight-actions">
+                  <a href="{{ featured_product.url }}" class="button">{{ product_cta_label }}</a>
+                  <a href="{{ routes.all_products_collection_url }}" class="button button--secondary">See all products</a>
+                </div>
+              </div>
+            </div>
+          </aside>
+        {%- endif -%}
+
+        <p class="article-template__subtitle">{{ hero_subtitle }}</p>
+
+        {%- if article_summary != blank -%}
+          <div class="article-template__summary">
+            <p class="article-template__summary-title">Quick Summary</p>
+            <p class="article-template__summary-text">{{ article_summary }}</p>
+          </div>
+        {%- endif -%}
+
+        <div class="article-template__guide-overview" data-article-guide hidden>
+          <div class="article-template__guide-header">
+            <div class="article-template__guide-copy">
+              <p class="article-template__summary-title">Jump through the guide</p>
+              <p class="article-template__guide-description">
+                Go straight to the sections that answer the buying, comparison, or sourcing question you came for.
+              </p>
+            </div>
+            <span class="article-template__guide-meta">{{ article_read_time }} min read</span>
+          </div>
+          <div class="article-template__guide-links" data-article-guide-target="hero"></div>
+        </div>
+
+        {%- if article.tags.size > 0 -%}
+          <ul class="article-template__tag-list" aria-label="Article topics">
+            {%- for tag in article.tags -%}
+              <li>
+                <a href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+
+      <div class="article-template__trust-strip" aria-label="Pureleven trust points">
+        <div class="article-template__trust-item">
+          <span class="article-template__trust-icon">1</span>
+          <span>{{ trust_point_one }}</span>
+        </div>
+        <div class="article-template__trust-item">
+          <span class="article-template__trust-icon">2</span>
+          <span>{{ trust_point_two }}</span>
+        </div>
+        <div class="article-template__trust-item">
+          <span class="article-template__trust-icon">3</span>
+          <span>{{ trust_point_three }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="article-template__content-layout page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+    <div
+      class="article-template__content article-template__content-main rte"
+      {% if content_block %}
+        {{ content_block.shopify_attributes }}
+      {% endif %}
+    >
+      {{ article.content }}
+    </div>
+
+    <aside class="article-template__sticky-rail" aria-label="Article product discovery">
+      <div class="article-template__rail-card article-template__rail-card--guide" data-article-guide hidden>
+        <div class="article-template__rail-header">
+          <p class="article-template__summary-title">In this guide</p>
+          <span class="article-template__guide-meta">{{ article_read_time }} min read</span>
+        </div>
+        <p>
+          Jump straight to the sections that cover comparisons, kitchen use, follow-up reading, and buying shortcuts.
+        </p>
+        <div class="article-template__guide-links" data-article-guide-target="rail"></div>
+      </div>
+
+      <div class="article-template__rail-card article-template__rail-card--shop">
+        <p class="article-template__summary-title">Shop while you read</p>
+        <div class="article-template__mini-products">
+          {%- if featured_product != blank -%}
+            <a class="article-template__mini-product" href="{{ featured_product.url }}">
+              {%- if featured_product.featured_media -%}
+                <span class="article-template__mini-product-media">
+                  <img
+                    src="{{ featured_product.featured_media | image_url: width: 160 }}"
+                    loading="lazy"
+                    width="{{ featured_product.featured_media.width }}"
+                    height="{{ featured_product.featured_media.height }}"
+                    alt="{{ featured_product.featured_media.alt | default: featured_product.title | escape }}"
+                  >
+                </span>
+              {%- endif -%}
+              <span class="article-template__mini-product-copy">
+                <span class="article-template__mini-product-title">{{ featured_product.title | escape }}</span>
+                <span class="article-template__mini-product-price">{{ featured_product.price | money }}</span>
+              </span>
+            </a>
+          {%- endif -%}
+
+          {%- if secondary_product != blank -%}
+            <a class="article-template__mini-product" href="{{ secondary_product.url }}">
+              {%- if secondary_product.featured_media -%}
+                <span class="article-template__mini-product-media">
+                  <img
+                    src="{{ secondary_product.featured_media | image_url: width: 160 }}"
+                    loading="lazy"
+                    width="{{ secondary_product.featured_media.width }}"
+                    height="{{ secondary_product.featured_media.height }}"
+                    alt="{{ secondary_product.featured_media.alt | default: secondary_product.title | escape }}"
+                  >
+                </span>
+              {%- endif -%}
+              <span class="article-template__mini-product-copy">
+                <span class="article-template__mini-product-title">{{ secondary_product.title | escape }}</span>
+                <span class="article-template__mini-product-price">{{ secondary_product.price | money }}</span>
+              </span>
+            </a>
+          {%- endif -%}
+        </div>
+        <a href="{{ routes.all_products_collection_url }}" class="article-template__rail-link link">See all products</a>
+      </div>
+    </aside>
+  </div>
+
+  <section class="article-template__related-products page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+    <div class="article-template__section-intro">
+      <p class="article-template__kicker">Ready to buy?</p>
+      <h2>Related products for this article</h2>
+      <p class="article-template__subtitle">
+        Move from reading intent to shopping intent with product cards tied to this topic and a direct route into the wider catalog.
+      </p>
+    </div>
+
+    <div class="article-template__merch-grid">
+      {%- if featured_product != blank -%}
+        {% render 'article-merch-card', card_product: featured_product, eyebrow: 'Primary pick', supporting_text: spotlight_text, action_label: product_cta_label, layout: 'vertical' %}
+      {%- endif -%}
+      {%- if secondary_product != blank -%}
+        {% render 'article-merch-card', card_product: secondary_product, eyebrow: 'Also consider', action_label: 'View product', layout: 'vertical' %}
+      {%- endif -%}
+      {%- if tertiary_product != blank -%}
+        {% render 'article-merch-card', card_product: tertiary_product, eyebrow: 'Kitchen add-on', action_label: 'View product', layout: 'vertical' %}
+      {%- endif -%}
+    </div>
+
+    <div class="article-template__related-actions">
+      <a href="{{ collection_cta_url }}" class="button">{{ collection_cta_label }}</a>
+      <a href="{{ routes.all_products_collection_url }}" class="button button--secondary">See all products</a>
+    </div>
+  </section>
+
+  {%- capture related_reads_markup -%}
+    {%- assign related_reads_rendered = 0 -%}
+    {%- for related_article in blog.articles -%}
+      {%- if related_article.id == article.id -%}
+        {%- continue -%}
+      {%- endif -%}
+      <div class="article-template__read-card">
+        {%- render 'article-card',
+          blog: blog,
+          article: related_article,
+          media_height: 'small',
+          media_aspect_ratio: related_article.image.aspect_ratio,
+          show_image: true,
+          show_date: true,
+          show_author: false,
+          show_excerpt: true
+        -%}
+      </div>
+      {%- assign related_reads_rendered = related_reads_rendered | plus: 1 -%}
+      {%- if related_reads_rendered == 3 -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- if related_reads_markup != blank -%}
+    <section class="article-template__related-reads page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <div class="article-template__section-intro">
+        <p class="article-template__kicker">Suggested reads</p>
+        <h2>Keep exploring this topic</h2>
+        <p class="article-template__subtitle">
+          Move from this guide into adjacent reads from the same journal, then jump back into the catalog when you are ready to buy.
+        </p>
+      </div>
+
+      <div class="article-template__reads-grid">
+        {{ related_reads_markup }}
+      </div>
+
+      <div class="article-template__related-actions">
+        <a href="{{ collection_cta_url }}" class="button">{{ collection_cta_label }}</a>
+        <a href="{{ blog.url }}" class="button button--secondary">See all {{ blog.title | escape }}</a>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if share_block -%}
+    <div
+      class="article-template__social-sharing page-width page-width--narrow{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+      {{ share_block.shopify_attributes }}
+    >
+      {% assign share_url = request.origin | append: article.url %}
+      {% render 'share-button', block: share_block, share_link: share_url %}
+    </div>
+  {%- endif -%}
+
+  <div class="article-template__back element-margin-top center{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+    <a href="{{ blog.url }}" class="article-template__link link animate-arrow">
+      <span class="icon-wrap">
+        <span class="svg-wrapper">
+          {{- 'icon-arrow.svg' | inline_asset_content -}}
+        </span>
+      </span>
+      {{ 'blogs.article.back_to_blog' | t: title: blog.title | escape }}
+    </a>
+  </div>
+
+  {%- if featured_product != blank -%}
+    <div class="article-template__mobile-bar">
+      <div class="article-template__mobile-bar-copy">
+        <p class="article-template__summary-title">Shop the article product</p>
+        <strong>{{ featured_product.title | escape }}</strong>
+      </div>
+      <a href="{{ featured_product.url }}" class="button">{{ product_cta_label }}</a>
+    </div>
+  {%- endif -%}
+
+  {%- if blog.comments_enabled? -%}
+    <div class="article-template__comment-wrapper background-secondary">
+      <div
+        id="comments"
+        class="page-width page-width--narrow{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+      >
+        {%- if article.comments_count > 0 -%}
+          {%- assign anchorId = '#Comments-' | append: article.id -%}
+
+          <h2 id="Comments-{{ article.id }}" tabindex="-1">
+            {{ 'blogs.article.comments' | t: count: article.comments_count }}
+          </h2>
+          {% paginate article.comments by 5 %}
+            <div class="article-template__comments">
+              {%- if comment.status == 'pending' and comment.content -%}
+                <article id="{{ comment.id }}" class="article-template__comments-comment">
+                  {{ comment.content }}
+                  <footer class="right">
+                    <span class="circle-divider caption-with-letter-spacing">{{ comment.author }}</span>
+                  </footer>
+                </article>
+              {%- endif -%}
+
+              {%- for comment in article.comments -%}
+                <article id="{{ comment.id }}" class="article-template__comments-comment">
+                  {{ comment.content }}
+                  <footer class="right">
+                    <span class="circle-divider caption-with-letter-spacing">{{ comment.author }}</span
+                    ><span class="caption-with-letter-spacing">
+                      {{- comment.created_at | time_tag: format: 'date' -}}
+                    </span>
+                  </footer>
+                </article>
+              {%- endfor -%}
+              {% render 'pagination', paginate: paginate, anchor: anchorId %}
+            </div>
+          {% endpaginate %}
+        {%- endif -%}
+        {% form 'new_comment', article %}
+          {%- liquid
+            assign post_message = 'blogs.article.success'
+            if blog.moderated? and comment.status == 'unapproved'
+              assign post_message = 'blogs.article.success_moderated'
+            endif
+          -%}
+          <h2>{{ 'blogs.article.comment_form_title' | t }}</h2>
+          {%- if form.errors -%}
+            <div class="form__message" role="alert">
+              <h3 class="form-status caption-large text-body" tabindex="-1" autofocus>
+                <span class="svg-wrapper">
+                  {{- 'icon-error.svg' | inline_asset_content -}}
+                </span>
+                {{ 'templates.contact.form.error_heading' | t }}
+              </h3>
+            </div>
+            <ul class="form-status-list caption-large">
+              {%- for field in form.errors -%}
+                <li>
+                  <a href="#CommentForm-{{ field }}" class="link">
+                    {%- if form.errors.translated_fields[field] contains 'author' -%}
+                      {{ 'blogs.article.name' | t }}
+                    {%- elsif form.errors.translated_fields[field] contains 'body' -%}
+                      {{ 'blogs.article.message' | t }}
+                    {%- else -%}
+                      {{ form.errors.translated_fields[field] }}
+                    {%- endif -%}
+                    {{ form.errors.messages[field] }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- elsif form.posted_successfully? -%}
+            <div class="form-status-list form__message" role="status">
+              <h3 class="form-status" tabindex="-1" autofocus>
+                <span class="svg-wrapper">
+                  {{- 'icon-success.svg' | inline_asset_content -}}
+                </span>
+                {{ post_message | t }}
+              </h3>
+            </div>
+          {%- endif -%}
+
+          <div
+            {% if blog.moderated? == false %}
+              class="article-template__comments-fields"
+            {% endif %}
+          >
+            <div class="article-template__comment-fields">
+              <div class="field field--with-error">
+                <input
+                  type="text"
+                  name="comment[author]"
+                  id="CommentForm-author"
+                  class="field__input"
+                  autocomplete="name"
+                  value="{{ form.author }}"
+                  aria-required="true"
+                  required
+                  {% if form.errors contains 'author' %}
+                    aria-invalid="true"
+                    aria-describedby="CommentForm-author-error"
+                  {% endif %}
+                  placeholder="{{ 'blogs.article.name' | t }}"
+                >
+                <label class="field__label" for="CommentForm-author">
+                  {{- 'blogs.article.name' | t }}
+                  <span aria-hidden="true">*</span></label
+                >
+                {%- if form.errors contains 'author' -%}
+                  <small id="CommentForm-author-error">
+                    <span class="form__message">
+                      <span class="svg-wrapper">
+                        {{- 'icon-error.svg' | inline_asset_content -}}
+                      </span>
+                      {{- 'blogs.article.name' | t }}
+                      {{ form.errors.messages.author }}.</span
+                    >
+                  </small>
+                {%- endif -%}
+              </div>
+              <div class="field field--with-error">
+                <input
+                  type="email"
+                  name="comment[email]"
+                  id="CommentForm-email"
+                  autocomplete="email"
+                  class="field__input"
+                  value="{{ form.email }}"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  aria-required="true"
+                  required
+                  {% if form.errors contains 'email' %}
+                    aria-invalid="true"
+                    aria-describedby="CommentForm-email-error"
+                  {% endif %}
+                  placeholder="{{ 'blogs.article.email' | t }}"
+                >
+                <label class="field__label" for="CommentForm-email">
+                  {{- 'blogs.article.email' | t }}
+                  <span aria-hidden="true">*</span></label
+                >
+                {%- if form.errors contains 'email' -%}
+                  <small id="CommentForm-email-error">
+                    <span class="form__message">
+                      <span class="svg-wrapper">
+                        {{- 'icon-error.svg' | inline_asset_content -}}
+                      </span>
+                      {{- 'blogs.article.email' | t }}
+                      {{ form.errors.messages.email }}.</span
+                    >
+                  </small>
+                {%- endif -%}
+              </div>
+            </div>
+            <div class="field field--with-error">
+              <textarea
+                rows="5"
+                name="comment[body]"
+                id="CommentForm-body"
+                class="text-area field__input"
+                aria-required="true"
+                required
+                {% if form.errors contains 'body' %}
+                  aria-invalid="true"
+                  aria-describedby="CommentForm-body-error"
+                {% endif %}
+                placeholder="{{ 'blogs.article.message' | t }}"
+              >{{ form.body }}</textarea>
+              <label class="form__label field__label" for="CommentForm-body">
+                {{- 'blogs.article.message' | t }}
+                <span aria-hidden="true">*</span></label
+              >
+            </div>
+            {%- if form.errors contains 'body' -%}
+              <small id="CommentForm-body-error">
+                <span class="form__message">
+                  <span class="svg-wrapper">
+                    {{- 'icon-error.svg' | inline_asset_content -}}
+                  </span>
+                  {{- 'blogs.article.message' | t }}
+                  {{ form.errors.messages.body }}.</span
+                >
+              </small>
+            {%- endif -%}
+          </div>
+          {%- if blog.moderated? -%}
+            <p class="article-template__comment-warning caption">{{ 'blogs.article.moderated' | t }}</p>
+          {%- endif -%}
+          <input type="submit" class="button" value="{{ 'blogs.article.post' | t }}">
+        {% endform %}
+      </div>
+    </div>
+  {%- endif -%}
+</article>
+
+<script>
+  (() => {
+    const root = document.querySelector('.article-template');
+    if (!root) return;
+
+    const content = root.querySelector('.article-template__content');
+    const guideBlocks = root.querySelectorAll('[data-article-guide]');
+    const guideTargets = root.querySelectorAll('[data-article-guide-target]');
+
+    if (!content || guideTargets.length === 0) {
+      guideBlocks.forEach((block) => {
+        block.hidden = true;
+      });
+      return;
+    }
+
+    const headings = [...content.querySelectorAll('h2')]
+      .map((heading) => ({
+        element: heading,
+        text: heading.textContent ? heading.textContent.trim() : '',
+      }))
+      .filter((heading) => heading.text !== '')
+      .slice(0, 6);
+
+    if (headings.length < 2) {
+      guideBlocks.forEach((block) => {
+        block.hidden = true;
+      });
+      return;
+    }
+
+    const assignedIds = new Set();
+    const slugify = (value) =>
+      value
+        .toLowerCase()
+        .replace(/&/g, 'and')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    const preparedHeadings = headings.map(({ element, text }, index) => {
+      let id = element.id || `article-section-${index + 1}-${slugify(text)}`;
+
+      if (!id || id === `article-section-${index + 1}-`) {
+        id = `article-section-${index + 1}`;
+      }
+
+      while (assignedIds.has(id)) {
+        id = `${id}-${index + 1}`;
+      }
+
+      assignedIds.add(id);
+      element.id = id;
+
+      return { id, text };
+    });
+
+    guideTargets.forEach((target) => {
+      const list = document.createElement('ul');
+      list.className = 'article-template__guide-list';
+
+      if (target.dataset.articleGuideTarget === 'rail') {
+        list.classList.add('article-template__guide-list--stacked');
+      }
+
+      preparedHeadings.forEach(({ id, text }, index) => {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+
+        link.href = `#${id}`;
+        link.className = 'article-template__guide-link';
+
+        if (target.dataset.articleGuideTarget === 'rail') {
+          const indexBadge = document.createElement('span');
+          indexBadge.className = 'article-template__guide-link-index';
+          indexBadge.textContent = `${index + 1}`;
+          link.append(indexBadge);
+        }
+
+        const label = document.createElement('span');
+        label.textContent = text;
+        link.append(label);
+        item.append(link);
+        list.append(item);
+      });
+
+      target.replaceChildren(list);
+    });
+
+    guideBlocks.forEach((block) => {
+      block.hidden = false;
+    });
+  })();
+</script>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": {{ article.title | strip | json }},
+    "description": {{ article_summary | json }},
+    "articleBody": {{ article_word_count_source | json }},
+    "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "mainEntityOfPage": {{ article_current_url | json }},
+    "isPartOf": {
+      "@type": "Blog",
+      "name": {{ blog.title | strip | json }},
+      "url": {{ article_blog_url | json }}
+    },
+    "author": {
+      "@type": "Person",
+      "name": {{ article.author | json }}
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": {{ shop.name | json }}{% if settings.logo != blank %},
+      "logo": {
+        "@type": "ImageObject",
+        "url": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }}
+      }{% endif %}
+    }{% if article.image != blank %},
+    "image": {{ article.image | image_url: width: 1600 | prepend: 'https:' | json }}{% endif %}
+  }
+</script>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ article_home_url | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+          "name": {{ blog.title | strip | json }},
+          "item": {{ article_blog_url | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ article.title | strip | json }},
+        "item": {{ article_current_url | json }}
+      }
+    ]
+  }
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-article.name",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "featured_image",
+      "name": "t:sections.main-article.blocks.featured_image.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "image_height",
+          "options": [
+            {
+              "value": "adapt",
+              "label": "t:sections.main-article.blocks.featured_image.settings.image_height.options__1.label"
+            },
+            {
+              "value": "small",
+              "label": "t:sections.main-article.blocks.featured_image.settings.image_height.options__2.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.main-article.blocks.featured_image.settings.image_height.options__3.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.main-article.blocks.featured_image.settings.image_height.options__4.label"
+            }
+          ],
+          "default": "adapt",
+          "label": "t:sections.main-article.blocks.featured_image.settings.image_height.label"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "t:sections.main-article.blocks.title.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "blog_show_date",
+          "default": true,
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_date.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_show_author",
+          "default": false,
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_author.label"
+        }
+      ]
+    },
+    {
+      "type": "content",
+      "name": "t:sections.main-article.blocks.content.name",
+      "limit": 1
+    },
+    {
+      "type": "share",
+      "name": "t:sections.main-article.blocks.share.name",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "share_label",
+          "label": "t:sections.main-article.blocks.share.settings.text.label",
+          "default": "t:sections.main-article.blocks.share.settings.text.default"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

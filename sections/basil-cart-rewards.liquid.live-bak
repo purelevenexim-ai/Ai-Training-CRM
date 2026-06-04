@@ -1,0 +1,253 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign free_delivery_threshold_rupees = settings.basil_cart_free_delivery_threshold | default: 649 | plus: 0
+  assign free_gift_threshold_rupees = settings.basil_cart_gift_threshold | default: 1449 | plus: 0
+  assign mid_threshold_rupees = settings.basil_cart_mid_threshold | default: 999 | plus: 0
+  assign top_threshold_rupees = settings.basil_cart_top_threshold | default: 1999 | plus: 0
+  assign mid_discount = settings.basil_cart_mid_discount | default: 100 | plus: 0
+  assign gift_discount = settings.basil_cart_gift_discount | default: 200 | plus: 0
+  assign top_discount = settings.basil_cart_top_discount | default: 400 | plus: 0
+  assign free_delivery_threshold = free_delivery_threshold_rupees | times: 100
+  assign mid_threshold = mid_threshold_rupees | times: 100
+  assign free_gift_threshold = free_gift_threshold_rupees | times: 100
+  assign top_threshold = top_threshold_rupees | times: 100
+  assign cart_total = cart.total_price
+  assign free_delivery_remaining = free_delivery_threshold | minus: cart_total
+  assign mid_remaining = mid_threshold | minus: cart_total
+  assign free_gift_remaining = free_gift_threshold | minus: cart_total
+  assign top_remaining = top_threshold | minus: cart_total
+  assign free_delivery_unlocked = false
+  assign mid_unlocked = false
+  assign free_gift_unlocked = false
+  assign top_unlocked = false
+  assign recommendation_collection = collections['products']
+  assign recommendation_count = 0
+
+  if recommendation_collection == blank
+    assign recommendation_collection = collections['all']
+  endif
+
+  if free_delivery_remaining < 0
+    assign free_delivery_remaining = 0
+  endif
+  if mid_remaining < 0
+    assign mid_remaining = 0
+  endif
+  if free_gift_remaining < 0
+    assign free_gift_remaining = 0
+  endif
+  if top_remaining < 0
+    assign top_remaining = 0
+  endif
+
+  if cart_total >= free_delivery_threshold
+    assign free_delivery_unlocked = true
+  endif
+  if cart_total >= mid_threshold
+    assign mid_unlocked = true
+  endif
+  if cart_total >= free_gift_threshold
+    assign free_gift_unlocked = true
+  endif
+  if cart_total >= top_threshold
+    assign top_unlocked = true
+  endif
+
+  comment
+    Determine next gap — the rupee amount remaining to the very next milestone
+    and produce the heading accordingly
+  endcomment
+
+  if top_unlocked
+    assign upsell_heading = settings.basil_cart_complete_upsell_heading | default: 'Add more and save more free gifts'
+    assign upsell_badge = ''
+    assign gap_threshold = 0
+  elsif free_gift_unlocked
+    assign gap_remaining = top_remaining | divided_by: 100
+    assign upsell_heading = 'Add one of these to unlock ₹' | append: top_discount | append: ' OFF'
+    assign upsell_badge = 'Only ₹' | append: gap_remaining | append: ' more!'
+    assign gap_threshold = top_threshold
+  elsif mid_unlocked
+    assign gap_remaining = free_gift_remaining | divided_by: 100
+    assign upsell_heading = 'Add one of these to unlock ₹' | append: gift_discount | append: ' OFF'
+    assign upsell_badge = 'Only ₹' | append: gap_remaining | append: ' more!'
+    assign gap_threshold = free_gift_threshold
+  elsif free_delivery_unlocked
+    assign gap_remaining = mid_remaining | divided_by: 100
+    assign upsell_heading = 'Add one of these to unlock ₹' | append: mid_discount | append: ' OFF'
+    assign upsell_badge = 'Only ₹' | append: gap_remaining | append: ' more!'
+    assign gap_threshold = mid_threshold
+  else
+    assign gap_remaining = free_delivery_remaining | divided_by: 100
+    assign upsell_heading = 'Add one of these to unlock FREE SHIPPING'
+    assign upsell_badge = 'Only ₹' | append: gap_remaining | append: ' more!'
+    assign gap_threshold = free_delivery_threshold
+  endif
+
+  comment
+    Gap filter: show products priced at or below the gap + 30% buffer
+    When all rewards are unlocked, show everything not in cart
+  endcomment
+  assign gap_buffer = gap_threshold | times: 130 | divided_by: 100
+-%}
+
+{%- if cart != empty -%}
+  <section class="section-{{ section.id }}-padding basil-upsell-section" data-basil-cart-upsells>
+    <div class="page-width">
+      <div class="basil-upsell-section__header">
+        <div class="basil-upsell-section__heading-row">
+          <span class="basil-upsell-section__icon" aria-hidden="true">🎁</span>
+          <h2 class="basil-upsell-section__heading">{{ upsell_heading }}</h2>
+        </div>
+        {%- unless upsell_badge == blank or top_unlocked -%}
+          <span class="basil-upsell-section__badge">{{ upsell_badge }}</span>
+        {%- endunless -%}
+      </div>
+
+      <div class="basil-upsell-strip" role="list" aria-label="Suggested add-ons">
+        {%- if recommendation_collection != blank and recommendation_collection.products_count > 0 -%}
+          {%- for product in recommendation_collection.products -%}
+            {%- assign product_in_cart = false -%}
+            {%- for item in cart.items -%}
+              {%- if item.product_id == product.id -%}
+                {%- assign product_in_cart = true -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- assign variant = product.selected_or_first_available_variant -%}
+            {%- assign show_product = false -%}
+
+            {%- if product_in_cart == false and product.available and variant != blank -%}
+              {%- if free_gift_unlocked -%}
+                {%- assign show_product = true -%}
+              {%- elsif variant.price <= gap_buffer -%}
+                {%- assign show_product = true -%}
+              {%- endif -%}
+            {%- endif -%}
+
+            {%- if show_product -%}
+              {%- assign recommendation_count = recommendation_count | plus: 1 -%}
+              <article class="basil-upsell-card" role="listitem">
+                <a href="{{ product.url }}" class="basil-upsell-card__img-link" tabindex="-1" aria-hidden="true">
+                  {%- if product.featured_image -%}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 180 }}"
+                      alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                      loading="lazy"
+                      width="90"
+                      height="90"
+                    >
+                  {%- endif -%}
+                </a>
+                <div class="basil-upsell-card__body">
+                  <a href="{{ product.url }}" class="basil-upsell-card__name">{{ product.title | escape }}</a>
+                  {%- if variant.title != 'Default Title' -%}
+                    <span class="basil-upsell-card__variant">{{ variant.title }}</span>
+                  {%- endif -%}
+                  <span class="basil-upsell-card__price">{{ variant.price | money_without_trailing_zeros }}</span>
+                  {%- if free_gift_unlocked == false and variant.price <= gap_threshold -%}
+                    <span class="basil-upsell-card__fit-tag">Good fit</span>
+                  {%- endif -%}
+                </div>
+                <div class="basil-upsell-card__cta">
+                  {% form 'product', product, class: 'basil-upsell-card__form' %}
+                    <input type="hidden" name="id" value="{{ variant.id }}">
+                    <button type="submit" class="basil-upsell-card__add">Add <span aria-hidden="true">+</span></button>
+                  {% endform %}
+                </div>
+              </article>
+
+              {%- if recommendation_count >= 6 -%}{%- break -%}{%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- if recommendation_count == 0 -%}
+          <div class="basil-upsell-strip__empty">
+            <a href="{{ routes.all_products_collection_url }}" class="button button--secondary">Browse more products</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var root = document.querySelector('[data-basil-cart-upsells]');
+      if (!root || root.dataset.basilInitialized === 'true') return;
+      root.dataset.basilInitialized = 'true';
+
+      root.querySelectorAll('.basil-upsell-card__form').forEach(function (form) {
+        form.addEventListener('submit', async function (event) {
+          event.preventDefault();
+          var submit = form.querySelector('button[type="submit"]');
+          if (!submit) return;
+          submit.disabled = true;
+          try {
+            var response = await fetch('/cart/add.js', {
+              method: 'POST',
+              body: new FormData(form),
+              headers: { Accept: 'application/json' }
+            });
+            if (!response.ok) throw new Error('add failed');
+            window.location.reload();
+          } catch (error) {
+            submit.disabled = false;
+          }
+        });
+      });
+    });
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Basil cart rewards",
+  "class": "basil-cart-rewards-section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "Basil cart rewards"
+    }
+  ]
+}
+{% endschema %}

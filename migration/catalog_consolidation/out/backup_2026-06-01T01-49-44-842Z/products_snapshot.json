@@ -1,0 +1,1100 @@
+{
+  "products": {
+    "nodes": [
+      {
+        "id": "gid://shopify/Product/9887203787045",
+        "title": "Kerala Black Pepper - 100gm",
+        "handle": "kerala-black-pepper-100gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12353966407973",
+            "name": "100gm",
+            "values": [
+              "Black Pepper 100gm"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641846870309",
+              "title": "Home page",
+              "handle": "frontpage"
+            },
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            },
+            {
+              "id": "gid://shopify/Collection/642675900709",
+              "title": "Spiciest Black Pepper",
+              "handle": "spiciest-black-pepper"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/50618616086821",
+              "title": "Black Pepper 100gm",
+              "price": "180.00",
+              "compareAtPrice": null,
+              "barcode": "",
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "100gm",
+                  "value": "Black Pepper 100gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/52659079905573",
+                "sku": "",
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0.1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9887209783589",
+        "title": "Kerala Cardamom",
+        "handle": "kerala-cardamom-50gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12414098211109",
+            "name": "Size",
+            "values": [
+              "50gm"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            },
+            {
+              "id": "gid://shopify/Collection/642675867941",
+              "title": "Export Quality Cardamom",
+              "handle": "export-quality-cardamom"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52432630317349",
+              "title": "50gm",
+              "price": "240.00",
+              "compareAtPrice": "299.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Size",
+                  "value": "50gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506656563493",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9906763989285",
+        "title": "Kerala Cardamom 8mm - 200gm",
+        "handle": "kerala-cardamom-8mm-200gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12404972552485",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/642675867941",
+              "title": "Export Quality Cardamom",
+              "handle": "export-quality-cardamom"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/50716970189093",
+              "title": "Default Title",
+              "price": "849.00",
+              "compareAtPrice": "1200.00",
+              "barcode": "",
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/52758161260837",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0.2
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9906766938405",
+        "title": "Kerala Cardamom 8mm Fruit - 100gm",
+        "handle": "kerala-cardamom-8mm-fruit-100gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12401309778213",
+            "name": "Title",
+            "values": [
+              "100gm",
+              "200gm"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            },
+            {
+              "id": "gid://shopify/Collection/642675867941",
+              "title": "Export Quality Cardamom",
+              "handle": "export-quality-cardamom"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52432633266469",
+              "title": "100gm",
+              "price": "449.00",
+              "compareAtPrice": "650.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "100gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506659676453",
+                "sku": "CA100",
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            },
+            {
+              "id": "gid://shopify/ProductVariant/52432633299237",
+              "title": "200gm",
+              "price": "449.00",
+              "compareAtPrice": "650.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "200gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506659709221",
+                "sku": "CA100-200GM",
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9906767921445",
+        "title": "Kerala Cardamom - 500gm",
+        "handle": "kerala-cardamom-500gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12414216569125",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/50717003284773",
+              "title": "Default Title",
+              "price": "1710.00",
+              "compareAtPrice": "2090.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/52758194553125",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0.05
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9906769658149",
+        "title": "Kerala Black Pepper",
+        "handle": "kerala-black-pepper-200gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12401309876517",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641846870309",
+              "title": "Home page",
+              "handle": "frontpage"
+            },
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            },
+            {
+              "id": "gid://shopify/Collection/642675900709",
+              "title": "Spiciest Black Pepper",
+              "handle": "spiciest-black-pepper"
+            },
+            {
+              "id": "gid://shopify/Collection/644657381669",
+              "title": "Products for cart Push",
+              "handle": "products-for-cart-push"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52432703586597",
+              "title": "Default Title",
+              "price": "349.00",
+              "compareAtPrice": "440.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506732618021",
+                "sku": "BP200",
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9906771329317",
+        "title": "Kerala Black Pepper - 300gm",
+        "handle": "kerala-black-pepper-300gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12404993196325",
+            "name": "Title",
+            "values": [
+              "300gm",
+              "200gm"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641846870309",
+              "title": "Home page",
+              "handle": "frontpage"
+            },
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            },
+            {
+              "id": "gid://shopify/Collection/642675900709",
+              "title": "Spiciest Black Pepper",
+              "handle": "spiciest-black-pepper"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52432633823525",
+              "title": "300gm",
+              "price": "449.00",
+              "compareAtPrice": "760.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "300gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506660069669",
+                "sku": "BP350",
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            },
+            {
+              "id": "gid://shopify/ProductVariant/52432633856293",
+              "title": "200gm",
+              "price": "449.00",
+              "compareAtPrice": "760.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "200gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506660102437",
+                "sku": "BP350-200GM",
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9906774147365",
+        "title": "Kerala Black Pepper - 500gm",
+        "handle": "kerala-black-pepper-500gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12404995621157",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641846870309",
+              "title": "Home page",
+              "handle": "frontpage"
+            },
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            },
+            {
+              "id": "gid://shopify/Collection/642675900709",
+              "title": "Spiciest Black Pepper",
+              "handle": "spiciest-black-pepper"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/50717061284133",
+              "title": "Default Title",
+              "price": "620.00",
+              "compareAtPrice": "800.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "DENY",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/52758252618021",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0.5
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9908816347429",
+        "title": "Kerala Adimali Clove",
+        "handle": "kerala-clove-100gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12383887753509",
+            "name": "Size",
+            "values": [
+              "100gm"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            },
+            {
+              "id": "gid://shopify/Collection/642757591333",
+              "title": "cloves",
+              "handle": "cloves"
+            },
+            {
+              "id": "gid://shopify/Collection/644657381669",
+              "title": "Products for cart Push",
+              "handle": "products-for-cart-push"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52432634216741",
+              "title": "100gm",
+              "price": "260.00",
+              "compareAtPrice": "380.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Size",
+                  "value": "100gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506660462885",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9908816740645",
+        "title": "Kerala Adimali Clove -200gm",
+        "handle": "kerala-clove-200gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12383888212261",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/641942192421",
+              "title": "Products",
+              "handle": "products"
+            },
+            {
+              "id": "gid://shopify/Collection/642757591333",
+              "title": "cloves",
+              "handle": "cloves"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/50728047116581",
+              "title": "Default Title",
+              "price": "420.00",
+              "compareAtPrice": "760.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/52769330659621",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0.2
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9921827242277",
+        "title": "Kerala White Pepper",
+        "handle": "kerala-white-pepper-100gm",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12401306763557",
+            "name": "Size",
+            "values": [
+              "100gm",
+              "200gm"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/642675900709",
+              "title": "Spiciest Black Pepper",
+              "handle": "spiciest-black-pepper"
+            },
+            {
+              "id": "gid://shopify/Collection/644657381669",
+              "title": "Products for cart Push",
+              "handle": "products-for-cart-push"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52432634315045",
+              "title": "100gm",
+              "price": "225.00",
+              "compareAtPrice": "349.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Size",
+                  "value": "100gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506660561189",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            },
+            {
+              "id": "gid://shopify/ProductVariant/52432634347813",
+              "title": "200gm",
+              "price": "225.00",
+              "compareAtPrice": "349.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Size",
+                  "value": "200gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506660593957",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9929469919525",
+        "title": "Cardamom (50g), Black Pepper (100g) & Clove (100g) – 3-in-1 Spice Combo Pack",
+        "handle": "cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12409462227237",
+            "name": "Title",
+            "values": [
+              "50gm"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/643257663781",
+              "title": "Combo",
+              "handle": "combo"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52432634642725",
+              "title": "50gm",
+              "price": "549.00",
+              "compareAtPrice": "899.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "DENY",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "50gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506660888869",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/9931911627045",
+        "title": "Cardamom (100g), Black Pepper (200g) & Clove (100g) – 3-in-1 Spice Combo Pack",
+        "handle": "cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12412377071909",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/643257663781",
+              "title": "Combo",
+              "handle": "combo"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/50818131394853",
+              "title": "Default Title",
+              "price": "949.00",
+              "compareAtPrice": "1189.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "DENY",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/52860265201957",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0.4
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/10089821667621",
+        "title": "Premium Cassia Cinnamon",
+        "handle": "premium-cassia-cinnamon-100g",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12581440487717",
+            "name": "Size",
+            "values": [
+              "100gm"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/642757591333",
+              "title": "cloves",
+              "handle": "cloves"
+            },
+            {
+              "id": "gid://shopify/Collection/645236064549",
+              "title": "Cinnamon",
+              "handle": "cinnamon"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52432635527461",
+              "title": "100gm",
+              "price": "220.00",
+              "compareAtPrice": "299.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Size",
+                  "value": "100gm"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54506661773605",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/10089836347685",
+        "title": "Premium Cassia Cinnamon - 200gm",
+        "handle": "premium-cassia-cinnamon-200g",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12581456216357",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/642757591333",
+              "title": "cloves",
+              "handle": "cloves"
+            },
+            {
+              "id": "gid://shopify/Collection/645236064549",
+              "title": "Cinnamon",
+              "handle": "cinnamon"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/51155094110501",
+              "title": "Default Title",
+              "price": "349.00",
+              "compareAtPrice": "600.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/53199678996773",
+                "sku": null,
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0.2
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/10089847259429",
+        "title": "Aromatic True Cinnamon (Ceylon)",
+        "handle": "aromatic-true-cinnamon-ceylon",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12581467455781",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/642757591333",
+              "title": "cloves",
+              "handle": "cloves"
+            },
+            {
+              "id": "gid://shopify/Collection/645236064549",
+              "title": "Cinnamon",
+              "handle": "cinnamon"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/52495448604965",
+              "title": "Default Title",
+              "price": "320.00",
+              "compareAtPrice": "480.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/54570254139685",
+                "sku": "5000",
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/Product/10089855844645",
+        "title": "Aromatic True Cinnamon (Ceylon) - 200g",
+        "handle": "aromatic-true-cinnamon-ceylon-200g",
+        "status": "ACTIVE",
+        "options": [
+          {
+            "id": "gid://shopify/ProductOption/12581476499749",
+            "name": "Title",
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "collections": {
+          "nodes": [
+            {
+              "id": "gid://shopify/Collection/642757591333",
+              "title": "cloves",
+              "handle": "cloves"
+            },
+            {
+              "id": "gid://shopify/Collection/645236064549",
+              "title": "Cinnamon",
+              "handle": "cinnamon"
+            }
+          ]
+        },
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/51155118522661",
+              "title": "Default Title",
+              "price": "599.00",
+              "compareAtPrice": "960.00",
+              "barcode": null,
+              "taxable": true,
+              "inventoryPolicy": "CONTINUE",
+              "selectedOptions": [
+                {
+                  "name": "Title",
+                  "value": "Default Title"
+                }
+              ],
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/53199705964837",
+                "sku": "5000",
+                "tracked": true,
+                "measurement": {
+                  "weight": {
+                    "unit": "KILOGRAMS",
+                    "value": 0.2
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

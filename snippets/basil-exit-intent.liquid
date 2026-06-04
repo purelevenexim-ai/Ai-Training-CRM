@@ -1,0 +1,112 @@
+{%- comment -%}
+  snippets/basil-exit-intent.liquid
+  Basil Commerce OS — Exit Intent Recovery Modal
+  Triggered by basil-cart.js: desktop mouseleave-top + mobile visibilitychange.
+  Shows cart items, savings, coupon code, and CTA to complete order.
+{%- endcomment -%}
+
+{%- assign exit_coupon        = settings.basil_exit_coupon_code    | default: 'STAYPL10' -%}
+{%- assign exit_discount_label = settings.basil_exit_discount_label | default: 'Extra 10% OFF' -%}
+
+<div id="basil-exit-overlay" class="basil-exit-overlay" aria-hidden="true"></div>
+
+<div
+  id="basil-exit-modal"
+  class="basil-exit-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Complete your order"
+  aria-hidden="true"
+>
+  <button class="basil-exit-modal__close" type="button" data-basil-exit-close aria-label="Close">✕</button>
+
+  <div class="basil-exit-modal__scarcity">
+    <span>⏳</span>
+    <span>Products in high demand — limited stock remaining</span>
+  </div>
+
+  <h2 class="basil-exit-modal__heading">Wait! Don't miss out 🛒</h2>
+  <p class="basil-exit-modal__sub">Your cart is saved — complete your order now.</p>
+
+  {%- comment -%}── Cart items preview (up to 3) ──{%- endcomment -%}
+  <div class="basil-exit-modal__items">
+    {%- for item in cart.items limit: 3 -%}
+      <div class="basil-exit-item">
+        {%- if item.image -%}
+          <img
+            src="{{ item.image | image_url: width: 80 }}"
+            alt="{{ item.image.alt | escape }}"
+            width="40"
+            height="40"
+            loading="lazy"
+            class="basil-exit-item__img"
+          >
+        {%- endif -%}
+        <div class="basil-exit-item__meta">
+          <span class="basil-exit-item__name">{{ item.product_title | truncate: 30 }}</span>
+          <span class="basil-exit-item__price">{{ item.final_price | money_without_trailing_zeros }} × {{ item.quantity }}</span>
+        </div>
+      </div>
+    {%- endfor -%}
+    {%- if cart.item_count > 3 -%}
+      <p class="basil-exit-modal__more">+{{ cart.item_count | minus: 3 }} more item{{ cart.item_count | minus: 3 | pluralize: '', 's' }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%}── Bill summary ──{%- endcomment -%}
+  <div class="basil-exit-modal__bill">
+    <div class="basil-exit-modal__bill-row">
+      <span>Subtotal ({{ cart.item_count }} item{{ cart.item_count | pluralize: '', 's' }})</span>
+      <span>{{ cart.original_total_price | money_without_trailing_zeros }}</span>
+    </div>
+    {%- if cart.total_discount > 0 -%}
+      <div class="basil-exit-modal__bill-row basil-exit-modal__bill-row--green">
+        <span>You save</span>
+        <span>−{{ cart.total_discount | money_without_trailing_zeros }}</span>
+      </div>
+    {%- endif -%}
+    <div class="basil-exit-modal__bill-row basil-exit-modal__bill-row--total">
+      <span>Total</span>
+      <span>{{ cart.total_price | money_without_trailing_zeros }}</span>
+    </div>
+  </div>
+
+  {%- comment -%}── Coupon offer ──{%- endcomment -%}
+  {%- if exit_coupon != blank -%}
+    <div class="basil-exit-modal__coupon-section">
+      <p class="basil-exit-modal__coupon-label">🎁 Use code for {{ exit_discount_label }}</p>
+      <div class="basil-exit-modal__coupon-row">
+        <div class="basil-exit-modal__coupon-code">{{ exit_coupon }}</div>
+        <button
+          type="button"
+          class="basil-exit-modal__coupon-copy"
+          data-basil-copy="{{ exit_coupon | escape }}"
+          aria-label="Copy coupon code"
+        >Copy</button>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%}── CTAs ──{%- endcomment -%}
+  <div class="basil-exit-modal__actions">
+    <a
+      href="/checkout"
+      class="basil-exit-modal__cta"
+      data-basil-cta="exit-intent-checkout"
+    >
+      <span>🔒</span>
+      <span>Complete Order Now →</span>
+    </a>
+    <button
+      type="button"
+      class="basil-exit-modal__dismiss"
+      data-basil-exit-close
+    >No thanks, exit anyway</button>
+  </div>
+
+  <div class="basil-exit-modal__trust">
+    <span>🔒 Secure</span>
+    <span>🚚 Fast Delivery</span>
+    <span>↩ Easy Returns</span>
+  </div>
+</div>

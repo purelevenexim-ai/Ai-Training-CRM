@@ -1,0 +1,206 @@
+[
+  {
+    "name": "cardamom_product_reply",
+    "message": "cardamom",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*CARDAMOM*",
+      "₹460",
+      "₹3350",
+      "Available",
+      "size     | price"
+    ],
+    "must_not_contain": [
+      "i’ll share the price details below",
+      "how much are you looking for",
+      "size     | price    | delivery"
+    ]
+  },
+  {
+    "name": "cardamom_alias_reply",
+    "message": "elakka",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*CARDAMOM*",
+      "₹460",
+      "₹3350"
+    ]
+  },
+  {
+    "name": "pepper_product_reply",
+    "message": "black pepper",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*BLACK PEPPER*",
+      "₹300",
+      "₹950"
+    ],
+    "must_not_contain": [
+      "yes, we have"
+    ]
+  },
+  {
+    "name": "white_pepper_product_reply",
+    "message": "white pepper undo?",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*WHITE PEPPER*",
+      "₹160",
+      "₹400"
+    ],
+    "must_not_contain": [
+      "*BLACK PEPPER*"
+    ]
+  },
+  {
+    "name": "cinnamon_product_reply",
+    "message": "cinnamon",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*CEYLON CINNAMON*",
+      "₹320",
+      "₹1400"
+    ]
+  },
+  {
+    "name": "clove_product_reply",
+    "message": "clove",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*CLOVE*",
+      "₹180",
+      "₹649"
+    ],
+    "must_not_contain": [
+      "yes, we have clove in stock"
+    ]
+  },
+  {
+    "name": "turmeric_product_reply",
+    "message": "turmeric",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*TURMERIC POWDER*",
+      "₹160",
+      "₹300"
+    ]
+  },
+  {
+    "name": "combo_offer_reply",
+    "message": "combo offer",
+    "expected_intent": "combo",
+    "must_contain": [
+      "*COMBO PACKS*",
+      "Combo Offer 1",
+      "₹560",
+      "₹699",
+      "₹1649"
+    ]
+  },
+  {
+    "name": "multi_product_catalog_reply",
+    "message": "cardamom and pepper rate pls",
+    "expected_intent": "details",
+    "must_contain": [
+      "*CARDAMOM*",
+      "*BLACK PEPPER*"
+    ]
+  },
+  {
+    "name": "complaint_with_product_reply",
+    "message": "I have not received my cardamom order yet",
+    "expected_intent": "complaint",
+    "must_contain": [
+      "support"
+    ],
+    "must_not_contain": [
+      "*CARDAMOM*",
+      "₹460",
+      "₹3350"
+    ]
+  },
+  {
+    "name": "wholesale_reply",
+    "message": "wholesale price for cardamom",
+    "expected_intent": "wholesale",
+    "must_contain": [
+      "product name",
+      "approx quantity",
+      "delivery location"
+    ],
+    "must_not_contain": [
+      "*CARDAMOM*",
+      "₹460",
+      "₹3350"
+    ]
+  },
+  {
+    "name": "manglish_pepper_reply",
+    "message": "kurumulak undo ?",
+    "expected_intent": "availability",
+    "must_contain": [
+      "undu",
+      "*black pepper*",
+      "size     | price"
+    ],
+    "must_not_contain": [
+      "yes, we have",
+      "size     | price    | delivery",
+      "details ayakk"
+    ]
+  },
+  {
+    "name": "cinnamon_delivery_reply",
+    "message": "patta delivery ethra divasam?",
+    "expected_intent": "delivery_time",
+    "must_contain": [
+      "delivery kittum",
+      "pincode"
+    ],
+    "must_not_contain": [
+      "size     | price"
+    ]
+  },
+  {
+    "name": "cinnamon_value_objection_reply",
+    "message": "patta rate kooduthal aanu",
+    "expected_intent": "price_objection",
+    "must_contain": [
+      "*ceylon cinnamon*",
+      "cleaner profile"
+    ]
+  },
+  {
+    "name": "pepper_negation_reply",
+    "message": "kurumulak venda",
+    "expected_intent": "product_negation",
+    "must_contain": [
+      "വേറെ എന്തെങ്കിലും"
+    ],
+    "must_not_contain": [
+      "*BLACK PEPPER*"
+    ]
+  },
+  {
+    "name": "typoed_clove_alias_grampu",
+    "message": "grampu undo?",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*CLOVE*"
+    ],
+    "must_not_contain": [
+      "how much are you looking for"
+    ]
+  },
+  {
+    "name": "typoed_clove_alias_gampoo",
+    "message": "Gampoo undo?",
+    "expected_intent": "availability",
+    "must_contain": [
+      "*CLOVE*"
+    ],
+    "must_not_contain": [
+      "how much are you looking for"
+    ]
+  }
+]

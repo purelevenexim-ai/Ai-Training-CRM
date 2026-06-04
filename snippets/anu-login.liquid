@@ -1,0 +1,178 @@
+{% liquid
+  assign anu_login_should_render = false
+
+  if template.name == 'login' or template.name == 'register' or template.name == 'account' or template.name == 'addresses' or template.name == 'activate_account' or template.name == 'order' or template.name == 'reset_password'
+    assign anu_login_should_render = false
+  else
+    case request.page_type
+      when 'index'
+        assign anu_login_should_render = settings.anu_login_show_on_home
+      when 'product'
+        assign anu_login_should_render = settings.anu_login_show_on_product
+      when 'collection'
+        assign anu_login_should_render = settings.anu_login_show_on_collection
+      when 'cart'
+        assign anu_login_should_render = false
+      when 'article', 'blog'
+        assign anu_login_should_render = settings.anu_login_show_on_content
+      else
+        assign anu_login_should_render = settings.anu_login_show_on_pages
+    endcase
+  endif
+
+  assign anu_login_heading = settings.anu_login_heading | default: 'Unlock 10% OFF'
+  assign anu_login_body = settings.anu_login_body | default: 'Fresh Kerala spices delivered directly from trusted farms.'
+  assign anu_login_button_label = settings.anu_login_button_label | default: 'Reveal My Coupon'
+  assign anu_login_cancel_label = settings.anu_login_cancel_label | default: 'Continue browsing'
+  assign anu_login_coupon_code = settings.anu_login_coupon_code | default: 'PL10OFF'
+  assign anu_login_widget_label = settings.anu_login_widget_label | default: '10% OFF'
+  assign anu_login_shopify_forms_id = settings.anu_login_shopify_forms_id | default: '987882'
+  assign anu_login_initial_stage = 'locked'
+  assign anu_login_force_open = false
+%}
+
+{% capture anu_login_phone_form %}
+  <form id="AnuLoginCustomerForm" class="anu-login__details-form" data-anu-login-phone-form novalidate>
+    <p class="anu-login__unlock-note">Use your phone number to unlock your coupon code.</p>
+
+    <div class="anu-login__field-group">
+      <label class="anu-login__label" for="AnuLoginPhoneField">Phone Number</label>
+      <input
+        class="anu-login__input"
+        id="AnuLoginPhoneField"
+        type="tel"
+        inputmode="numeric"
+        autocomplete="tel"
+        placeholder="Enter your phone number"
+        required
+        data-anu-login-phone
+      >
+    </div>
+
+    <div class="anu-login__panel-actions">
+      <button class="anu-login__submit anu-login__submit--offer" data-anu-login-submit type="submit">{{ anu_login_button_label }}</button>
+      <button class="anu-login__secondary-link" data-anu-login-form-cancel type="button">{{ anu_login_cancel_label }}</button>
+    </div>
+
+    <p class="anu-login__consent-copy">Your number is saved securely in Shopify Forms for this offer and PureLeven updates. No password or payment details needed.</p>
+  </form>
+{% endcapture %}
+
+{% if settings.anu_login_enabled and anu_login_should_render %}
+  <div
+    class="anu-login"
+    data-anu-login-root
+    data-mobile-only="{{ settings.anu_login_mobile_only }}"
+    data-show-widget="{{ settings.anu_login_show_widget }}"
+    data-trigger-mode="{{ settings.anu_login_trigger_mode }}"
+    data-delay-seconds="{{ settings.anu_login_delay_seconds }}"
+    data-scroll-percent="{{ settings.anu_login_scroll_percent }}"
+    data-cooldown-hours="{{ settings.anu_login_cooldown_hours }}"
+    data-coupon-code="{{ anu_login_coupon_code | escape }}"
+    data-initial-stage="{{ anu_login_initial_stage }}"
+    data-force-open="{{ anu_login_force_open }}"
+    data-redirect-url="{{ routes.collections_url | default: '/collections' }}"
+    data-shopify-forms-id="{{ anu_login_shopify_forms_id | escape }}"
+  >
+    <div class="anu-login__overlay" data-anu-login-overlay></div>
+
+    <aside
+      class="anu-login__sheet"
+      data-anu-login-sheet
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="AnuLoginTitle"
+      aria-describedby="AnuLoginBody"
+      tabindex="-1"
+    >
+      <div class="anu-login__grabber" aria-hidden="true"></div>
+
+      <button type="button" class="anu-login__close" data-anu-login-close aria-label="Close welcome offer">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <div class="anu-login__sheet-inner">
+        <section class="anu-login__stage" data-anu-login-stage="locked">
+          <div class="anu-login__hero-card anu-login__hero-card--poster">
+            <h2 id="AnuLoginTitle" class="visually-hidden">{{ anu_login_heading }}</h2>
+            <p id="AnuLoginBody" class="visually-hidden">{{ anu_login_body }}</p>
+            <img class="anu-login__hero-poster" src="{{ 'anu-login-hero-giftpack.jpg' | asset_url }}" alt="" loading="eager" width="950" height="560">
+            <span class="anu-login__hero-mascot" aria-hidden="true">
+              <img src="{{ 'anu-login-mascot.jpg' | asset_url }}" alt="" loading="eager" width="420" height="420">
+            </span>
+            <span class="anu-login__spice-motion" aria-hidden="true">
+              <span class="anu-login__cardamom anu-login__cardamom--one"></span>
+              <span class="anu-login__cardamom anu-login__cardamom--two"></span>
+              <span class="anu-login__cardamom anu-login__cardamom--three"></span>
+            </span>
+          </div>
+
+          <div class="anu-login__trust-strip" aria-label="Welcome offer benefits">
+            <div class="anu-login__trust-item">
+              <strong>10% OFF</strong>
+              <span>On your first order</span>
+            </div>
+            <div class="anu-login__trust-item">
+              <strong>Free Shipping</strong>
+              <span>On orders above Rs. 649</span>
+            </div>
+            <div class="anu-login__trust-item">
+              <strong>Trusted Farms</strong>
+              <span>Organic farmer network</span>
+            </div>
+          </div>
+
+          <p class="anu-login__message" id="AnuLoginMessage" data-anu-login-message hidden></p>
+
+          <div class="anu-login__panel-stack">
+            <section class="anu-login__panel" data-anu-login-panel="phone">
+              {{ anu_login_phone_form }}
+            </section>
+          </div>
+        </section>
+
+        <section class="anu-login__stage anu-login__stage--success" data-anu-login-stage="success" hidden>
+          <div class="anu-login__success-art" aria-hidden="true">
+            <span class="anu-login__confetti anu-login__confetti--one"></span>
+            <span class="anu-login__confetti anu-login__confetti--two"></span>
+            <span class="anu-login__confetti anu-login__confetti--three"></span>
+            <svg class="anu-login__success-icon" width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+              <circle cx="64" cy="64" r="42" fill="#0E5C36"/>
+              <path d="M45 64.5L58.5 78L84 51" stroke="#F7F5EE" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <h3 class="anu-login__success-title">Your Offer Is Ready</h3>
+          <p class="anu-login__success-body">Use this code at checkout for 10% OFF on your first order.</p>
+
+          <div class="anu-login__coupon-card">
+            <p class="anu-login__coupon-label">YOUR COUPON CODE</p>
+            <div class="anu-login__coupon-row">
+              <code class="anu-login__coupon" data-anu-login-coupon>{{ anu_login_coupon_code }}</code>
+              <button class="anu-login__copy" data-anu-login-copy type="button">Copy Code</button>
+            </div>
+          </div>
+
+          <button class="anu-login__submit anu-login__submit--continue" data-anu-login-done type="button">Start Shopping</button>
+
+          <p class="anu-login__checkout-note">
+            Your welcome code is ready for checkout. Save
+            <strong>10% OFF</strong>
+            on your first order.
+          </p>
+        </section>
+      </div>
+    </aside>
+
+    <button class="anu-login__widget" data-anu-login-widget type="button" hidden aria-label="Open {{ anu_login_widget_label }} welcome offer">
+      <span class="anu-login__widget-card">
+        <span class="anu-login__widget-art" aria-hidden="true">
+          <img src="{{ 'anu-login-mascot.jpg' | asset_url }}" alt="" loading="lazy" width="420" height="420">
+        </span>
+        <span class="anu-login__widget-copy">
+          <span class="anu-login__widget-pill">{{ anu_login_widget_label }}</span>
+        </span>
+      </span>
+    </button>
+  </div>
+{% endif %}

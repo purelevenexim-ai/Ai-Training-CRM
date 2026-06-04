@@ -1,0 +1,70 @@
+{%- assign upsell_heading = 'Pair with this spice' -%}
+{%- assign upsell_intro = 'Build a sharper kitchen lineup around this product with high-rotation companions and one faster best-seller jump.' -%}
+{%- assign upsell_handles = '' -%}
+
+{%- if product.handle contains 'combo-pack' -%}
+  {%- assign upsell_heading = 'Break the trio into kitchen refills' -%}
+  {%- assign upsell_intro = 'If the bundle sold you on the category, these are the next single-origin refills to keep your cooking lineup coherent.' -%}
+  {%- assign upsell_handles = 'kerala-cardamom-50gm|kerala-black-pepper-200gm|kerala-clove-100gm' -%}
+{%- elsif product.handle contains 'cardamom' -%}
+  {%- assign upsell_handles = 'kerala-black-pepper-200gm|kerala-clove-100gm|cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack' -%}
+{%- elsif product.handle contains 'black-pepper' -%}
+  {%- assign upsell_handles = 'kerala-cardamom-50gm|kerala-clove-100gm|cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack' -%}
+{%- elsif product.handle contains 'clove' -%}
+  {%- assign upsell_handles = 'kerala-cardamom-50gm|kerala-black-pepper-200gm|cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack' -%}
+{%- elsif product.handle contains 'white-pepper' -%}
+  {%- assign upsell_heading = 'Build a more refined pepper shelf' -%}
+  {%- assign upsell_intro = 'White pepper works best when shoppers can compare it against black pepper, cardamom warmth, and a stronger cooking story.' -%}
+  {%- assign upsell_handles = 'kerala-black-pepper-200gm|kerala-cardamom-50gm|kerala-clove-100gm' -%}
+{%- elsif product.handle contains 'cassia' -%}
+  {%- assign upsell_heading = 'Warm spice companions' -%}
+  {%- assign upsell_intro = 'Push the stronger cinnamon profile into a fuller kitchen story with cardamom, clove, and a lighter cinnamon alternative.' -%}
+  {%- assign upsell_handles = 'premium-cassia-cinnamon-200g|kerala-cardamom-50gm|kerala-clove-100gm' -%}
+{%- elsif product.handle contains 'ceylon' or product.handle contains 'cinnamon' -%}
+  {%- assign upsell_heading = 'Refined kitchen pairings' -%}
+  {%- assign upsell_intro = 'Keep the softer cinnamon tone, then balance it with fragrant cardamom and a bolder cassia option for comparison.' -%}
+  {%- assign upsell_handles = 'premium-cassia-cinnamon-100g|kerala-cardamom-50gm|kerala-clove-100gm' -%}
+{%- endif -%}
+
+{%- assign upsell_handle_list = upsell_handles | split: '|' -%}
+{%- assign rendered_count = 0 -%}
+
+<div id="ProductUpsell-{{ section.id }}" class="product-hero-upsell" {{ block.shopify_attributes }}>
+  <div class="product-hero-upsell__header">
+    <p class="product-hero-upsell__eyebrow">Kitchen pairings</p>
+    <div>
+      <h2 class="product-hero-upsell__heading">{{ upsell_heading }}</h2>
+      <p class="product-hero-upsell__intro">{{ upsell_intro }}</p>
+    </div>
+  </div>
+  <div class="product-hero-upsell__grid">
+    {%- assign skip_card_product_styles = false -%}
+    {%- for upsell_handle in upsell_handle_list -%}
+      {%- assign upsell_product = all_products[upsell_handle] -%}
+      {%- if rendered_count < 2 -%}
+        {%- if upsell_product != blank and upsell_product.id != product.id -%}
+          {%- assign rendered_count = rendered_count | plus: 1 -%}
+          <div class="product-hero-upsell__card">
+            {% render 'card-product',
+              card_product: upsell_product,
+              media_aspect_ratio: 'square',
+              show_secondary_image: true,
+              show_vendor: false,
+              show_rating: false,
+              skip_styles: skip_card_product_styles,
+              quick_add: 'standard',
+              section_id: section.id
+            %}
+          </div>
+          {%- assign skip_card_product_styles = true -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+  {%- if rendered_count > 0 -%}
+    <div class="product-hero-upsell__footer">
+      <span>Two simple pairings for a cleaner kitchen build.</span>
+      <a href="{{ routes.all_products_collection_url }}">Shop best sellers</a>
+    </div>
+  {%- endif -%}
+</div>

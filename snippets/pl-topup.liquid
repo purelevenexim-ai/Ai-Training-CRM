@@ -1,0 +1,111 @@
+{% comment %} pl-topup.liquid — Pure Leven Cart v3 — Smart cart-aware recommendations {% endcomment %}
+
+{% assign ship_threshold       = settings.free_shipping_threshold | default: 649 %}
+{% assign ship_threshold_paise = ship_threshold | times: 100 %}
+
+{% comment %} Only render when cart is below free shipping threshold {% endcomment %}
+{% if cart.total_price < ship_threshold_paise %}
+  {% if settings.topup_enabled %}
+    {% assign topup_handle = settings.topup_collection | default: '' %}
+    {% assign topup_limit  = settings.topup_limit | default: 3 %}
+    {% assign topup_coll   = collections[topup_handle] %}
+
+    {% assign ship_rem_rupees = ship_threshold_paise | minus: cart.total_price | divided_by: 100 %}
+
+    {% comment %} Build pipe-delimited cart product ID list for exclusion {% endcomment %}
+    {% assign cart_pid_list = '' %}
+    {% for item in cart.items %}
+      {% assign cart_pid_list = cart_pid_list | append: '|' | append: item.product_id %}
+    {% endfor %}
+
+    {% comment %} Count available products (not already in cart) {% endcomment %}
+    {% assign avail_count = 0 %}
+    {% if topup_coll and topup_coll.products.size > 0 %}
+      {% for p in topup_coll.products limit: 30 %}
+        {% assign pid_str = p.id | prepend: '|' %}
+        {% unless cart_pid_list contains pid_str %}
+          {% assign avail_count = avail_count | plus: 1 %}
+        {% endunless %}
+      {% endfor %}
+    {% endif %}
+
+    {% comment %} Only render section when there are available (un-carted) products {% endcomment %}
+    {% if avail_count > 0 %}
+
+<div class="pl-topup-wrap" id="pl-topup-section">
+  <div class="pl-topup-header">
+    <div class="pl-topup-icon" aria-hidden="true">✨</div>
+    <div>
+      <p class="pl-topup-title">Complete your collection — 10% off</p>
+      <p class="pl-topup-sub">Add ₹{{ ship_rem_rupees }} more to unlock FREE shipping</p>
+    </div>
+  </div>
+
+  <div class="pl-topup-scroll-wrap">
+    <div class="pl-topup-scroll" id="pl-topup-scroll" role="list" aria-label="Suggested items to reach free shipping">
+      {% assign shown = 0 %}
+      {% for p in topup_coll.products limit: 30 %}
+        {% if shown >= topup_limit %}{% break %}{% endif %}
+        {% assign pid_str = p.id | prepend: '|' %}
+        {% unless cart_pid_list contains pid_str %}
+          {% assign discounted_rupees = p.price | times: 90 | divided_by: 100 | divided_by: 100 %}
+          {% assign original_rupees   = p.price | divided_by: 100 %}
+          <div class="pl-topup-card" role="listitem">
+            {% if p.featured_image %}
+              <img class="pl-topup-img"
+                   src="{{ p.featured_image | image_url: width: 88 }}"
+                   alt="{{ p.title | escape }}"
+                   width="44" height="44"
+                   loading="lazy">
+            {% else %}
+              <div class="pl-topup-img" style="display:flex;align-items:center;justify-content:center;font-size:22px;">🌿</div>
+            {% endif %}
+            <div class="pl-topup-info">
+              <p class="pl-topup-name">{{ p.title }}</p>
+              <div class="pl-topup-price-row">
+                <span class="pl-topup-price">₹{{ discounted_rupees }}</span>
+                <span class="pl-topup-was">₹{{ original_rupees }}</span>
+                <span class="pl-topup-disc">10% off</span>
+              </div>
+            </div>
+            <button class="pl-topup-add-btn"
+                    type="button"
+                    aria-label="Add {{ p.title | escape }} to cart at 10% off"
+                    onclick="
+                      const btn = this;
+                      fetch('/cart/add.js', {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({id: {{ p.variants.first.id }}, quantity: 1})
+                      }).then(r => r.json()).then(() => {
+                        btn.textContent = '✓ Added';
+                        btn.disabled = true;
+                        setTimeout(() => location.reload(), 600);
+                      }).catch(() => { btn.textContent = 'Error'; });
+                    ">
+              + Add
+            </button>
+          </div>
+          {% assign shown = shown | plus: 1 %}
+        {% endunless %}
+      {% endfor %}
+    </div>
+    <div class="pl-topup-grad" aria-hidden="true"></div>
+  </div>
+
+  <div class="pl-topup-dots" id="pl-topup-dots" aria-hidden="true">
+    {% assign shown_d = 0 %}
+    {% for p in topup_coll.products limit: 30 %}
+      {% if shown_d >= topup_limit %}{% break %}{% endif %}
+      {% assign pid_str = p.id | prepend: '|' %}
+      {% unless cart_pid_list contains pid_str %}
+        <span class="pl-dot{% if shown_d == 0 %} pl-on{% endif %}"></span>
+        {% assign shown_d = shown_d | plus: 1 %}
+      {% endunless %}
+    {% endfor %}
+  </div>
+</div>
+
+    {% endif %}
+  {% endif %}
+{% endif %}

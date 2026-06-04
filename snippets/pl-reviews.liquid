@@ -1,0 +1,84 @@
+{% comment %} pl-reviews.liquid — Pure Leven Cart {% endcomment %}
+
+{% comment %} Static review data — update via theme settings or metafields in production {% endcomment %}
+{% assign reviews = '
+Priya M.|Kochi|Cardamom|The cardamom is absolutely fresh — you can smell Kerala the moment you open the pack. Best spice I have ordered online.|4A|5|15 Apr 2026|Cardamom Pods 100g
+Ananya S.|Bangalore|Turmeric|Pure quality, no adulterants. My doctor approved it. Will keep ordering!|7B|5|2 May 2026|Turmeric Powder 200g
+Rahul K.|Chennai|Cinnamon|Beautiful aroma. The cinnamon sticks are plump and oily — exactly how they should be.|3R|5|20 May 2026|Ceylon Cinnamon 50g
+' | split: "
+" %}
+
+<div class="pl-reviews-card">
+  <div class="pl-rev-header">
+    <div class="pl-rev-score-block">
+      <div class="pl-rev-stars" aria-label="5 stars">★★★★★</div>
+      <div class="pl-rev-count">What our customers say</div>
+    </div>
+    <a href="/pages/reviews" class="pl-rev-see-all">See all reviews →</a>
+  </div>
+
+  <button class="pl-rev-toggle"
+          type="button"
+          onclick="plToggleReviews(this)"
+          aria-expanded="false">
+    <span class="pl-rev-toggle-label">Read customer reviews</span>
+    <span class="pl-rev-toggle-arr" aria-hidden="true">&#9660;</span>
+  </button>
+
+  <div class="pl-rev-body-wrap" aria-hidden="true">
+    <div class="pl-rev-list">
+
+    {% comment %} Review 1 {% endcomment %}
+    <article class="pl-rev-item">
+      <div class="pl-rev-top">
+        <div class="pl-rev-avatar" style="background:#166534;" aria-hidden="true">P</div>
+        <div>
+          <p class="pl-rev-name">Priya M.</p>
+          <span class="pl-rev-badge">✓ Verified buyer · Kochi</span>
+        </div>
+      </div>
+      <div class="pl-rev-meta">
+        <span class="pl-rev-star" aria-label="5 stars">★★★★★</span>
+        <span class="pl-rev-date">15 Apr 2026</span>
+      </div>
+      <p class="pl-rev-body">The cardamom is absolutely fresh — you can smell Kerala the moment you open the pack. Best spice I have ordered online.</p>
+      <p class="pl-rev-product">Purchased: Cardamom Pods 100g</p>
+    </article>
+
+    {% comment %} Review 2 {% endcomment %}
+    <article class="pl-rev-item">
+      <div class="pl-rev-top">
+        <div class="pl-rev-avatar" style="background:#1e40af;" aria-hidden="true">A</div>
+        <div>
+          <p class="pl-rev-name">Ananya S.</p>
+          <span class="pl-rev-badge">✓ Verified buyer · Bangalore</span>
+        </div>
+      </div>
+      <div class="pl-rev-meta">
+        <span class="pl-rev-star" aria-label="5 stars">★★★★★</span>
+        <span class="pl-rev-date">2 May 2026</span>
+      </div>
+      <p class="pl-rev-body">Pure quality, no adulterants. My doctor approved it. Will keep ordering!</p>
+      <p class="pl-rev-product">Purchased: Turmeric Powder 200g</p>
+    </article>
+
+    {% comment %} Review 3 {% endcomment %}
+    <article class="pl-rev-item">
+      <div class="pl-rev-top">
+        <div class="pl-rev-avatar" style="background:#92400e;" aria-hidden="true">R</div>
+        <div>
+          <p class="pl-rev-name">Rahul K.</p>
+          <span class="pl-rev-badge">✓ Verified buyer · Chennai</span>
+        </div>
+      </div>
+      <div class="pl-rev-meta">
+        <span class="pl-rev-star" aria-label="5 stars">★★★★★</span>
+        <span class="pl-rev-date">20 May 2026</span>
+      </div>
+      <p class="pl-rev-body">Beautiful aroma. The cinnamon sticks are plump and oily — exactly how they should be.</p>
+      <p class="pl-rev-product">Purchased: Ceylon Cinnamon 50g</p>
+    </article>
+
+  </div><!-- /pl-rev-list -->
+  </div><!-- /pl-rev-body-wrap -->
+</div>

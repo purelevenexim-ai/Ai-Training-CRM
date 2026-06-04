@@ -1,0 +1,16 @@
+[Unit]
+Description=Anu Login Backend
+After=network.target
+
+[Service]
+Type=simple
+User=__APP_USER__
+Group=www-data
+WorkingDirectory=__APP_DIR__
+EnvironmentFile=__ENV_FILE__
+ExecStart=__APP_DIR__/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port __PORT__
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

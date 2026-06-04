@@ -1,0 +1,103 @@
+{
+  "name": "02 - Daily Journey Preview",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "55 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-preview",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "baseUrl",
+              "value": "http://127.0.0.1:8000/api"
+            },
+            {
+              "name": "shopDomain",
+              "value": "rwxtic-gz.myshopify.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-preview-config",
+      "name": "Set Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$json.baseUrl + '/journey/orchestrate/preview'}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\"shop_domain\": $json.shopDomain} }}",
+        "options": {}
+      },
+      "id": "preview-call",
+      "name": "Preview Orchestration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        760,
+        260
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Config": {
+      "main": [
+        [
+          {
+            "node": "Preview Orchestration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "versionId": "02-journey-preview-v1",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "id": "02-daily-journey-preview",
+  "tags": []
+}

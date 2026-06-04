@@ -1,0 +1,58 @@
+version: '3.8'
+
+# Self-hosted Plunk for Pureleven lifecycle emails
+# Plunk handles all follow-up emails (D7, D30, D60, cart abandonment)
+
+services:
+  plunk-api:
+    # Official Plunk API service
+    image: plunk/api:latest
+    container_name: pureleven-plunk
+    ports:
+      - "5000:5000"
+    environment:
+      # Database (PostgreSQL on same Docker network)
+      DATABASE_URL: postgresql://pureleven:fw0GVY882X4shqb6RvYH2QNojQYNe67Qz1etGAaBajx8lq18@pureleven-postgres:5432/plunk_db
+      
+      # SMTP Relay (SendGrid as outbound relay)
+      SMTP_HOST: smtp.sendgrid.net
+      SMTP_PORT: 587
+      SMTP_USERNAME: apikey
+      SMTP_PASSWORD: ${SENDGRID_API_KEY}
+      SMTP_FROM: noreply@pureleven.com
+      SMTP_SECURE: "false"
+      
+      # Plunk Config
+      NODE_ENV: production
+      LOG_LEVEL: info
+      API_ENABLED: "true"
+      
+    networks:
+      - pureleven_default  # Same network as postgres
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  plunk-web:
+    # Plunk Web Dashboard
+    image: plunk/web:latest
+    container_name: pureleven-plunk-web
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: http://pureleven-plunk:5000
+    depends_on:
+      - plunk-api
+    networks:
+      - pureleven_default
+    restart: unless-stopped
+
+networks:
+  pureleven_default:
+    external: true  # Use existing network
+
+
+

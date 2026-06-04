@@ -1,0 +1,121 @@
+{
+  "name": "Pureleven AI Ad Review — Daily 6AM",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "cronExpression", "expression": "0 6 * * *"}]
+        }
+      },
+      "name": "Every Day 6 AM IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://pureleven-ai-engine:8000/api/crm/budgets/status",
+        "options": {}
+      },
+      "name": "Get Budget Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://pureleven-ai-engine:8000/api/crm/analytics/roas?days=7",
+        "options": {}
+      },
+      "name": "Get ROAS Last 7 Days",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [460, 440]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://pureleven-ai-engine:8000/api/crm/tracking/status",
+        "options": {}
+      },
+      "name": "Get Tracking Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [460, 580]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"date\": \"{{ $now.format('yyyy-MM-dd') }}\",\n  \"google\": {\n    \"HighIntent_Search\": {\n      \"daily_budget\": {{ $node[\"Get Budget Status\"].json.campaign_plan.google[0].daily_budget_inr }},\n      \"note\": \"Fetch actual spend from Google Ads Dashboard\"\n    },\n    \"Category_Search\": {\n      \"daily_budget\": {{ $node[\"Get Budget Status\"].json.campaign_plan.google[1].daily_budget_inr }},\n      \"note\": \"Fetch actual spend from Google Ads Dashboard\"\n    },\n    \"Brand_PureLeven\": {\n      \"daily_budget\": {{ $node[\"Get Budget Status\"].json.campaign_plan.google[2].daily_budget_inr }},\n      \"note\": \"Fetch actual spend from Google Ads Dashboard\"\n    }\n  },\n  \"meta\": {\n    \"TOF_Video_Cold\": {\n      \"daily_budget\": {{ $node[\"Get Budget Status\"].json.campaign_plan.meta[0].daily_budget_inr }}\n    },\n    \"ProductViewers_Retarget\": {\n      \"daily_budget\": {{ $node[\"Get Budget Status\"].json.campaign_plan.meta[1].daily_budget_inr }}\n    },\n    \"CartAbandon_Recovery\": {\n      \"daily_budget\": {{ $node[\"Get Budget Status\"].json.campaign_plan.meta[2].daily_budget_inr }}\n    },\n    \"CheckoutRecovery\": {\n      \"daily_budget\": {{ $node[\"Get Budget Status\"].json.campaign_plan.meta[3].daily_budget_inr }}\n    }\n  },\n  \"crm\": {\n    \"orders_today\": {{ $node[\"Get Tracking Status\"].json.phase1.orders_today }},\n    \"google_roas_7d\": {{ $node[\"Get ROAS Last 7 Days\"].json.channels[0].roas }},\n    \"meta_roas_7d\": {{ $node[\"Get ROAS Last 7 Days\"].json.channels[1].roas }}\n  }\n}",
+        "options": {}
+      },
+      "name": "Compose Metrics Payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [680, 440]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://pureleven-ai-engine:8000/api/crm/ai-review/trigger",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "metrics": "={{ $json }}",
+          "review_type": "morning"
+        },
+        "options": {}
+      },
+      "name": "Trigger AI Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [900, 440]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "={{ $json.status }}"
+            },
+            {
+              "name": "review_id",
+              "value": "={{ $json.review_id }}"
+            },
+            {
+              "name": "triggered_at",
+              "value": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "name": "Log Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1120, 440]
+    }
+  ],
+  "connections": {
+    "Every Day 6 AM IST": {
+      "main": [
+        [
+          {"node": "Get Budget Status",    "type": "main", "index": 0},
+          {"node": "Get ROAS Last 7 Days", "type": "main", "index": 0},
+          {"node": "Get Tracking Status",  "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Get Budget Status":    {"main": [[{"node": "Compose Metrics Payload", "type": "main", "index": 0}]]},
+    "Get ROAS Last 7 Days": {"main": [[{"node": "Compose Metrics Payload", "type": "main", "index": 0}]]},
+    "Get Tracking Status":  {"main": [[{"node": "Compose Metrics Payload", "type": "main", "index": 0}]]},
+    "Compose Metrics Payload": {"main": [[{"node": "Trigger AI Review",    "type": "main", "index": 0}]]},
+    "Trigger AI Review":       {"main": [[{"node": "Log Result",           "type": "main", "index": 0}]]}
+  },
+  "active": true,
+  "settings": {"executionOrder": "v1"},
+  "tags": ["ai-review", "daily", "pureleven"]
+}

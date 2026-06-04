@@ -1,0 +1,20 @@
+family_key,category,canonical_title,canonical_handle,variant_option_name,target_variants,grade_policy,combo_policy,status
+black_pepper,Whole Spices,Kerala Black Pepper,kerala-black-pepper,Size,"50g|100g|200g",grade_na,not_combo,active
+white_pepper,Whole Spices,Kerala White Pepper,kerala-white-pepper,Size,"50g|100g|200g",grade_na,not_combo,active
+green_cardamom,Whole Spices,Kerala Cardamom,kerala-cardamom,Size,"50g|100g|200g",keep_grades_separate,not_combo,active
+clove,Whole Spices,Kerala Adimali Clove,kerala-adimali-clove,Size,"50g|100g|200g",grade_na,not_combo,active
+ceylon_cinnamon,Whole Spices,Aromatic True Cinnamon (Ceylon),aromatic-true-cinnamon-ceylon,Size,"50g|100g|200g",keep_grades_separate,not_combo,active
+cassia_cinnamon,Whole Spices,Premium Cassia Cinnamon,premium-cassia-cinnamon,Size,"50g|100g|200g",keep_grades_separate,not_combo,active
+kerala_cinnamon_naadan,Whole Spices,Kerala Cinnamon (Naadan),kerala-cinnamon-naadan,Size,"50g|100g|200g",keep_grades_separate,not_combo,planned
+kerala_tamarind,Whole Spices,Kerala Tamarind,kerala-tamarind,Size,"50g|100g|200g",grade_na,not_combo,planned
+star_anise,Whole Spices,Premium Star Anise,premium-star-anise,Size,"50g|100g|200g",grade_na,not_combo,planned
+cardamom_powder,Powders,Cardamom Powder,cardamom-powder,Size,"50g|100g|200g",grade_na,not_combo,planned
+turmeric_powder,Powders,Turmeric Powder,turmeric-powder,Size,"50g|100g|200g",grade_na,not_combo,planned
+chilli_powder,Powders,Chilli Powder,chilli-powder,Size,"50g|100g|200g",grade_na,not_combo,planned
+black_pepper_powder,Powders,Black Pepper Powder,black-pepper-powder,Size,"50g|100g|200g",grade_na,not_combo,planned
+cinnamon_powder,Powders,Cinnamon Powder,cinnamon-powder,Size,"50g|100g|200g",grade_na,not_combo,planned
+wild_honey,Honey,Kerala Wild Honey,kerala-wild-honey,Size,"50g|100g|200g",grade_na,not_combo,planned
+stingless_honey,Honey,Stingless Bee Honey,stingless-bee-honey,Size,"50g|100g|200g",grade_na,not_combo,planned
+coffee_powder,Beverages,Kerala Coffee Powder,kerala-coffee-powder,Size,"50g|100g|200g",grade_na,not_combo,planned
+munnar_tea,Beverages,Munnar Tea,munnar-tea,Size,"50g|100g|200g",grade_na,not_combo,planned
+spice_combo_3in1,Combos,3-in-1 Kerala Spice Combo Pack,kerala-spice-combo-pack,Pack,"50g+100g+100g|100g+200g+100g",grade_na,keep_combo_separate,active

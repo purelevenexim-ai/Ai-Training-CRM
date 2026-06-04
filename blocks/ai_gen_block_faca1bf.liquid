@@ -1,0 +1,261 @@
+{% doc %}
+  @prompt
+    A block with icon saying that top rated, top value pack , 4-6 days delivery
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-features-block-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ block.settings.gap }}px;
+    padding: {{ block.settings.padding }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    justify-content: {{ block.settings.alignment }};
+  }
+
+  .ai-feature-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.icon_text_gap }}px;flex: 1;
+    min-width: 200px;
+  }
+
+  .ai-feature-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    color: {{ block.settings.icon_color }};
+    flex-shrink: 0;
+  }
+
+  .ai-feature-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    font-weight: {{ block.settings.text_weight }};
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-features-block-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .ai-feature-item-{{ ai_gen_id }} {
+      justify-content: center;min-width: auto;
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-features-block-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-feature-item-{{ ai_gen_id }}">
+    <div class="ai-feature-icon-{{ ai_gen_id }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+      </svg>
+    </div>
+    <p class="ai-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_1_text }}</p>
+  </div>
+
+  <div class="ai-feature-item-{{ ai_gen_id }}">
+    <div class="ai-feature-icon-{{ ai_gen_id }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+      </svg>
+    </div>
+    <p class="ai-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_2_text }}</p>
+  </div>
+
+  <div class="ai-feature-item-{{ ai_gen_id }}">
+    <div class="ai-feature-icon-{{ ai_gen_id }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12,6 12,12 16,14"></polyline></svg>
+    </div>
+    <p class="ai-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_3_text }}</p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product features",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "feature_1_text",
+      "label": "Feature 1 text",
+      "default": "Top rated"
+    },
+    {
+      "type": "text",
+      "id": "feature_2_text",
+      "label": "Feature 2 text",
+      "default": "Top value pack"
+    },
+    {
+      "type": "text",
+      "id": "feature_3_text",
+      "label": "Feature 3 text",
+      "default": "4-6 days delivery"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        },
+        {
+          "value": "space-between",
+          "label": "Space between"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between features",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "icon_text_gap",
+      "min": 5,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Gap between icon and text",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Block padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Icon style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#078362"
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Text weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product features"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

@@ -1,0 +1,325 @@
+/* ─────────────────────────────────────────────────────────
+   basil-checkout-otp.css
+   OTP login flow styling for checkout-prep page
+───────────────────────────────────────────────────────── */
+
+.basil-otp-container {
+  background: #fff;
+  border: 1px solid #e0e9e2;
+  border-radius: 12px;
+  padding: 1.6rem;
+  margin-bottom: 1.6rem;
+}
+
+.basil-otp__header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.basil-otp__icon {
+  font-size: 1.8rem;
+}
+
+.basil-otp__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a3a2a;
+  margin: 0;
+}
+
+.basil-otp__subtitle {
+  font-size: 0.95rem;
+  color: #888;
+  margin: 0.4rem 0 0;
+}
+
+/* Phone Input Stage */
+.basil-otp-stage {
+  display: none;
+}
+
+.basil-otp-stage.active {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.basil-otp__phone-group {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.basil-otp__phone-input {
+  flex: 1;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.1s;
+}
+
+.basil-otp__phone-input:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.basil-otp__send-btn {
+  padding: 0.8rem 1.6rem;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+
+.basil-otp__send-btn:hover:not(:disabled) {
+  background: #1b5e20;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+}
+
+.basil-otp__send-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.basil-otp__send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* OTP Input Stage */
+.basil-otp__otp-group {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.basil-otp__digit {
+  width: 3rem;
+  height: 3rem;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a3a2a;
+  transition: all 0.1s;
+}
+
+.basil-otp__digit:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.basil-otp__digit.filled {
+  background: #f0f7f0;
+}
+
+/* OTP Messages */
+.basil-otp__message {
+  font-size: 0.9rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.basil-otp__message.show {
+  display: block;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.basil-otp__message.error {
+  background: #ffebee;
+  color: #c62828;
+  border-left: 3px solid #c62828;
+}
+
+.basil-otp__message.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-left: 3px solid #2e7d32;
+}
+
+.basil-otp__message.info {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-left: 3px solid #1565c0;
+}
+
+/* Resend OTP */
+.basil-otp__resend {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 1rem;
+}
+
+.basil-otp__resend-btn {
+  background: none;
+  border: none;
+  color: #2e7d32;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 600;
+  padding: 0;
+  transition: color 0.1s;
+}
+
+.basil-otp__resend-btn:hover:not(:disabled) {
+  color: #1b5e20;
+}
+
+.basil-otp__resend-btn:disabled {
+  color: #bbb;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* OTP Action Buttons */
+.basil-otp__actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.basil-otp__verify-btn {
+  flex: 1;
+  padding: 0.8rem;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.basil-otp__verify-btn:hover:not(:disabled) {
+  background: #1b5e20;
+}
+
+.basil-otp__verify-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.basil-otp__change-phone {
+  padding: 0.8rem;
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.basil-otp__change-phone:hover {
+  background: #e8e8e8;
+}
+
+/* Timer Display */
+.basil-otp__timer {
+  font-size: 0.85rem;
+  color: #e65100;
+  font-weight: 600;
+  margin-top: 0.6rem;
+}
+
+/* Toggle Button */
+.basil-otp__toggle {
+  background: none;
+  border: none;
+  color: #2e7d32;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0;
+  margin-top: 0.8rem;
+  text-decoration: underline;
+  transition: color 0.1s;
+}
+
+.basil-otp__toggle:hover {
+  color: #1b5e20;
+}
+
+/* Form Method Selection */
+.basil-form-method-toggle {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1.6rem;
+}
+
+.basil-form-method-btn {
+  flex: 1;
+  padding: 0.8rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  color: #666;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.basil-form-method-btn.active {
+  border-color: #2e7d32;
+  background: #f0f7f0;
+  color: #2e7d32;
+}
+
+.basil-form-method-btn:hover {
+  border-color: #2e7d32;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+  .basil-otp-container {
+    padding: 1.2rem;
+  }
+
+  .basil-otp__phone-group {
+    flex-direction: column;
+  }
+
+  .basil-otp__send-btn {
+    width: 100%;
+  }
+
+  .basil-otp__otp-group {
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .basil-otp__digit {
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 1.1rem;
+  }
+
+  .basil-otp__actions {
+    flex-direction: column;
+  }
+
+  .basil-otp__change-phone {
+    width: 100%;
+  }
+}

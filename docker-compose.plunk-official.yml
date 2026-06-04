@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: pureleven-plunk-postgres
+    environment:
+      POSTGRES_USER: plunk
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme123}
+      POSTGRES_DB: plunk
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"  # Different port from main postgres
+    networks:
+      - plunk-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plunk"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Queue
+  redis:
+    image: redis:7-alpine
+    container_name: pureleven-plunk-redis
+    ports:
+      - "6380:6379"
+    networks:
+      - plunk-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Minio S3-Compatible Storage
+  minio:
+    image: minio/minio:latest
+    container_name: pureleven-plunk-minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-plunk}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-plunkminiopass}
+    volumes:
+      - minio-data:/minio_root
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console
+    networks:
+      - plunk-network
+    restart: unless-stopped
+    command: server /minio_root --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Plunk Application (All services)
+  plunk:
+    image: ghcr.io/useplunk/plunk:latest
+    container_name: pureleven-plunk
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      # Service Mode (all = API + Web + SMTP + Worker)
+      SERVICE: all
+
+      # Database
+      DATABASE_URL: postgresql://plunk:${DB_PASSWORD:-changeme123}@postgres:5432/plunk
+      DIRECT_DATABASE_URL: postgresql://plunk:${DB_PASSWORD:-changeme123}@postgres:5432/plunk
+
+      # Redis
+      REDIS_URL: redis://redis:6379
+
+      # JWT Secret
+      JWT_SECRET: ${JWT_SECRET}
+
+      # Domain Configuration
+      API_DOMAIN: ${API_DOMAIN:-api.pureleven.local}
+      DASHBOARD_DOMAIN: ${DASHBOARD_DOMAIN:-app.pureleven.local}
+      LANDING_DOMAIN: ${LANDING_DOMAIN:-www.pureleven.local}
+      WIKI_DOMAIN: ${WIKI_DOMAIN:-docs.pureleven.local}
+      SMTP_DOMAIN: ${SMTP_DOMAIN:-smtp.pureleven.local}
+      USE_HTTPS: ${USE_HTTPS:-false}
+
+      # AWS SES Configuration (for email sending)
+      AWS_SES_REGION: ${AWS_SES_REGION:-us-east-1}
+      AWS_SES_ACCESS_KEY_ID: ${AWS_SES_ACCESS_KEY_ID}
+      AWS_SES_SECRET_ACCESS_KEY: ${AWS_SES_SECRET_ACCESS_KEY}
+      SES_CONFIGURATION_SET: ${SES_CONFIGURATION_SET:-plunk-tracking}
+
+      # Minio/S3 Storage
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-plunk}
+      S3_ACCESS_KEY_SECRET: ${MINIO_ROOT_PASSWORD:-plunkminiopass}
+      S3_BUCKET: plunk
+
+    ports:
+      # Internal Docker network only - no public port 80
+      # API accessed via: http://pureleven-plunk:8080 (from AI-Engine on same Docker network)
+      - "8080:8080"  # API (internal network only)
+      - "3000:3000"  # Web dashboard (internal network only)
+      # SMTP ports for internal email relay:
+      - "465:465"    # SMTP implicit TLS
+      - "587:587"    # SMTP STARTTLS
+    networks:
+      - plunk-network
+    restart: unless-stopped
+    volumes:
+      # Optional: Mount certificates for SMTP TLS
+      # - /etc/letsencrypt/live/smtp.yourdomain.com/privkey.pem:/certs/privkey.pem:ro
+      # - /etc/letsencrypt/live/smtp.yourdomain.com/fullchain.pem:/certs/fullchain.pem:ro
+      - plunk-data:/app/data
+
+volumes:
+  postgres-data:
+  minio-data:
+  plunk-data:
+
+networks:
+  plunk-network:
+    driver: bridge

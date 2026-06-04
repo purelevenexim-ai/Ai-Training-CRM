@@ -1,0 +1,146 @@
+.article-merch-card {
+  display: grid;
+  gap: 1.2rem;
+  height: 100%;
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  border: 0.1rem solid rgba(27, 94, 86, 0.08);
+  background: #ffffff;
+  box-shadow: 0 0.4rem 1.5rem rgba(0, 0, 0, 0.02);
+  color: var(--pl-green-deep);
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.article-merch-card:hover {
+  transform: translateY(-0.2rem);
+  border-color: rgba(27, 94, 86, 0.16);
+  box-shadow: 0 1rem 2.5rem rgba(27, 94, 86, 0.08);
+}
+
+.article-merch-card__media {
+  display: block;
+  overflow: hidden;
+  border-radius: 1.6rem;
+  background: rgba(27, 94, 86, 0.04);
+}
+
+.article-merch-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-merch-card__body {
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+  min-width: 0;
+  padding: 0.4rem 0.4rem 0.2rem;
+}
+
+.article-merch-card__eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.14rem;
+  text-transform: uppercase;
+  color: rgba(27, 58, 48, 0.62);
+}
+
+.article-merch-card__title {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: clamp(1.42rem, 1.28rem + 0.22vw, 1.56rem);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  line-height: 1.35;
+  color: var(--pl-green-deep);
+}
+
+.article-merch-card__text {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1.3rem;
+  line-height: 1.55;
+  color: rgba(27, 58, 48, 0.74);
+}
+
+.article-merch-card__price-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+.article-merch-card__price {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1.36rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--pl-green-deep);
+}
+
+.article-merch-card__price--compare {
+  font-size: 1.18rem;
+  color: rgba(27, 58, 48, 0.58);
+  text-decoration: line-through;
+}
+
+.article-merch-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.article-merch-card__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.4rem;
+  border-radius: 0.8rem;
+  border: 0.1rem solid var(--pl-green);
+  background: transparent;
+  color: var(--pl-green-deep);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1.32rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.article-merch-card__arrow {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: rgba(27, 58, 48, 0.34);
+}
+
+.article-merch-card--vertical .article-merch-card__media {
+  aspect-ratio: 1 / 1;
+}
+
+.article-merch-card--horizontal {
+  grid-template-columns: 10rem minmax(0, 1fr);
+  align-items: start;
+}
+
+.article-merch-card--horizontal .article-merch-card__media {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  align-self: start;
+}
+
+@media screen and (max-width: 749px) {
+  .article-merch-card--horizontal {
+    grid-template-columns: 9rem minmax(0, 1fr);
+  }
+
+  .article-merch-card__body {
+    padding: 0.2rem 0.2rem 0.1rem;
+  }
+}

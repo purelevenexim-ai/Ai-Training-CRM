@@ -1,0 +1,161 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- if cart != empty -%}
+<div class="section-{{ section.id }}-padding basil-trust-section">
+  <div class="page-width">
+
+    {%- comment -%}── Trust badge row ──{%- endcomment -%}
+    <div class="basil-trust-badges" aria-label="Why choose Pureleven">
+      <div class="basil-trust-badge">
+        <span class="basil-trust-badge__icon" aria-hidden="true">🚚</span>
+        <span>Free shipping<br>on orders above ₹{{ settings.basil_cart_free_delivery_threshold | default: 649 }}</span>
+      </div>
+      <div class="basil-trust-badge">
+        <span class="basil-trust-badge__icon" aria-hidden="true">🌿</span>
+        <span>Farm-origin,<br>pure &amp; natural</span>
+      </div>
+      <div class="basil-trust-badge">
+        <span class="basil-trust-badge__icon" aria-hidden="true">🧪</span>
+        <span>No preservatives,<br>100% natural</span>
+      </div>
+      <div class="basil-trust-badge">
+        <span class="basil-trust-badge__icon" aria-hidden="true">🔒</span>
+        <span>Secure &amp; safe<br>payments</span>
+      </div>
+      <div class="basil-trust-badge">
+        <span class="basil-trust-badge__icon" aria-hidden="true">⭐</span>
+        <span>3000+<br>happy kitchens</span>
+      </div>
+    </div>
+
+    {%- comment -%}── Review / Story / Delivery 3-col grid ──{%- endcomment -%}
+    <div class="basil-trust-grid">
+
+      {%- comment -%}Col 1 – Customer review{%- endcomment -%}
+      <div class="basil-trust-grid__col basil-trust-review">
+        <div class="basil-trust-review__stars" aria-label="5 stars">★★★★★</div>
+        <blockquote class="basil-trust-review__quote">
+          "{{ section.settings.review_quote | default: settings.basil_cart_review_quote | default: 'Very fresh aroma compared to supermarket spices. You can feel the difference!' }}"
+        </blockquote>
+        <cite class="basil-trust-review__author">— {{ section.settings.review_author | default: settings.basil_cart_review_author | default: 'Mary, Kochi' }}</cite>
+      </div>
+
+      {%- comment -%}Col 2 – Kerala story steps{%- endcomment -%}
+      <div class="basil-trust-grid__col basil-trust-story">
+        <p class="basil-trust-story__heading">From Kerala Hills<br>To Your Kitchen</p>
+        <div class="basil-trust-story__steps" aria-label="Our process">
+          <div class="basil-trust-story__step">
+            <span class="basil-trust-story__step-icon" aria-hidden="true">🌾</span>
+            <span>Sourced from<br>Kerala Farms</span>
+          </div>
+          <span class="basil-trust-story__arrow" aria-hidden="true">→</span>
+          <div class="basil-trust-story__step">
+            <span class="basil-trust-story__step-icon" aria-hidden="true">📦</span>
+            <span>Small Batch<br>Packing</span>
+          </div>
+          <span class="basil-trust-story__arrow" aria-hidden="true">→</span>
+          <div class="basil-trust-story__step">
+            <span class="basil-trust-story__step-icon" aria-hidden="true">✅</span>
+            <span>Hygienic<br>Processing</span>
+          </div>
+          <span class="basil-trust-story__arrow" aria-hidden="true">→</span>
+          <div class="basil-trust-story__step">
+            <span class="basil-trust-story__step-icon" aria-hidden="true">🚚</span>
+            <span>Delivered<br>Fresh to You</span>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%}Col 3 – Delivery estimate{%- endcomment -%}
+      <div class="basil-trust-grid__col basil-trust-delivery">
+        <p class="basil-trust-delivery__heading">Delivery Estimate</p>
+        <div class="basil-trust-delivery__location">
+          <span aria-hidden="true">📍</span>
+          {{ section.settings.delivery_location | default: settings.basil_cart_delivery_location | default: 'Kochi, Kerala' }}
+        </div>
+        <p class="basil-trust-delivery__days">
+          {{ section.settings.delivery_estimate | default: settings.basil_cart_delivery_estimate | default: '2–3 Days Delivery' }}
+        </p>
+        <p class="basil-trust-delivery__ships">
+          📦 {{ section.settings.delivery_ships_in | default: settings.basil_cart_delivery_ships_in | default: 'Ships within 24 hours' }}
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Basil cart trust",
+  "settings": [
+    {
+      "type": "text",
+      "id": "review_quote",
+      "label": "Review quote",
+      "info": "Overrides global Basil Checkout setting when set."
+    },
+    {
+      "type": "text",
+      "id": "review_author",
+      "label": "Review author"
+    },
+    {
+      "type": "text",
+      "id": "delivery_location",
+      "label": "Delivery location"
+    },
+    {
+      "type": "text",
+      "id": "delivery_estimate",
+      "label": "Delivery estimate"
+    },
+    {
+      "type": "text",
+      "id": "delivery_ships_in",
+      "label": "Ships-in text"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Basil cart trust"
+    }
+  ]
+}
+{% endschema %}

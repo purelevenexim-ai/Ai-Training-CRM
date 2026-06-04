@@ -1,0 +1,55 @@
+{%- assign review_rating = product.metafields.reviews.rating.value -%}
+{%- assign review_count = product.metafields.reviews.rating_count -%}
+
+<div class="product-conversion-panel" {{ block.shopify_attributes }}>
+  <div class="product-conversion-panel__capture">
+    <p class="product-conversion-panel__eyebrow">Keep this on your list</p>
+    <h2 class="product-conversion-panel__heading">Get fresh-lot notes and bundle alerts.</h2>
+    <p class="product-conversion-panel__intro">We will only send useful stock, offer, and spice-care updates for shoppers already considering this product.</p>
+    {% form 'customer', class: 'product-capture-form' %}
+      <input type="hidden" name="contact[tags]" value="product-capture,{{ product.handle }},newsletter">
+      <div class="product-capture-form__row">
+        <input
+          id="ProductCapture-{{ section.id }}-{{ product.id }}"
+          type="email"
+          name="contact[email]"
+          class="product-capture-form__input"
+          value="{{ form.email }}"
+          autocorrect="off"
+          autocapitalize="off"
+          autocomplete="email"
+          placeholder="Email address"
+          required
+        >
+        <button type="submit" class="product-capture-form__button">Notify me</button>
+      </div>
+      {%- if form.errors -%}
+        <small class="product-capture-form__message">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</small>
+      {%- endif -%}
+      {%- if form.posted_successfully? -%}
+        <p class="product-capture-form__success">You are on the list for fresh-lot and bundle updates.</p>
+      {%- endif -%}
+    {% endform %}
+  </div>
+
+  <div class="product-conversion-panel__proof">
+    <p class="product-conversion-panel__eyebrow">Why shoppers trust it</p>
+    {%- if review_rating != blank and review_count != blank -%}
+      <div class="product-conversion-panel__rating">
+        <strong>{{ review_rating }}</strong>
+        <span>/ 5 shopper rating</span>
+        <em>{{ review_count }} buyer reviews.</em>
+      </div>
+    {%- else -%}
+      <div class="product-conversion-panel__rating">
+        <strong>Farm-direct trust</strong>
+        <span>Clear origin, whole-spice quality, and fresher kitchen turnover.</span>
+      </div>
+    {%- endif -%}
+    <ul class="product-conversion-panel__proof-list" role="list">
+      <li>Direct farm sourcing from Kerala spice regions.</li>
+      <li>Whole-spice quality with clean storage guidance.</li>
+      <li>Simple bundles for easier repeat purchases.</li>
+    </ul>
+  </div>
+</div>

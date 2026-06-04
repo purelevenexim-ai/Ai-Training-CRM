@@ -1,0 +1,21 @@
+family_key,canonical_source_handle,target_handle,option_name,target_variant_value,mutation_action,source_handle,source_variant_value,price,compare_at_price,sku,barcode,taxable,inventory_policy,tracked,inventory_available,inventory_location,weight_value,weight_unit,price_source
+ceylon_cinnamon,aromatic-true-cinnamon-ceylon-100g,aromatic-true-cinnamon-ceylon,Size,50g,create,aromatic-true-cinnamon-ceylon-100g,100gm,160.00,240.00,5000,,true,CONTINUE,true,,,50,KILOGRAMS,auto_derived
+ceylon_cinnamon,aromatic-true-cinnamon-ceylon-100g,aromatic-true-cinnamon-ceylon,Size,100g,create,aromatic-true-cinnamon-ceylon-100g,100gm,320.00,480.00,5000,,true,CONTINUE,true,,,100,KILOGRAMS,source_variant
+ceylon_cinnamon,aromatic-true-cinnamon-ceylon-100g,aromatic-true-cinnamon-ceylon,Size,200g,create,aromatic-true-cinnamon-ceylon-200g,Default Title,599.00,960.00,5000,,true,CONTINUE,true,,,0.2,KILOGRAMS,source_variant
+spice_combo_3in1,cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack,kerala-spice-combo-pack,Pack,50g+100g+100g,create,cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack,50gm,549.00,899.00,,,true,DENY,true,,,50,KILOGRAMS,source_variant
+spice_combo_3in1,cardamom-50g-black-pepper-100g-clove-100g-3-in-1-spice-combo-pack,kerala-spice-combo-pack,Pack,100g+200g+100g,create,cardamom-100g-black-pepper-200g-clove-100g-3-in-1-spice-combo-pack,Default Title,949.00,1189.00,,,true,DENY,true,,,0.4,KILOGRAMS,source_variant
+black_pepper,kerala-black-pepper-100gm,kerala-black-pepper,Size,50g,create,kerala-black-pepper-100gm,Black Pepper 100gm,90.00,,,,true,CONTINUE,true,,,0.1,KILOGRAMS,auto_derived
+black_pepper,kerala-black-pepper-100gm,kerala-black-pepper,Size,100g,create,kerala-black-pepper-100gm,Black Pepper 100gm,180.00,,,,true,CONTINUE,true,,,0.1,KILOGRAMS,source_variant
+black_pepper,kerala-black-pepper-100gm,kerala-black-pepper,Size,200g,create,kerala-black-pepper-200gm,Default Title,349.00,440.00,BP200,,true,CONTINUE,true,,,200,KILOGRAMS,source_variant
+green_cardamom,kerala-cardamom-50gm,kerala-cardamom,Size,50g,create,kerala-cardamom-50gm,50gm,240.00,299.00,,,true,CONTINUE,true,,,50,KILOGRAMS,source_variant
+green_cardamom,kerala-cardamom-50gm,kerala-cardamom,Size,100g,create,kerala-cardamom-8mm-fruit-100gm,100gm,449.00,650.00,CA100,,true,CONTINUE,true,,,100,KILOGRAMS,source_variant
+green_cardamom,kerala-cardamom-50gm,kerala-cardamom,Size,200g,create,kerala-cardamom-8mm-200gm,Default Title,849.00,1200.00,,,true,CONTINUE,true,,,0.2,KILOGRAMS,source_variant
+clove,kerala-clove-100gm,kerala-adimali-clove,Size,50g,create,kerala-clove-100gm,100gm,130.00,190.00,,,true,CONTINUE,true,,,50,KILOGRAMS,auto_derived
+clove,kerala-clove-100gm,kerala-adimali-clove,Size,100g,create,kerala-clove-100gm,100gm,260.00,380.00,,,true,CONTINUE,true,,,100,KILOGRAMS,source_variant
+clove,kerala-clove-100gm,kerala-adimali-clove,Size,200g,create,kerala-clove-200gm,Default Title,420.00,760.00,,,true,CONTINUE,true,,,0.2,KILOGRAMS,source_variant
+white_pepper,kerala-white-pepper-100gm,kerala-white-pepper,Size,50g,create,kerala-white-pepper-100gm,100gm,112.50,174.50,,,true,CONTINUE,true,,,50,KILOGRAMS,auto_derived
+white_pepper,kerala-white-pepper-100gm,kerala-white-pepper,Size,100g,create,kerala-white-pepper-100gm,100gm,225.00,349.00,,,true,CONTINUE,true,,,100,KILOGRAMS,source_variant
+white_pepper,kerala-white-pepper-100gm,kerala-white-pepper,Size,200g,create,kerala-white-pepper-100gm,100gm,450.00,698.00,,,true,CONTINUE,true,,,200,KILOGRAMS,auto_derived
+cassia_cinnamon,premium-cassia-cinnamon-100g,premium-cassia-cinnamon,Size,50g,create,premium-cassia-cinnamon-100g,100gm,110.00,149.50,,,true,CONTINUE,true,,,50,KILOGRAMS,auto_derived
+cassia_cinnamon,premium-cassia-cinnamon-100g,premium-cassia-cinnamon,Size,100g,create,premium-cassia-cinnamon-100g,100gm,220.00,299.00,,,true,CONTINUE,true,,,100,KILOGRAMS,source_variant
+cassia_cinnamon,premium-cassia-cinnamon-100g,premium-cassia-cinnamon,Size,200g,create,premium-cassia-cinnamon-200g,Default Title,349.00,600.00,,,true,CONTINUE,true,,,0.2,KILOGRAMS,source_variant

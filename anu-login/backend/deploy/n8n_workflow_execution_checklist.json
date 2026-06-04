@@ -1,0 +1,149 @@
+{
+  "version": "2026-05-21",
+  "base_url": "http://127.0.0.1:8000/api",
+  "workflows": [
+    {
+      "id": "wf_01_shopify_sync",
+      "name": "Shopify Catalog Sync",
+      "trigger": {
+        "type": "cron",
+        "cron": "*/30 * * * *"
+      },
+      "call": {
+        "method": "POST",
+        "path": "/ai/sync"
+      },
+      "success_check": {
+        "method": "GET",
+        "path": "/ai/catalog",
+        "assert": "product_count > 0"
+      }
+    },
+    {
+      "id": "wf_02_daily_journey_preview",
+      "name": "Daily Journey Preview",
+      "trigger": {
+        "type": "cron",
+        "cron": "55 9 * * *"
+      },
+      "call": {
+        "method": "POST",
+        "path": "/journey/orchestrate/preview",
+        "json": {
+          "shop_domain": "rwxtic-gz.myshopify.com"
+        }
+      }
+    },
+    {
+      "id": "wf_03_daily_journey_orchestrate",
+      "name": "Daily Journey Orchestration",
+      "trigger": {
+        "type": "cron",
+        "cron": "0 10 * * *"
+      },
+      "call": {
+        "method": "POST",
+        "path": "/journey/orchestrate",
+        "json": {
+          "shop_domain": "rwxtic-gz.myshopify.com",
+          "dry_run": false
+        }
+      }
+    },
+    {
+      "id": "wf_04_ai_followup_dispatch",
+      "name": "AI Followup Dispatch",
+      "trigger": {
+        "type": "cron",
+        "cron": "*/10 * * * *"
+      },
+      "call": {
+        "method": "POST",
+        "path": "/ai/dispatch",
+        "json_template": {
+          "customer_phone": "{{customer_phone}}",
+          "shop_domain": "rwxtic-gz.myshopify.com",
+          "incoming_reply": ""
+        }
+      },
+      "branch_rules": [
+        {
+          "if": "response.should_send == true",
+          "then": [
+            "send_whatsapp_text(response.message)",
+            "if link clicked, call POST /ai/dispatch/mark-clicked/{followup_id}"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wf_05_meta_delivery_to_session",
+      "name": "Meta Delivery Opens Session",
+      "trigger": {
+        "type": "webhook",
+        "path": "/webhooks/meta/whatsapp"
+      },
+      "expected_backend_behavior": [
+        "status delivered opens /ai/session/open",
+        "followups generated and queued"
+      ]
+    },
+    {
+      "id": "wf_06_customer_reply_tracking",
+      "name": "Customer Reply Tracking",
+      "trigger": {
+        "type": "webhook",
+        "source": "Wabis or Meta inbound reply relay"
+      },
+      "call": {
+        "method": "POST",
+        "path": "/tracking/whatsapp-reply",
+        "json_template": {
+          "customer_phone": "{{phone}}",
+          "shop_domain": "rwxtic-gz.myshopify.com",
+          "template_name": "{{template_name}}",
+          "reply_text": "{{reply_text}}",
+          "journey_stage": "{{journey_stage}}",
+          "wabis_message_id": "{{message_id}}",
+          "metadata": {}
+        }
+      }
+    },
+    {
+      "id": "wf_07_delhivery_webhook",
+      "name": "Delhivery Status Webhook",
+      "trigger": {
+        "type": "webhook",
+        "path": "/delhivery/webhook"
+      },
+      "notes": [
+        "configure DELHIVERY_WEBHOOK_SECRET in production",
+        "register webhook in Delhivery dashboard"
+      ]
+    },
+    {
+      "id": "wf_08_health_and_daily_report",
+      "name": "Health Monitoring and Daily Report",
+      "trigger": {
+        "type": "cron",
+        "cron": "0 0 * * *"
+      },
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/monitoring/health"
+        },
+        {
+          "method": "POST",
+          "path": "/monitoring/daily-report"
+        }
+      ]
+    }
+  ],
+  "smoke_tests": [
+    "GET /health returns status ok",
+    "GET /monitoring/health returns status ok",
+    "GET /ai/catalog returns product_count > 0",
+    "POST /journey/orchestrate/preview returns total_would_send"
+  ]
+}

@@ -1,0 +1,170 @@
+{%- assign summary = '' -%}
+{%- assign highlight_1 = '' -%}
+{%- assign highlight_2 = '' -%}
+{%- assign highlight_3 = '' -%}
+{%- assign highlight_4 = '' -%}
+{%- assign primary_cta_url = '/collections/all' -%}
+{%- assign primary_cta_label = 'Explore Kerala Spices' -%}
+{%- assign secondary_cta_url = '/blogs/cooking-spices' -%}
+{%- assign secondary_cta_label = 'Read Spice Journal' -%}
+{%- assign note = 'From Kerala soil to your kitchen.' -%}
+
+{%- if product_handle contains 'combo-pack' -%}
+  {%- assign primary_cta_label = 'Explore Best Sellers' -%}
+  {%- if product_handle contains '50g-black-pepper-100g-clove-100g' or product_handle == 'cardamom-pepper-clove-combo-pack-special-offer-100-off' -%}
+    {%- assign summary = 'A starter Kerala spice combo that bundles cardamom, black pepper, and clove into one purchase for gifting, first-time buyers, and everyday kitchen setup.' -%}
+    {%- assign highlight_1 = '3 core spices in one' -%}
+    {%- assign highlight_2 = 'Starter / gifting use case' -%}
+    {%- assign highlight_3 = 'Kerala spice identity' -%}
+    {%- assign highlight_4 = 'Lower decision friction' -%}
+    {%- assign note = 'Ideal when you want a cleaner kitchen starting point instead of comparing multiple separate spice listings.' -%}
+  {%- else -%}
+    {%- assign summary = 'A larger Kerala spice combo built for families and frequent cooks who want cardamom, black pepper, and clove together in a more kitchen-friendly bundle.' -%}
+    {%- assign highlight_1 = 'Larger bundled quantity' -%}
+    {%- assign highlight_2 = 'Family kitchen use' -%}
+    {%- assign highlight_3 = '3 essential spices together' -%}
+    {%- assign highlight_4 = 'Better refill value' -%}
+    {%- assign note = 'Best when these core spices already move quickly in the kitchen and convenience matters.' -%}
+  {%- endif -%}
+{%- elsif product_handle contains 'cardamom' -%}
+  {%- assign primary_cta_label = 'Explore Cardamom Range' -%}
+  {%- if product_handle contains '50gm' -%}
+    {%- assign summary = 'This compact Kerala cardamom pack is for buyers who want fragrant whole pods, faster kitchen turnover, and a lower-commitment way to keep chai, sweets, and daily cooking aromatic.' -%}
+    {%- assign highlight_1 = 'Whole cardamom pods' -%}
+    {%- assign highlight_2 = 'Low kitchen-stock commitment' -%}
+    {%- assign highlight_3 = 'Great for chai and sweets' -%}
+    {%- assign highlight_4 = 'Trial-friendly size' -%}
+    {%- assign note = 'Smaller pack, stronger turnover, fresher pod experience.' -%}
+  {%- elsif product_handle contains '8mm-fruit-100gm' or product_handle == 'kerala-cardamom-200gm' -%}
+    {%- assign summary = 'A daily-use Kerala cardamom pack with 8mm whole-pod positioning, designed for home kitchens that want bright aroma, cleaner storage cycles, and reliable use in chai, desserts, and savory cooking.' -%}
+    {%- assign highlight_1 = '8mm whole pods' -%}
+    {%- assign highlight_2 = 'Daily-use pack size' -%}
+    {%- assign highlight_3 = 'Kerala source story' -%}
+    {%- assign highlight_4 = 'Balanced pack size' -%}
+    {%- assign note = 'Best when you want regular cardamom use without carrying too much stock.' -%}
+  {%- elsif product_handle contains '8mm-200gm' or product_handle == 'kerala-cardamom-online-100gm' -%}
+    {%- assign summary = 'Kerala cardamom in a larger 8mm refill pack for households that want bigger whole pods, stronger aroma release, and enough volume for repeat chai, dessert, and masala use.' -%}
+    {%- assign highlight_1 = '8mm whole pods' -%}
+    {%- assign highlight_2 = 'Higher-aroma profile' -%}
+    {%- assign highlight_3 = 'Built for repeat use' -%}
+    {%- assign highlight_4 = 'Kerala high-range positioning' -%}
+    {%- assign note = 'A stronger fit for kitchens that open cardamom often, not just occasionally.' -%}
+  {%- elsif product_handle contains '500gm' -%}
+    {%- assign summary = 'This larger Kerala cardamom refill pack is for kitchens that already know how quickly good cardamom disappears and want kitchen scale without stepping down to flatter commodity stock.' -%}
+    {%- assign highlight_1 = 'Refill-led pack' -%}
+    {%- assign highlight_2 = 'Kerala cardamom identity' -%}
+    {%- assign highlight_3 = 'Whole-pod freshness logic' -%}
+    {%- assign highlight_4 = 'Heavy-use households' -%}
+    {%- assign note = 'Best for repeat chai drinkers and larger households that use cardamom as a real staple.' -%}
+  {%- endif -%}
+{%- elsif product_handle contains 'black-pepper' -%}
+  {%- assign primary_cta_label = 'Explore Pepper Range' -%}
+  {%- if product_handle contains '100gm' -%}
+    {%- assign summary = 'This compact Kerala black pepper pack is built for first grinder refills and lighter-use kitchens that want whole peppercorn aroma without leaving a larger pouch open for too long.' -%}
+    {%- assign highlight_1 = 'Whole peppercorns' -%}
+    {%- assign highlight_2 = 'First grinder refill' -%}
+    {%- assign highlight_3 = 'Fresh-crack flavor' -%}
+    {%- assign highlight_4 = 'Low-commitment pack' -%}
+    {%- assign note = 'Smaller pouch, same whole-pepper advantage, better for slower-use kitchens.' -%}
+  {%- elsif product_handle contains '200gm' -%}
+    {%- assign summary = 'Whole Kerala black pepper designed for daily seasoning and fresh grinding, with better aroma retention than pre-ground pepper and enough volume for steady kitchen use.' -%}
+    {%- assign highlight_1 = 'Whole peppercorn format' -%}
+    {%- assign highlight_2 = 'Daily seasoning sweet spot' -%}
+    {%- assign highlight_3 = 'Fresh-grind use case' -%}
+    {%- assign highlight_4 = 'Kerala provenance' -%}
+    {%- assign note = 'This is the everyday pepper pack for cooks who want the grinder doing the real work.' -%}
+  {%- elsif product_handle contains '300gm' or product_handle == 'kerala-black-pepper-350gm' -%}
+    {%- assign summary = 'A larger Kerala black pepper offer pack for families and repeat cooks who want whole-pepper freshness, better refill value, and a more kitchen-friendly volume.' -%}
+    {%- assign highlight_1 = 'Larger value pack' -%}
+    {%- assign highlight_2 = 'Whole peppercorn format' -%}
+    {%- assign highlight_3 = 'Refill-ready kitchen use' -%}
+    {%- assign highlight_4 = 'Stronger value per use' -%}
+    {%- assign note = 'Best when pepper disappears quickly in your kitchen and smaller packs slow you down.' -%}
+  {%- elsif product_handle contains '500gm' -%}
+    {%- assign summary = 'This larger Kerala black pepper pack is for heavier-use kitchens that want bulk refill convenience while still preserving the whole-pepper aroma advantage.' -%}
+    {%- assign highlight_1 = 'Bulk refill size' -%}
+    {%- assign highlight_2 = 'Whole pepper freshness' -%}
+    {%- assign highlight_3 = 'High-use kitchen fit' -%}
+    {%- assign highlight_4 = 'Grinder-led cooking' -%}
+    {%- assign note = 'Made for kitchens that use pepper constantly and want refill scale without switching to flat ground pepper.' -%}
+  {%- endif -%}
+{%- elsif product_handle contains 'clove' -%}
+  {%- assign primary_cta_label = 'Explore Whole Spices' -%}
+  {%- if product_handle contains '100gm' -%}
+    {%- assign summary = 'Kerala Adimali clove in a smaller whole-bud pack, suited to chai, rice dishes, and masala blends where visible quality and strong aroma matter more than bulk volume.' -%}
+    {%- assign highlight_1 = 'Whole clove buds' -%}
+    {%- assign highlight_2 = 'Adimali / Kerala positioning' -%}
+    {%- assign highlight_3 = 'Smaller kitchen-friendly pack' -%}
+    {%- assign highlight_4 = 'Aroma-first cooking' -%}
+    {%- assign note = 'A practical fit for homes that use clove often enough to care about freshness, but not at refill scale.' -%}
+  {%- elsif product_handle contains '200gm' -%}
+    {%- assign summary = 'A larger Kerala Adimali clove pack for households that use whole cloves more often and want stronger refill value without giving up whole-bud quality and aroma.' -%}
+    {%- assign highlight_1 = 'Whole clove buds' -%}
+    {%- assign highlight_2 = 'Larger refill pack' -%}
+    {%- assign highlight_3 = 'Aroma-first spice use' -%}
+    {%- assign highlight_4 = 'Better refill value' -%}
+    {%- assign note = 'This format works best when cloves are already part of the weekly cooking rhythm.' -%}
+  {%- endif -%}
+{%- elsif product_handle contains 'white-pepper' -%}
+  {%- assign primary_cta_label = 'Explore Pepper Range' -%}
+  {%- assign summary = 'Kerala white pepper delivers smoother heat and a more refined culinary finish than black pepper, especially in soups, sauces, marinades, noodles, and lighter-colored dishes.' -%}
+  {%- assign highlight_1 = 'Smoother heat' -%}
+  {%- assign highlight_2 = 'Whole-spice format' -%}
+  {%- assign highlight_3 = 'Best for soups and sauces' -%}
+  {%- assign highlight_4 = 'Cleaner visual finish' -%}
+  {%- assign note = 'Choose white pepper when you want precision and warmth without the sharper edge of black pepper.' -%}
+{%- elsif product_handle contains 'premium-cassia-cinnamon' or product_handle contains 'cassia' -%}
+  {%- assign primary_cta_label = 'Explore Cinnamon Range' -%}
+  {%- if product_handle contains '200g' or product_handle contains '200gm' -%}
+    {%- assign summary = 'A larger cassia cinnamon pack for kitchens that want bold cinnamon warmth on repeat in chai, baking, breakfast recipes, and savory spice work.' -%}
+    {%- assign highlight_1 = 'Bold cassia profile' -%}
+    {%- assign highlight_2 = 'Repeat-use kitchen size' -%}
+    {%- assign highlight_3 = 'Great for chai and baking' -%}
+    {%- assign highlight_4 = 'Stronger cinnamon character' -%}
+    {%- assign note = 'Choose this when you already know you prefer the warmer, more assertive side of cinnamon.' -%}
+  {%- else -%}
+    {%- assign summary = 'Premium cassia cinnamon with a bolder, warmer flavor profile suited to chai, baking, and savory recipes where a stronger cinnamon note is preferred.' -%}
+    {%- assign highlight_1 = 'Bold cassia profile' -%}
+    {%- assign highlight_2 = 'Great for chai and baking' -%}
+    {%- assign highlight_3 = 'Stronger cinnamon character' -%}
+    {%- assign highlight_4 = 'Everyday-use size' -%}
+    {%- assign note = 'Built for buyers who want cinnamon to show up clearly rather than stay in the background.' -%}
+  {%- endif -%}
+{%- elsif product_handle contains 'aromatic-true-cinnamon-ceylon' or product_handle contains 'ceylon' -%}
+  {%- assign primary_cta_label = 'Explore Cinnamon Range' -%}
+  {%- if product_handle contains '200g' or product_handle contains '200gm' -%}
+    {%- assign summary = 'A larger true Ceylon cinnamon pack for kitchens that prefer a lighter, sweeter, and more delicate cinnamon profile on repeat in tea, desserts, and softer baking.' -%}
+    {%- assign highlight_1 = 'True Ceylon cinnamon' -%}
+    {%- assign highlight_2 = 'Lighter and sweeter taste' -%}
+    {%- assign highlight_3 = 'Kitchen refill format' -%}
+    {%- assign highlight_4 = 'Best for tea and desserts' -%}
+    {%- assign note = 'A better fit for repeat Ceylon buyers who want finesse, not brute cinnamon intensity.' -%}
+  {%- else -%}
+    {%- assign summary = 'True Ceylon cinnamon with a lighter, sweeter, and more delicate profile than cassia, suited to tea, desserts, and refined everyday use.' -%}
+    {%- assign highlight_1 = 'True Ceylon cinnamon' -%}
+    {%- assign highlight_2 = 'Lighter and sweeter taste' -%}
+    {%- assign highlight_3 = 'Best for tea and desserts' -%}
+    {%- assign highlight_4 = 'Refined everyday use' -%}
+    {%- assign note = 'Choose this when you want a gentler cinnamon expression rather than a bold cassia note.' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if summary != blank -%}
+  <div class="product__seo-summary-surface">
+    <p class="product__seo-summary-eyebrow">Answer-first guide</p>
+    <p class="product__seo-summary-text">{{ summary }}</p>
+    <ul class="product__seo-summary-highlights list-unstyled" role="list">
+      {%- if highlight_1 != blank -%}<li>{{ highlight_1 }}</li>{%- endif -%}
+      {%- if highlight_2 != blank -%}<li>{{ highlight_2 }}</li>{%- endif -%}
+      {%- if highlight_3 != blank -%}<li>{{ highlight_3 }}</li>{%- endif -%}
+      {%- if highlight_4 != blank -%}<li>{{ highlight_4 }}</li>{%- endif -%}
+    </ul>
+    <div class="product__seo-summary-actions">
+      <a class="product__seo-summary-action product__seo-summary-action--primary" href="{{ primary_cta_url }}">{{ primary_cta_label }}</a>
+      <a class="product__seo-summary-action product__seo-summary-action--secondary" href="{{ secondary_cta_url }}">{{ secondary_cta_label }}</a>
+    </div>
+    {%- if note != blank -%}
+      <p class="product__seo-summary-note">{{ note }}</p>
+    {%- endif -%}
+  </div>
+{%- endif -%}

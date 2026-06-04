@@ -1,0 +1,81 @@
+{% if template.name == 'index' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "LocalBusiness"],
+      "@id": "{{ shop.url }}/#localbusiness",
+      "name": "Pureleven",
+      "legalName": "Pure Leven Exim",
+      "alternateName": ["Organic Pure Leven", "PureLeven", "Pureleven Spices"],
+      "description": "Fresh Kerala spices, raw honey, tea, coffee, and natural foods sourced directly from small family farms in Kerala hill regions and packed for authentic aroma and flavor.",
+      "url": "{{ shop.url }}",
+      {% if settings.logo %}"logo": { "@type": "ImageObject", "url": "{{ settings.logo | image_url: width: 400 | prepend: 'https:' }}" },{% endif %}
+      "telephone": "+91-80755-19579",
+      "email": "purelevenexim@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "8/621 Rajakumari",
+        "addressLocality": "Idukki",
+        "addressRegion": "Kerala",
+        "postalCode": "685619",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 9.9453,
+        "longitude": 77.1662
+      },
+      "priceRange": "₹₹",
+      "openingHours": "Mo-Su 09:00-18:00",
+      "currenciesAccepted": "INR",
+      "paymentAccepted": "UPI, Credit Card, Debit Card, Net Banking",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "45",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "sameAs": [
+        "{{ settings.social_instagram_link }}",
+        "{{ settings.social_facebook_link }}",
+        "{{ settings.social_youtube_link }}"
+      ]
+    },
+    {
+      "@type": "ItemList",
+      "name": "Fresh Kerala Spices and Farm-Origin Pantry Staples",
+      "description": "Shop cardamom, black pepper, cloves, and signature spice combos sourced from Kerala hill farms.",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Kerala Green Cardamom",
+          "url": "{{ shop.url }}/products/kerala-cardamom-200gm"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Idukki Black Pepper",
+          "url": "{{ shop.url }}/products/kerala-black-pepper-200gm"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Kerala Cloves",
+          "url": "{{ shop.url }}/products/kerala-clove-100gm"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Cardamom, Pepper and Clove Combo Pack",
+          "url": "{{ shop.url }}/products/cardamom-pepper-clove-combo-pack-special-offer-100-off"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% endif %}

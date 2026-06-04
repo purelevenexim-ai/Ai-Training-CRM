@@ -1,0 +1,99 @@
+{%- comment -%}
+  sections/thank-you-hero.liquid
+  Custom post-purchase page shown after successful order.
+  Redirect handled by /pages/thank-you route.
+{%- endcomment -%}
+
+{%- assign section_id = section.id -%}
+
+<div id="thank-you-hero" class="thank-you-hero page-width">
+  <div class="thank-you-hero__content">
+    <div class="thank-you-hero__icon">🎉</div>
+    <h1 class="thank-you-hero__title">Thank You for Your Order!</h1>
+    <p class="thank-you-hero__subtitle">Your delicious spices are on the way.</p>
+
+    <div class="thank-you-hero__order-card">
+      <div class="thank-you-card-row">
+        <span class="thank-you-card-label">Order ID</span>
+        <span class="thank-you-card-value" id="order-id">—</span>
+      </div>
+      <div class="thank-you-card-row">
+        <span class="thank-you-card-label">Estimated Delivery</span>
+        <span class="thank-you-card-value" id="order-eta">—</span>
+      </div>
+      <div class="thank-you-card-row">
+        <span class="thank-you-card-label">Total Paid</span>
+        <span class="thank-you-card-value" id="order-total">—</span>
+      </div>
+    </div>
+
+    <div class="thank-you-actions">
+      <a href="#" id="track-order-btn" class="button button--primary button--full-width">
+        📍 Track Your Order on WhatsApp
+      </a>
+      <a href="{{ routes.root_url }}" class="button button--secondary button--full-width">
+        Continue Shopping
+      </a>
+    </div>
+
+    <div class="thank-you-benefits">
+      <h3 class="thank-you-benefits__heading">What's Next?</h3>
+      <div class="thank-you-benefits__list">
+        <div class="thank-you-benefit">
+          <span class="thank-you-benefit__icon">✓</span>
+          <span class="thank-you-benefit__text">Order confirmation sent to your email</span>
+        </div>
+        <div class="thank-you-benefit">
+          <span class="thank-you-benefit__icon">✓</span>
+          <span class="thank-you-benefit__text">Track shipment via WhatsApp updates</span>
+        </div>
+        <div class="thank-you-benefit">
+          <span class="thank-you-benefit__icon">✓</span>
+          <span class="thank-you-benefit__text">3-day free returns by mail</span>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%}── Phase 4: Loyalty Rewards ──{%- endcomment -%}
+    <div class="thank-you-loyalty"></div>
+
+    <div class="thank-you-referral">
+      <h3 class="thank-you-referral__heading">Earn ₹100 • Share & Get</h3>
+      <p class="thank-you-referral__subtitle">Give your friends ₹100 OFF, Get ₹100 credit yourself</p>
+      <button class="button button--secondary button--full-width" id="share-referral-btn">
+        🎁 Share with Friends
+      </button>
+    </div>
+
+    <div class="thank-you-social">
+      <p class="thank-you-social__text">Follow us for recipes & tips</p>
+      <div class="thank-you-social__links">
+        <a href="https://instagram.com/pureleven" target="_blank" rel="noopener" class="thank-you-social__icon">📷</a>
+        <a href="https://facebook.com/pureleven" target="_blank" rel="noopener" class="thank-you-social__icon">👍</a>
+        <a href="https://youtube.com/pureleven" target="_blank" rel="noopener" class="thank-you-social__icon">▶️</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ 'thank-you-hero.css' | asset_url | stylesheet_tag }}
+{{ 'basil-tier-indicators.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'basil-loyalty.js' | asset_url }}" defer></script>
+<script src="{{ 'thank-you-hero.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Thank You Hero",
+  "tag": "section",
+  "class": "section",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp number for tracking",
+      "default": "+919447744583"
+    }
+  ]
+}
+{% endschema %}

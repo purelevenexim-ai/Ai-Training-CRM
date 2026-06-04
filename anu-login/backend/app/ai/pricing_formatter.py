@@ -51,9 +51,10 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery location"
         ),
-        "fallback": "Price, delivery, payment, or order help?",
+        "fallback": "",
         "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
-        "payment": "Payment update kandittu. Screenshot / transaction ref undo? Share ചെയ്താൽ confirm cheyyാം.",
+        "payment": "Payment ചെയ്താൽ screenshot അല്ലെങ്കിൽ transaction reference share cheyyu 😊 Confirm cheyyam.",
+        "payment_received": "Payment screenshot received 😊 Verify cheythu confirm cheyyam.",
         "business_info": "PureLeven Idukki-side spices aanu. Farm story, products, delivery, എല്ലാം help cheyyാം.",
         "human_handoff": "Sure, direct support help arrange cheyyാം. Oru minute.",
         "complaint": "Sorry about that. Nammal ithu immediately support team-il raise cheyyാം.",
@@ -86,9 +87,10 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery place"
         ),
-        "fallback": "Price, delivery, payment, order help?",
+        "fallback": "",
         "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
-        "payment": "Payment update kandittu. Screenshot allenkil transaction ref undenkil ayakkamo? Confirm cheyyam.",
+        "payment": "Payment cheythittundengil screenshot allenkil transaction reference ayacholu 😊 Confirm cheyyam.",
+        "payment_received": "Payment screenshot kitti 😊 Verify cheythu confirm cheyyam.",
         "business_info": "PureLeven Idukki side spices aanu. Farm-il ninnulla products aanu.",
         "human_handoff": "Sure, direct support connect cheyyam.",
         "complaint": "Sorry. Ithu support team-il immediate aayi raise cheyyam.",
@@ -125,9 +127,10 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery place"
         ),
-        "fallback": "വില, delivery, payment, അല്ലെങ്കിൽ order help ആണോ?",
+        "fallback": "",
         "footer": "കേരളത്തിൽ ₹600 കഴിഞ്ഞാൽ free delivery. കേരളത്തിന് പുറത്തേക്ക് customer charge ₹60 ആണ്.",
-        "payment": "Payment update കണ്ടു. Screenshot അല്ലെങ്കിൽ transaction ref ഉണ്ടെങ്കിൽ അയയ്ക്കൂ. Confirm ചെയ്യാം.",
+        "payment": "Payment ചെയ്തിട്ടുണ്ടെങ്കിൽ screenshot അല്ലെങ്കിൽ transaction reference അയയ്ക്കൂ 😊 Confirm ചെയ്യാം.",
+        "payment_received": "Payment screenshot കിട്ടി 😊 Verify ചെയ്ത് confirm ചെയ്യാം.",
         "business_info": "PureLeven Idukki-side spices ആണ്. Farm storyയും delivery helpഉം share ചെയ്യാം.",
         "human_handoff": "Sure, direct support connect ചെയ്യാം.",
         "complaint": "ക്ഷമിക്കണം. ഇത് support team-ലേക്ക് ഉടൻ raise ചെയ്യാം.",

@@ -289,7 +289,52 @@ def _message_meta(
 
 
 def _ai_routes_need_queue(route: str | None) -> bool:
-    return route in {"ai", "catalog", "clarification", "escalation"}
+    return route in {"ai", "catalog", "clarification", "escalation", "silent_wait"}
+
+
+def _extract_unknown_product_candidate(message: str) -> str:
+    cleaned = "".join(ch.lower() if ch.isalnum() or ch.isspace() else " " for ch in str(message or ""))
+    normalized = " ".join(cleaned.split())
+    stopwords = {
+        "available", "availability", "stock", "price", "rate", "details", "detail", "info", "more",
+        "undo", "undu", "venam", "need", "want", "order", "delivery", "charge", "question", "pls",
+        "please", "can", "get", "about", "help", "is", "are", "any", "do", "you", "have",
+    }
+    tokens = [token for token in normalized.split() if token not in stopwords]
+    if not tokens:
+        return ""
+    candidate = " ".join(tokens[:3]).strip()
+    if candidate in {"what", "which", "hello", "hi", "hey"}:
+        return ""
+    return candidate
+
+
+def _log_silent_wait_gap(
+    *,
+    conversation_id: str,
+    customer_phone: str,
+    incoming_message: str,
+    route_reason: str,
+    decision: dict[str, Any] | None = None,
+) -> str:
+    understanding = (decision or {}).get("message_understanding") or {}
+    gap_id = log_knowledge_gap(
+        customer_phone,
+        incoming_message,
+        conversation_id,
+        detected_intent=str((decision or {}).get("intent") or understanding.get("detected_intent") or ""),
+        detected_product=str(understanding.get("detected_product") or (decision or {}).get("resolved_product_key") or ""),
+        confidence=float(understanding.get("confidence") or 0.2),
+        reason=route_reason,
+        status="open",
+    )
+    candidate = str(understanding.get("unknown_product_candidate") or _extract_unknown_product_candidate(incoming_message) or "").strip()
+    if candidate:
+        try:
+            log_missing_product(candidate, clarification=incoming_message[:200])
+        except Exception as exc:
+            logger.warning("Failed to log missing product candidate %s: %s", candidate, exc)
+    return gap_id
 
 
 def _store_generated_reply(
@@ -763,6 +808,7 @@ def _generate_and_send_reply(
             if state_before and state_before.get("flow_id") == "product_journey"
             else {}
         )
+        customer_state = get_customer_state(customer_phone) or {}
         
         # Route message
         decision = route_message(
@@ -791,6 +837,22 @@ def _generate_and_send_reply(
         )
         route = decision.get("route")
         reply_context = dict(conversation_context or {})
+        reply_context.update(
+            {
+                "language": customer_state.get("language"),
+                "active_product": customer_state.get("active_product"),
+                "latest_intent": customer_state.get("latest_intent"),
+                "price_shared": customer_state.get("price_shared"),
+                "quantity_selected": customer_state.get("quantity_selected"),
+                "address_received": customer_state.get("address_received"),
+                "pincode_received": customer_state.get("pincode_received"),
+                "payment_claimed": customer_state.get("payment_claimed"),
+                "payment_screenshot_received": customer_state.get("payment_screenshot_received"),
+                "defer_intent": customer_state.get("defer_intent"),
+                "followups_allowed": customer_state.get("followups_allowed"),
+                "journey_stage": customer_state.get("journey_stage"),
+            }
+        )
         if isinstance(decision.get("product_context"), dict):
             reply_context.update(decision["product_context"])
         if decision.get("resolved_product_key") and "product_key" not in reply_context:
@@ -920,6 +982,17 @@ def _generate_and_send_reply(
                 context=reply_context,
             )
 
+            if reply_result.get("suggested_action") == "wait_for_user" or not reply_result.get("reply_text"):
+                gap_id = _log_silent_wait_gap(
+                    conversation_id=conversation_id,
+                    customer_phone=customer_phone,
+                    incoming_message=incoming_message,
+                    route_reason=str(reply_result.get("knowledge_gap_reason") or decision.get("reason") or "catalog_without_useful_reply"),
+                    decision={**decision, "message_understanding": reply_result.get("message_understanding") or decision.get("message_understanding") or {}},
+                )
+                logger.warning(f"[CATALOG-SEARCH] {customer_phone}: query='{incoming_message[:50]}' (SILENT_WAIT)")
+                return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
+
             if reply_result.get("reply_text"):
                 logger.warning(f"[CATALOG-REPLY] {customer_phone}: reply ready for catalog topic")
                 return _store_generated_reply(
@@ -930,24 +1003,14 @@ def _generate_and_send_reply(
                     customer_name=customer_name,
                     inbound_message=incoming_message,
                 )
-
-            fallback_reply = {
-                "reply_text": "Price, delivery, or order help?",
-                "intent": "fallback",
-                "should_escalate": False,
-                "escalation_reason": None,
-                "suggested_action": "send_reply",
-            }
-            log_missing_product(incoming_message)
-            logger.warning(f"[CATALOG-SEARCH] {customer_phone}: query='{incoming_message[:50]}' (FALLBACK_SENT)")
-            return _store_generated_reply(
-                conversation_id,
-                customer_phone,
-                fallback_reply,
-                route,
-                customer_name=customer_name,
-                inbound_message=incoming_message,
+            gap_id = _log_silent_wait_gap(
+                conversation_id=conversation_id,
+                customer_phone=customer_phone,
+                incoming_message=incoming_message,
+                route_reason="catalog_without_useful_reply",
+                decision=decision,
             )
+            return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
         
         # [7] SALES FLOW
         if route == "sales":
@@ -960,11 +1023,31 @@ def _generate_and_send_reply(
             logger.info(f"[FAQ] {customer_phone} - FAQ question")
             # TODO: Implement FAQ knowledge base lookup
             return {"status": "faq_lookup", "route": route}
-        
+
+        if route == "silent_wait":
+            logger.info(f"[SILENT-WAIT] {customer_phone} - no useful AI reply")
+            gap_id = _log_silent_wait_gap(
+                conversation_id=conversation_id,
+                customer_phone=customer_phone,
+                incoming_message=incoming_message,
+                route_reason=str(decision.get("reason") or "low_confidence_unclear_message"),
+                decision=decision,
+            )
+            return {"status": "skipped", "reason": "silent_wait", "route": route, "gap_id": gap_id}
+
         # [9] CLARIFICATION - Knowledge gap capture
         if route == "clarification":
             logger.info(f"[CLARIFICATION] {customer_phone} - Intent unclear")
-            gap_id = log_knowledge_gap(customer_phone, incoming_message, conversation_id)
+            gap_id = log_knowledge_gap(
+                customer_phone,
+                incoming_message,
+                conversation_id,
+                detected_intent=str(decision.get("intent") or ""),
+                detected_product=str((decision.get("message_understanding") or {}).get("detected_product") or ""),
+                confidence=float(((decision.get("message_understanding") or {}).get("confidence") or 0.2)),
+                reason=str(decision.get("reason") or "clarification"),
+                status="open",
+            )
             fallback_reply = WabisReplyGenerator.generate_reply(
                 incoming_message=incoming_message,
                 customer_phone=customer_phone,
@@ -972,7 +1055,9 @@ def _generate_and_send_reply(
                 conversation_id=conversation_id,
                 context=reply_context,
             )
-            logger.warning(f"[CLARIFICATION-GAP] {customer_phone}: gap_id={gap_id}, message='{incoming_message[:50]}' (REPLY_SENT)")
+            logger.warning(f"[CLARIFICATION-GAP] {customer_phone}: gap_id={gap_id}, message='{incoming_message[:50]}'")
+            if fallback_reply.get("suggested_action") == "wait_for_user" or not fallback_reply.get("reply_text"):
+                return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
             result = _store_generated_reply(
                 conversation_id,
                 customer_phone,
@@ -1002,6 +1087,22 @@ def _generate_and_send_reply(
             should_escalate = reply_result.get("should_escalate", False)
             
             logger.warning(f"[AI-REPLY] Generated: intent={intent}, text_len={len(reply_text)}")
+
+            if reply_result.get("suggested_action") == "wait_for_user" or not reply_text:
+                gap_id = _log_silent_wait_gap(
+                    conversation_id=conversation_id,
+                    customer_phone=customer_phone,
+                    incoming_message=incoming_message,
+                    route_reason=str(reply_result.get("knowledge_gap_reason") or decision.get("reason") or "low_confidence_unclear_message"),
+                    decision={**decision, "message_understanding": reply_result.get("message_understanding") or decision.get("message_understanding") or {}},
+                )
+                return {
+                    "status": "skipped",
+                    "reason": "silent_wait",
+                    "route": "silent_wait",
+                    "gap_id": gap_id,
+                    "intent": intent,
+                }
             
             # Augment with knowledge if flagged
             if decision.get("require_knowledge"):

@@ -11,6 +11,7 @@ from app.ai.customer_state_engine import sync_customer_state_from_inbound
 from app.ai.conversation_state_manager import get_conversation_state, mark_activity, reset_conversation_state
 from app.ai.flow_helpers import flow_match, log_flow_abandoned
 from app.ai.intent_registry import intent_metadata
+from app.ai.message_understanding import understand_customer_message
 from app.ai.product_knowledge import detect_product
 from app.storage import get_db_connection
 
@@ -87,6 +88,56 @@ def _route_catalog(reason: str, *, intent: str, product_key: str | None = None, 
     if product_context:
         decision["product_context"] = product_context
     return decision
+
+
+def _is_media_marker(message: str) -> bool:
+    text = (message or "").strip().lower()
+    return text.startswith("[[media:") and text.endswith("]]")
+
+
+def _unknown_product_candidate(message: str) -> str:
+    normalized = " ".join(
+        "".join(ch.lower() if ch.isalnum() or ch.isspace() else " " for ch in str(message or "")).split()
+    )
+    stopwords = {
+        "available",
+        "availability",
+        "stock",
+        "price",
+        "rate",
+        "details",
+        "detail",
+        "info",
+        "more",
+        "undo",
+        "undu",
+        "venam",
+        "need",
+        "want",
+        "order",
+        "delivery",
+        "charge",
+        "question",
+        "pls",
+        "please",
+        "can",
+        "get",
+        "about",
+        "help",
+        "is",
+        "are",
+        "any",
+        "do",
+        "you",
+        "have",
+    }
+    tokens = [token for token in normalized.split() if token not in stopwords]
+    if not tokens:
+        return ""
+    candidate = " ".join(tokens[:3]).strip()
+    if candidate in {"what", "which", "hello", "hi", "hey"}:
+        return ""
+    return candidate
 
 
 def route_message(phone: str, message: str, message_meta: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -313,6 +364,52 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
             intent=metadata["detected_intent"],
             product_key=product_key,
         ) | {"message_understanding": {**metadata, "detected_product": product_key}}
+
+    if _is_media_marker(message):
+        has_payment_context = bool(
+            (state or {}).get("payment_claimed")
+            or (state or {}).get("payment_screenshot_received")
+            or (state or {}).get("address_received")
+            or (state or {}).get("pincode_received")
+            or str((state or {}).get("journey_stage") or "").strip().lower() in {"order_capture", "payment_pending", "payment_review"}
+        )
+        if has_payment_context:
+            return {
+                "route": "ai",
+                "reason": "Media received with active payment/order context",
+                "intent": "payment",
+                "message_understanding": {**metadata, "detected_intent": "payment"},
+            }
+        return {
+            "route": "silent_wait",
+            "reason": "low_confidence_media_review",
+            "intent": "media_review",
+            "message_understanding": {**metadata, "confidence": 0.2, "unknown_product_candidate": ""},
+        }
+
+    semantic = understand_customer_message(
+        message=message,
+        context=(state or {}).get("context") or {},
+        product_detected=False,
+        rule_intent=metadata["detected_intent"],
+        detected_language=metadata["detected_language"],
+        allow_gemini_fallback=False,
+    )
+    if metadata["detected_intent"] == "fallback" and semantic.get("intent") not in {
+        "delivery_received_confirmation",
+        "gratitude_positive",
+        "post_delivery_feedback",
+    }:
+        return {
+            "route": "silent_wait",
+            "reason": "low_confidence_unclear_message",
+            "intent": "fallback",
+            "message_understanding": {
+                **metadata,
+                "confidence": float(semantic.get("confidence") or 0.2),
+                "unknown_product_candidate": _unknown_product_candidate(message),
+            },
+        }
 
     return {
         "route": "ai",

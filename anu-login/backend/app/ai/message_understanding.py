@@ -22,6 +22,7 @@ def understand_customer_message(
     product_detected: bool = False,
     rule_intent: str = "fallback",
     detected_language: str = "english",
+    allow_gemini_fallback: bool = False,
 ) -> dict[str, Any]:
     """Broad semantic understanding before reply generation.
 
@@ -112,7 +113,7 @@ def understand_customer_message(
             },
         }
 
-    if not product_detected and rule_intent == "fallback":
+    if not product_detected and rule_intent == "fallback" and allow_gemini_fallback:
         ai_understanding = _understand_with_gemini(
             message=message,
             context=context,
@@ -130,13 +131,13 @@ def understand_customer_message(
         "customer_meaning": "Rule-based classifier result used.",
         "product_mentions": [],
         "needs_product_info": product_detected,
-        "reply_needed": True,
+        "reply_needed": False if (not product_detected and rule_intent == "fallback") else True,
         "should_escalate": rule_intent in {"complaint", "return_refund", "human_handoff", "wholesale"},
         "should_sell": product_detected,
-        "should_ask_clarification": rule_intent == "fallback",
-        "confidence": 0.5 if rule_intent == "fallback" else 0.65,
-        "recommended_action": "use_rule_intent",
-        "source": "rule_fallback",
+        "should_ask_clarification": False,
+        "confidence": 0.2 if (not product_detected and rule_intent == "fallback") else 0.65,
+        "recommended_action": "wait_for_user" if (not product_detected and rule_intent == "fallback") else "use_rule_intent",
+        "source": "low_confidence_rules" if (not product_detected and rule_intent == "fallback") else "rule_fallback",
         "prompt_trace": {
             "prompt_id": "message_understanding_prompt",
             "prompt_version": int(get_prompt_config("message_understanding_prompt").get("version") or 1),

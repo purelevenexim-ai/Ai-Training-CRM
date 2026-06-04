@@ -11,6 +11,7 @@ for path in (str(ROOT), str(BACKEND_ROOT)):
         sys.path.insert(0, path)
 
 from app.ai.pricing_formatter import PricingFormatter
+from app.ai.intent_router import route_message
 from app.ai.wabis_reply_generator import WabisReplyGenerator
 
 
@@ -58,7 +59,7 @@ def test_elakka_maps_to_same_cardamom_catalog() -> None:
     )
 
     assert elakka_result["intent"] == "availability"
-    assert "*CARDAMOM*" in elakka_result["reply_text"]
+    assert "100g ₹460" in elakka_result["reply_text"]
     assert "₹460" in elakka_result["reply_text"]
 
 
@@ -131,8 +132,8 @@ def test_typoed_clove_aliases_map_to_clove_reply() -> None:
 
     assert grampu_result["intent"] == "availability"
     assert gampoo_result["intent"] == "availability"
-    assert "*CLOVE*" in grampu_result["reply_text"]
-    assert "*CLOVE*" in gampoo_result["reply_text"]
+    assert "100g ₹180" in grampu_result["reply_text"]
+    assert "100g ₹180" in gampoo_result["reply_text"]
     assert "how much are you looking for" not in grampu_result["reply_text"].lower()
     assert "yes, we have clove in stock" not in grampu_result["reply_text"].lower()
     assert "Size     | Price    | Delivery" not in grampu_result["reply_text"]
@@ -202,7 +203,8 @@ def test_unmatched_non_product_message_uses_clean_fallback() -> None:
     )
 
     assert result["intent"] == "fallback"
-    assert "products, delivery, payment, or orders" in result["reply_text"]
+    assert result["reply_text"] is None
+    assert result["suggested_action"] == "wait_for_user"
 
 
 def test_media_marker_gets_media_aware_reply() -> None:
@@ -212,9 +214,9 @@ def test_media_marker_gets_media_aware_reply() -> None:
         customer_name="Anu",
     )
 
-    assert result["intent"] == "media_received"
-    assert "video" in result["reply_text"].lower()
-    assert "one line" in result["reply_text"].lower()
+    assert result["intent"] == "media_review"
+    assert result["reply_text"] is None
+    assert result["suggested_action"] == "wait_for_user"
 
 
 def test_parcel_received_message_gets_post_delivery_reply() -> None:
@@ -231,3 +233,49 @@ def test_parcel_received_message_gets_post_delivery_reply() -> None:
     assert "feedback" in result["reply_text"].lower() or "feedback" in result["reply_text"]
     assert "products, delivery, payment, or orders" not in result["reply_text"].lower()
     assert result.get("prompt_trace") is not None
+
+
+def test_unknown_product_query_goes_silent_wait() -> None:
+    decision = route_message(
+        "919999999980",
+        "Plants available??",
+        message_meta={"message_type": "text", "has_previous_interaction": True},
+    )
+
+    assert decision["route"] == "silent_wait"
+    assert decision["reason"] == "low_confidence_unclear_message"
+
+
+def test_payment_done_gets_payment_reply() -> None:
+    result = WabisReplyGenerator.generate_reply(
+        incoming_message="paid",
+        customer_phone="919999999979",
+        customer_name="Anu",
+    )
+
+    assert result["intent"] == "payment"
+    assert result["reply_text"] is not None
+    assert "screenshot" in result["reply_text"].lower() or "transaction" in result["reply_text"].lower()
+
+
+def test_payment_media_with_context_gets_verification_reply() -> None:
+    result = WabisReplyGenerator.generate_reply(
+        incoming_message="[[media:image]]",
+        customer_phone="919999999978",
+        customer_name="Anu",
+        context={"payment_claimed": True, "journey_stage": "payment_pending"},
+    )
+
+    assert result["intent"] == "payment"
+    assert "verify" in result["reply_text"].lower() or "confirm" in result["reply_text"].lower()
+
+
+def test_plain_media_without_context_stays_silent() -> None:
+    decision = route_message(
+        "919999999977",
+        "[[media:image]]",
+        message_meta={"message_type": "image", "has_previous_interaction": True},
+    )
+
+    assert decision["route"] == "silent_wait"
+    assert decision["reason"] == "low_confidence_media_review"

@@ -1868,6 +1868,19 @@ def init_database() -> None:
         )
         connection.execute('CREATE INDEX IF NOT EXISTS idx_kg_phone ON knowledge_gaps(phone, created_at DESC)')
         connection.execute('CREATE INDEX IF NOT EXISTS idx_kg_unresolved ON knowledge_gaps(resolved_by, created_at DESC)')
+        for _col, _ddl in [
+            ("detected_product", "TEXT"),
+            ("confidence", "REAL"),
+            ("reason", "TEXT"),
+            ("status", "TEXT NOT NULL DEFAULT 'open'"),
+            ("admin_label", "TEXT"),
+            ("correct_response", "TEXT"),
+            ("updated_at", "TEXT"),
+        ]:
+            try:
+                connection.execute(f"ALTER TABLE knowledge_gaps ADD COLUMN {_col} {_ddl}")
+            except Exception:
+                pass
 
         # Missing products - tracks products customers ask for but we don't have
         connection.execute(

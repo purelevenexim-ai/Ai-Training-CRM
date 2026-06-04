@@ -1448,7 +1448,8 @@ def get_training_gaps(limit: int = 30) -> dict[str, list[dict[str, Any]]]:
         if _table_exists(connection, "knowledge_gaps"):
             for row in connection.execute(
                 """
-                SELECT id, phone, original_query, detected_intent, created_at
+                SELECT id, phone, original_query, detected_intent, detected_product,
+                       confidence, reason, status, admin_label, correct_response, created_at, updated_at
                 FROM knowledge_gaps
                 WHERE resolved_by IS NULL
                 ORDER BY created_at DESC

@@ -1828,6 +1828,10 @@ export default function OwnerDashboard() {
                     <p>
                       {gap.detected_intent || 'unknown intent'} • {gap.phone || 'no phone'}
                     </p>
+                    <p className="muted-copy">
+                      Product: {gap.detected_product || '—'} • Reason: {gap.reason || 'knowledge_gap'} • Confidence:{' '}
+                      {gap.confidence ?? '—'}
+                    </p>
                     <small>{formatDateTime(gap.created_at)}</small>
                   </article>
                 ))}

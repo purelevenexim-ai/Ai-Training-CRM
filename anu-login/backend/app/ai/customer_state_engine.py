@@ -177,8 +177,6 @@ def _detect_payment_claim(message: str) -> bool:
 
 def _detect_screenshot(message: str, message_type: str | None = None) -> bool:
     text = normalize_message(message)
-    if message_type and message_type.lower() in {"image", "photo", "media", "document"}:
-        return True
     return any(keyword in text for keyword in ("screenshot", "receipt", "proof", "payment screenshot"))
 
 
@@ -289,12 +287,25 @@ def update_customer_state(
         followups_allowed,
         default=_normalize_bool(existing.get("followups_allowed"), 1),
     )
+    existing_journey_stage = str(existing.get("journey_stage") or existing.get("flow_step") or "").strip().lower()
 
     if not detected_address and _address_like(inbound_message or ""):
         detected_address = 1
     if not detected_payment_claimed and _detect_payment_claim(inbound_message or ""):
         detected_payment_claimed = 1
     if not detected_payment_screenshot and _detect_screenshot(inbound_message or "", message_type=message_type):
+        detected_payment_screenshot = 1
+    if (
+        not detected_payment_screenshot
+        and str(message_type or "").lower() in {"image", "photo", "media", "document"}
+        and (
+            detected_payment_claimed
+            or _normalize_bool(existing.get("payment_claimed"), 0)
+            or existing_journey_stage in {"order_capture", "payment_pending", "payment_review"}
+            or _normalize_bool(existing.get("address_received"), 0)
+            or bool(existing.get("pincode_received"))
+        )
+    ):
         detected_payment_screenshot = 1
 
     if defer_intent is None and detected_intent in {"followup", "negation"}:

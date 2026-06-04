@@ -18,7 +18,33 @@ from app.ai.wabis_api_client import WabisAPIClient
 logger = logging.getLogger(__name__)
 
 
-def log_knowledge_gap(phone: str, original_query: str, conversation_id: str = "") -> str:
+def _ensure_gap_columns(conn) -> None:
+    for column_sql in (
+        "ALTER TABLE knowledge_gaps ADD COLUMN detected_product TEXT",
+        "ALTER TABLE knowledge_gaps ADD COLUMN confidence REAL",
+        "ALTER TABLE knowledge_gaps ADD COLUMN reason TEXT",
+        "ALTER TABLE knowledge_gaps ADD COLUMN status TEXT NOT NULL DEFAULT 'open'",
+        "ALTER TABLE knowledge_gaps ADD COLUMN admin_label TEXT",
+        "ALTER TABLE knowledge_gaps ADD COLUMN correct_response TEXT",
+        "ALTER TABLE knowledge_gaps ADD COLUMN updated_at TEXT",
+    ):
+        try:
+            conn.execute(column_sql)
+        except Exception:
+            pass
+
+
+def log_knowledge_gap(
+    phone: str,
+    original_query: str,
+    conversation_id: str = "",
+    *,
+    detected_intent: str = "",
+    detected_product: str = "",
+    confidence: float | None = None,
+    reason: str = "",
+    status: str = "open",
+) -> str:
     """
     Log that we don't understand this query.
     Returns gap_id for tracking.
@@ -26,17 +52,25 @@ def log_knowledge_gap(phone: str, original_query: str, conversation_id: str = ""
     try:
         gap_id = str(uuid.uuid4())
         conn = get_db_connection()
+        _ensure_gap_columns(conn)
         conn.execute(
             """
             INSERT INTO knowledge_gaps 
-            (id, phone, original_query, conversation_id, created_at)
-            VALUES (?, ?, ?, ?, ?)
+            (id, phone, original_query, conversation_id, detected_intent, detected_product,
+             confidence, reason, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 gap_id,
                 phone,
                 original_query,
                 conversation_id,
+                detected_intent,
+                detected_product,
+                confidence,
+                reason,
+                status,
+                datetime.now(timezone.utc).isoformat(),
                 datetime.now(timezone.utc).isoformat(),
             ),
         )
@@ -223,9 +257,11 @@ def get_unresolved_gaps(limit: int = 20) -> list[dict[str, Any]]:
     """Get unresolved knowledge gaps for human review"""
     try:
         conn = get_db_connection()
+        _ensure_gap_columns(conn)
         rows = conn.execute(
             """
-            SELECT id, phone, original_query, clarifications, detected_intent, created_at
+            SELECT id, phone, original_query, clarifications, detected_intent, detected_product,
+                   confidence, reason, status, admin_label, correct_response, created_at, updated_at
             FROM knowledge_gaps
             WHERE resolved_by IS NULL
             ORDER BY created_at DESC
@@ -242,7 +278,14 @@ def get_unresolved_gaps(limit: int = 20) -> list[dict[str, Any]]:
                 "query": row[2],
                 "clarifications": json.loads(row[3]) if row[3] else [],
                 "intent": row[4],
-                "created": row[5],
+                "detected_product": row[5],
+                "confidence": row[6],
+                "reason": row[7],
+                "status": row[8],
+                "admin_label": row[9],
+                "correct_response": row[10],
+                "created": row[11],
+                "updated": row[12],
             })
         return result
     except Exception as e:

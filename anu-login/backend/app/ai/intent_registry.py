@@ -126,7 +126,23 @@ INTENT_KEYWORDS: dict[str, tuple[str, ...]] = {
     "negation": ("venda", "vendam", "not interested", "dont want", "don't want", "no need"),
     "human_handoff": ("call me", "human", "agent", "owner", "direct", "speak to"),
     "business_info": ("who are you", "about pureleven", "location", "shop", "company", "farm"),
-    "payment": ("gpay", "upi", "payment", "bank", "account number", "cash paid", "paid rs", "transaction"),
+    "payment": (
+        "gpay",
+        "upi",
+        "payment",
+        "bank",
+        "account number",
+        "cash paid",
+        "paid rs",
+        "transaction",
+        "paid",
+        "payment done",
+        "payment sent",
+        "sent payment",
+        "screenshot",
+        "payment proof",
+        "transaction ref",
+    ),
 }
 
 
@@ -220,6 +236,7 @@ def detect_intent(message: str, *, product_detected: bool = False) -> str:
     for intent in (
         "complaint",
         "return_refund",
+        "order_confirm",
         "payment",
         "human_handoff",
         "business_info",
@@ -231,6 +248,8 @@ def detect_intent(message: str, *, product_detected: bool = False) -> str:
         "delivery_time",
     ):
         if any(keyword in normalized for keyword in INTENT_KEYWORDS.get(intent, ())):
+            if intent == "order_confirm":
+                return "payment"
             return intent
 
     if "delivery" in normalized or "shipping" in normalized or "courier" in normalized:

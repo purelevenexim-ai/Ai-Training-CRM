@@ -161,7 +161,7 @@ def _display_product_reference(product: dict[str, Any], customer_reference: str,
     return reference
 
 
-def _non_product_reply(intent: str, style: str) -> dict[str, Any]:
+def _non_product_reply(intent: str, style: str, context: Optional[dict[str, Any]] = None) -> dict[str, Any]:
     style_key = PricingFormatter._style_key(style)
     copy = PricingFormatter.REPLY_STYLE_COPY[style_key] if hasattr(PricingFormatter, "REPLY_STYLE_COPY") else None
     # Access module-level copy without exposing it publicly.
@@ -184,13 +184,16 @@ def _non_product_reply(intent: str, style: str) -> dict[str, Any]:
             "escalation_reason": intent,
             "suggested_action": "escalate",
         }
-    if intent == "payment":
+    if intent in {"payment", "order_confirm"}:
+        state_context = context or {}
+        payment_received = bool(state_context.get("payment_screenshot_received"))
         return {
-            "reply_text": copy["payment"],
+            "reply_text": copy["payment_received"] if payment_received else copy["payment"],
             "intent": "payment",
             "should_escalate": False,
             "escalation_reason": None,
             "suggested_action": "send_reply",
+            "journey_stage": "payment_review" if payment_received else "payment_pending",
         }
     if intent == "followup":
         return {
@@ -267,11 +270,11 @@ def _non_product_reply(intent: str, style: str) -> dict[str, Any]:
             "suggested_action": "escalate",
         }
     return {
-        "reply_text": copy["fallback"],
+        "reply_text": None,
         "intent": "fallback",
         "should_escalate": False,
         "escalation_reason": None,
-        "suggested_action": "send_reply",
+        "suggested_action": "wait_for_user",
     }
 
 
@@ -300,6 +303,7 @@ def generate_dynamic_reply(
         product_detected=bool(product),
         rule_intent=intent,
         detected_language=reply_style,
+        allow_gemini_fallback=False,
     )
     semantic_intent = str(semantic_understanding.get("intent") or "").strip()
 
@@ -307,6 +311,7 @@ def generate_dynamic_reply(
         reply = _non_product_reply(
             "delivery_received_confirmation" if semantic_intent == "post_delivery_feedback" else semantic_intent,
             reply_style,
+            context=context,
         )
         reply["message_understanding"] = {
             **metadata,
@@ -320,7 +325,24 @@ def generate_dynamic_reply(
         return reply
 
     if not product:
-        reply = _non_product_reply(intent, reply_style)
+        if intent == "fallback" and not bool(semantic_understanding.get("reply_needed", True)):
+            return {
+                "reply_text": None,
+                "intent": "fallback",
+                "should_escalate": False,
+                "escalation_reason": None,
+                "suggested_action": "wait_for_user",
+                "message_understanding": {
+                    **metadata,
+                    **semantic_understanding,
+                    "product": None,
+                    "product_mentions": [],
+                    "reply_style": reply_style,
+                    "customer_reference": None,
+                },
+                "knowledge_gap_reason": "low_confidence_unclear_message",
+            }
+        reply = _non_product_reply(intent, reply_style, context=context)
         reply["message_understanding"] = {
             **metadata,
             **semantic_understanding,
@@ -333,7 +355,7 @@ def generate_dynamic_reply(
         return reply
 
     if intent in {"complaint", "return_refund", "human_handoff", "payment", "wholesale", "followup", "negation"}:
-        reply = _non_product_reply(intent, reply_style)
+        reply = _non_product_reply(intent, reply_style, context=context)
         reply["message_understanding"] = {
             **metadata,
             "product": product["id"],
@@ -394,7 +416,7 @@ def generate_dynamic_reply(
         closing_line=bridge.get("closing_line") or None,
     )
     if not payload:
-        fallback = _non_product_reply("fallback", reply_style)
+        fallback = _non_product_reply("fallback", reply_style, context=context)
         fallback["message_understanding"] = {
             **metadata,
             "product": product_id,

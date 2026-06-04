@@ -212,7 +212,7 @@ class WabisReplyGenerator:
             media_type = WabisReplyGenerator._media_message_type(incoming_message)
             if media_type:
                 reply_style = WabisReplyGenerator._detect_reply_style(incoming_message)
-                return WabisReplyGenerator._handle_media_message(media_type, reply_style)
+                return WabisReplyGenerator._handle_media_message(media_type, reply_style, context=context)
 
             if is_pure_greeting(incoming_message, product_detected=bool(detect_product(incoming_message))):
                 logger.warning(
@@ -402,35 +402,56 @@ class WabisReplyGenerator:
         return ""
 
     @staticmethod
-    def _handle_media_message(media_type: str, reply_style: str = "english") -> dict[str, Any]:
+    def _handle_media_message(
+        media_type: str,
+        reply_style: str = "english",
+        context: Optional[dict[str, Any]] = None,
+    ) -> dict[str, Any]:
         style_key = PricingFormatter._style_key(reply_style)
-        copy = {
-            "english": (
-                f"I received the {media_type} 😊\n\n"
-                "If this is for an order/payment, please type one line also so I can understand it clearly."
-            ),
-            "manglish": (
-                f"{media_type} kitti 😊\n\n"
-                "Order/payment related aanenkil oru line text ayachu parayamo? Appo clear aayi help cheyyam."
-            ),
-            "malayalam": (
-                f"{media_type} കിട്ടി 😊\n\n"
-                "Order/payment related ആണെങ്കിൽ ഒരു line text കൂടി അയയ്ക്കാമോ? അപ്പോൾ clear ആയി help ചെയ്യാം."
-            ),
-        }[style_key]
+        state = context or {}
+        payment_context = bool(
+            state.get("payment_claimed")
+            or state.get("payment_screenshot_received")
+            or state.get("address_received")
+            or state.get("pincode_received")
+            or str(state.get("journey_stage") or "").strip().lower() in {"order_capture", "payment_pending", "payment_review"}
+        )
+        if payment_context:
+            copy = {
+                "english": "Payment screenshot received 😊 We’ll verify it and confirm shortly.",
+                "manglish": "Payment screenshot kitti 😊 Verify cheythu confirm cheyyam.",
+                "malayalam": "Payment screenshot കിട്ടി 😊 Verify ചെയ്ത് confirm ചെയ്യാം.",
+            }[style_key]
+            return {
+                "reply_text": copy,
+                "intent": "payment",
+                "should_escalate": False,
+                "escalation_reason": None,
+                "suggested_action": "send_reply",
+                "media_mode": "text",
+                "journey_stage": "payment_review",
+                "message_understanding": {
+                    "detected_intent": "payment",
+                    "detected_language": style_key,
+                    "media_type": media_type,
+                    "payment_context": True,
+                },
+            }
         return {
-            "reply_text": copy,
-            "intent": "media_received",
+            "reply_text": None,
+            "intent": "media_review",
             "should_escalate": False,
             "escalation_reason": None,
-            "suggested_action": "send_reply",
+            "suggested_action": "wait_for_user",
             "media_mode": "text",
             "extra_messages": [],
             "message_understanding": {
-                "detected_intent": "media_received",
+                "detected_intent": "media_review",
                 "detected_language": style_key,
                 "media_type": media_type,
+                "payment_context": False,
             },
+            "knowledge_gap_reason": "low_confidence_media_review",
         }
 
     @staticmethod

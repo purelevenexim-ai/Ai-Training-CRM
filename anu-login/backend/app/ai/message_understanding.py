@@ -10,6 +10,36 @@ from app.services.prompt_registry_service import get_prompt_config, get_prompt_t
 
 logger = logging.getLogger(__name__)
 
+PAYMENT_CONFIRMATION_TERMS = (
+    "paid",
+    "payment done",
+    "payment sent",
+    "sent payment",
+    "cash paid",
+    "transaction sent",
+    "transaction ref",
+    "transaction reference",
+    "gpay cheythu",
+    "upi cheythu",
+    "transfer cheythu",
+    "done",
+    "sent",
+)
+
+PAYMENT_PROOF_TERMS = (
+    "screenshot",
+    "receipt",
+    "proof",
+    "transaction ref",
+    "transaction reference",
+    "utr",
+    "rrn",
+    "ref no",
+    "reference no",
+)
+
+TRANSACTION_REF_PATTERN = re.compile(r"\b(?:utr|rrn|ref|txn|transaction)\s*[:#-]?\s*[a-z0-9]{6,}\b", re.IGNORECASE)
+
 
 def _normalise_text(message: str) -> str:
     return re.sub(r"\s+", " ", (message or "").strip().lower())
@@ -32,11 +62,69 @@ def understand_customer_message(
     """
     text = _normalise_text(message)
     context = context or {}
+    payment_stage = str(context.get("journey_stage") or context.get("current_stage") or "").strip().lower()
+    latest_intent = str(context.get("latest_intent") or "").strip().lower()
+    payment_context = bool(
+        context.get("payment_claimed")
+        or context.get("payment_screenshot_received")
+        or payment_stage in {"order_capture", "payment_pending", "payment_review"}
+        or latest_intent == "payment"
+    )
 
     received_terms = ("kitti", "kitty", "got", "received", "recieved", "ലഭിച്ചു", "കിട്ടി")
     parcel_terms = ("parcel", "parsal", "order", "product", "item", "package", "delivery", "courier", "പാഴ്സൽ", "ഓർഡർ", "സാധനം")
     thanks_terms = ("thank", "thanks", "thanku", "thank u", "tnx", "നന്ദി")
     feedback_terms = ("feedback", "review", "opinion", "abhiprayam", "review parayam")
+
+    if _looks_like_payment_proof(text=text, payment_context=payment_context):
+        return {
+            "intent": "payment_proof_shared",
+            "sub_intent": "customer_shared_payment_proof",
+            "sentiment": "neutral",
+            "language": detected_language,
+            "journey_stage": "payment_review",
+            "customer_meaning": "Customer shared payment proof or a transaction reference for verification.",
+            "product_mentions": [],
+            "needs_product_info": False,
+            "reply_needed": True,
+            "should_escalate": False,
+            "should_sell": False,
+            "should_ask_clarification": False,
+            "confidence": 0.9 if payment_context else 0.72,
+            "recommended_action": "verify_payment_proof",
+            "source": "semantic_rules",
+            "prompt_trace": {
+                "prompt_id": "message_understanding_prompt",
+                "prompt_version": int(get_prompt_config("message_understanding_prompt").get("version") or 1),
+                "final_prompt": "",
+                "llm_response": "",
+            },
+        }
+
+    if _looks_like_payment_confirmation(text=text, payment_context=payment_context):
+        return {
+            "intent": "payment_confirmation",
+            "sub_intent": "customer_claimed_payment_done",
+            "sentiment": "neutral",
+            "language": detected_language,
+            "journey_stage": "payment_pending",
+            "customer_meaning": "Customer says payment was completed and expects verification.",
+            "product_mentions": [],
+            "needs_product_info": False,
+            "reply_needed": True,
+            "should_escalate": False,
+            "should_sell": False,
+            "should_ask_clarification": False,
+            "confidence": 0.88 if payment_context else 0.7,
+            "recommended_action": "ask_or_verify_payment_proof",
+            "source": "semantic_rules",
+            "prompt_trace": {
+                "prompt_id": "message_understanding_prompt",
+                "prompt_version": int(get_prompt_config("message_understanding_prompt").get("version") or 1),
+                "final_prompt": "",
+                "llm_response": "",
+            },
+        }
 
     if any(received in text for received in received_terms) and any(parcel in text for parcel in parcel_terms):
         return {
@@ -145,6 +233,28 @@ def understand_customer_message(
             "llm_response": "",
         },
     }
+
+
+def _looks_like_payment_confirmation(*, text: str, payment_context: bool) -> bool:
+    if not text:
+        return False
+    if any(term in text for term in PAYMENT_CONFIRMATION_TERMS):
+        return True
+    if payment_context and text in {"done", "sent", "ok done", "payment done", "done payment"}:
+        return True
+    return False
+
+
+def _looks_like_payment_proof(*, text: str, payment_context: bool) -> bool:
+    if not text:
+        return False
+    if any(term in text for term in PAYMENT_PROOF_TERMS):
+        return True
+    if TRANSACTION_REF_PATTERN.search(text):
+        return True
+    if payment_context and re.search(r"\b\d{6,}\b", text) and any(token in text for token in ("ref", "utr", "rrn", "txn")):
+        return True
+    return False
 
 
 def _understand_with_gemini(

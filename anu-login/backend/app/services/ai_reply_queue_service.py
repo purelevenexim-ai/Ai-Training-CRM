@@ -605,12 +605,22 @@ def run_due_ai_reply_jobs(limit: int = 20) -> list[dict[str, Any]]:
 
             from app.routes.wave02_wabis_routes import _generate_and_send_reply
 
+            job_metadata: dict[str, Any] = {}
+            if job.get("metadata_json"):
+                try:
+                    parsed = json.loads(str(job["metadata_json"]))
+                    if isinstance(parsed, dict):
+                        job_metadata = parsed
+                except Exception:
+                    job_metadata = {}
+
             result = _generate_and_send_reply(
                 conversation_id=job["conversation_id"],
                 customer_phone=job["customer_phone"],
                 customer_name=job["customer_name"],
                 incoming_message=job["source_message"],
                 message_type=job["message_type"],
+                message_meta_extra=dict(job_metadata.get("message_meta") or {}),
             )
             status = "sent" if result.get("status") in {"sent", "escalated"} else "skipped"
             if result.get("status") == "error":

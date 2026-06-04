@@ -307,11 +307,27 @@ def generate_dynamic_reply(
     )
     semantic_intent = str(semantic_understanding.get("intent") or "").strip()
 
-    if semantic_intent in {"delivery_received_confirmation", "gratitude_positive", "post_delivery_feedback"} and not product:
+    if semantic_intent in {
+        "delivery_received_confirmation",
+        "gratitude_positive",
+        "post_delivery_feedback",
+        "payment_confirmation",
+        "payment_proof_shared",
+    } and not product:
+        target_intent = semantic_intent
+        reply_context = dict(context)
+        if semantic_intent == "post_delivery_feedback":
+            target_intent = "delivery_received_confirmation"
+        elif semantic_intent in {"payment_confirmation", "payment_proof_shared"}:
+            target_intent = "payment"
+            if semantic_intent == "payment_proof_shared":
+                reply_context["payment_screenshot_received"] = True
+            else:
+                reply_context["payment_claimed"] = True
         reply = _non_product_reply(
-            "delivery_received_confirmation" if semantic_intent == "post_delivery_feedback" else semantic_intent,
+            target_intent,
             reply_style,
-            context=context,
+            context=reply_context,
         )
         reply["message_understanding"] = {
             **metadata,

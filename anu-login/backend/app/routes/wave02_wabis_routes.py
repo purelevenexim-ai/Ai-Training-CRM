@@ -270,8 +270,83 @@ def _message_meta(
     customer_phone: str,
     control: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    def collect_media_fragments(value: Any, fragments: list[str]) -> None:
+        if value is None:
+            return
+        if isinstance(value, dict):
+            for key, item in value.items():
+                key_name = str(key or "").strip().lower()
+                if key_name in {
+                    "caption",
+                    "text",
+                    "body",
+                    "ocr_text",
+                    "ocr",
+                    "analysis_text",
+                    "media_text",
+                    "title",
+                    "description",
+                    "filename",
+                    "file_name",
+                    "message",
+                }:
+                    collect_media_fragments(item, fragments)
+                elif isinstance(item, (dict, list)):
+                    collect_media_fragments(item, fragments)
+            return
+        if isinstance(value, list):
+            for item in value:
+                collect_media_fragments(item, fragments)
+            return
+        text = str(value or "").strip()
+        if not text or text.startswith("http://") or text.startswith("https://"):
+            return
+        fragments.append(text)
+
+    def extract_media_hints() -> dict[str, Any]:
+        fragments: list[str] = []
+        for raw_value in (
+            payload.user_message,
+            payload.message,
+            payload.body,
+            payload.user_input,
+            payload.value,
+            payload.text,
+        ):
+            if not raw_value:
+                continue
+            text = str(raw_value).strip()
+            if text.startswith("{") and text.endswith("}"):
+                try:
+                    parsed = json.loads(text)
+                except Exception:
+                    parsed = text
+                collect_media_fragments(parsed, fragments)
+            else:
+                collect_media_fragments(text, fragments)
+
+        unique: list[str] = []
+        seen: set[str] = set()
+        for fragment in fragments:
+            lowered = fragment.lower()
+            if lowered in seen:
+                continue
+            seen.add(lowered)
+            unique.append(fragment)
+
+        media_type = str(payload.message_type or payload.type or "").strip().lower()
+        if not media_type and incoming_message.startswith("[[media:"):
+            media_type = incoming_message.removeprefix("[[media:").removesuffix("]]").strip().lower()
+
+        return {
+            "media_type": media_type,
+            "media_text": " ".join(unique).strip(),
+            "media_caption": unique[0] if unique else "",
+            "raw_message": payload.user_message or payload.message or payload.body or "",
+        }
+
     control = control or get_ai_control_settings()
-    return {
+    meta = {
         "message_type": payload.type or payload.message_type or "text",
         "postback_id": payload.postback_id or payload.postbackid,
         "provider_postback_id": payload.postback_id or payload.postbackid,
@@ -286,6 +361,8 @@ def _message_meta(
         "wabis_priority_minutes": control.get("wabis_priority_minutes", 5),
         "has_previous_interaction": _has_previous_interaction(customer_phone),
     }
+    meta.update(extract_media_hints())
+    return meta
 
 
 def _ai_routes_need_queue(route: str | None) -> bool:
@@ -722,6 +799,7 @@ async def handle_wabis_incoming_message(
                 postback_id=payload.postback_id or payload.postbackid,
                 reply_message_id=payload.reply_message_id,
                 input_flow_id=payload.input_flow_id,
+                message_meta_extra=meta,
             )
             return {
                 "status": "received",
@@ -743,6 +821,7 @@ async def handle_wabis_incoming_message(
                 "event_id": event_id,
                 "postback_id": payload.postback_id or payload.postbackid,
                 "reply_message_id": payload.reply_message_id,
+                "message_meta": meta,
             },
         )
         logger.warning("[MAIN] AI reply queued for %s: %s", phone, queue_result)
@@ -775,6 +854,7 @@ def _generate_and_send_reply(
     postback_id: str | None = None,
     reply_message_id: str | None = None,
     input_flow_id: str | None = None,
+    message_meta_extra: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Route message to correct handler using unified conversation state.
@@ -833,6 +913,7 @@ def _generate_and_send_reply(
                 ),
                 "wabis_priority_minutes": control.get("wabis_priority_minutes", 5),
                 "has_previous_interaction": _has_previous_interaction(customer_phone),
+                **(message_meta_extra or {}),
             },
         )
         route = decision.get("route")
@@ -853,6 +934,7 @@ def _generate_and_send_reply(
                 "journey_stage": customer_state.get("journey_stage"),
             }
         )
+        reply_context["message_meta"] = dict(message_meta_extra or {})
         if isinstance(decision.get("product_context"), dict):
             reply_context.update(decision["product_context"])
         if decision.get("resolved_product_key") and "product_key" not in reply_context:

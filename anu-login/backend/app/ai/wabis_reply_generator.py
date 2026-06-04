@@ -15,6 +15,7 @@ import json
 from app.ai.openrouter_client import ai_client
 from app.ai.gemini_client import gemini_client
 from app.ai.intent_registry import is_pure_greeting
+from app.ai.media_understanding import analyze_media_message
 from app.ai.product_knowledge import detect_product
 from app.ai.training_data_loader import (
     find_best_match,
@@ -212,7 +213,18 @@ class WabisReplyGenerator:
             media_type = WabisReplyGenerator._media_message_type(incoming_message)
             if media_type:
                 reply_style = WabisReplyGenerator._detect_reply_style(incoming_message)
-                return WabisReplyGenerator._handle_media_message(media_type, reply_style, context=context)
+                media_analysis = analyze_media_message(
+                    incoming_message=incoming_message,
+                    context=context or {},
+                    message_meta=(context or {}).get("message_meta") or {},
+                    detected_language=reply_style,
+                )
+                return WabisReplyGenerator._handle_media_message(
+                    media_type,
+                    reply_style,
+                    context=context,
+                    media_analysis=media_analysis,
+                )
 
             if is_pure_greeting(incoming_message, product_detected=bool(detect_product(incoming_message))):
                 logger.warning(
@@ -406,22 +418,15 @@ class WabisReplyGenerator:
         media_type: str,
         reply_style: str = "english",
         context: Optional[dict[str, Any]] = None,
+        media_analysis: Optional[dict[str, Any]] = None,
     ) -> dict[str, Any]:
         style_key = PricingFormatter._style_key(reply_style)
         state = context or {}
-        payment_context = bool(
-            state.get("payment_claimed")
-            or state.get("payment_screenshot_received")
-            or state.get("address_received")
-            or state.get("pincode_received")
-            or str(state.get("journey_stage") or "").strip().lower() in {"order_capture", "payment_pending", "payment_review"}
-        )
-        if payment_context:
-            copy = {
-                "english": "Payment screenshot received 😊 We’ll verify it and confirm shortly.",
-                "manglish": "Payment screenshot kitti 😊 Verify cheythu confirm cheyyam.",
-                "malayalam": "Payment screenshot കിട്ടി 😊 Verify ചെയ്ത് confirm ചെയ്യാം.",
-            }[style_key]
+        analysis = media_analysis or {}
+        payment_context = bool(analysis.get("payment_context"))
+        if analysis.get("intent") == "payment_proof_shared" or payment_context:
+            copy_key = "payment_review_details" if analysis.get("needs_amount_time") else "payment_received"
+            copy = PricingFormatter.get_static_copy(copy_key, style_key)
             return {
                 "reply_text": copy,
                 "intent": "payment",
@@ -435,6 +440,9 @@ class WabisReplyGenerator:
                     "detected_language": style_key,
                     "media_type": media_type,
                     "payment_context": True,
+                    "media_analysis": analysis.get("analysis_type") or "payment_proof_detected",
+                    "media_text": analysis.get("extracted_text") or "",
+                    "media_keywords": analysis.get("keywords") or [],
                 },
             }
         return {
@@ -450,6 +458,7 @@ class WabisReplyGenerator:
                 "detected_language": style_key,
                 "media_type": media_type,
                 "payment_context": False,
+                "media_analysis": analysis.get("analysis_type") or "low_confidence_media_review",
             },
             "knowledge_gap_reason": "low_confidence_media_review",
         }

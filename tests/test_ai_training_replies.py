@@ -11,6 +11,7 @@ for path in (str(ROOT), str(BACKEND_ROOT)):
         sys.path.insert(0, path)
 
 from app.ai.pricing_formatter import PricingFormatter
+from app.ai.customer_state_engine import sync_customer_state_from_inbound
 from app.ai.intent_router import route_message
 from app.ai.wabis_reply_generator import WabisReplyGenerator
 
@@ -258,12 +259,37 @@ def test_payment_done_gets_payment_reply() -> None:
     assert "screenshot" in result["reply_text"].lower() or "transaction" in result["reply_text"].lower()
 
 
+def test_payment_done_in_pending_context_maps_to_payment_reply() -> None:
+    result = WabisReplyGenerator.generate_reply(
+        incoming_message="done",
+        customer_phone="919999999976",
+        customer_name="Anu",
+        context={"journey_stage": "payment_pending", "latest_intent": "payment"},
+    )
+
+    assert result["intent"] == "payment"
+    assert result["suggested_action"] == "send_reply"
+    assert "screenshot" in result["reply_text"].lower() or "transaction" in result["reply_text"].lower()
+
+
 def test_payment_media_with_context_gets_verification_reply() -> None:
     result = WabisReplyGenerator.generate_reply(
         incoming_message="[[media:image]]",
         customer_phone="919999999978",
         customer_name="Anu",
         context={"payment_claimed": True, "journey_stage": "payment_pending"},
+    )
+
+    assert result["intent"] == "payment"
+    assert "verify" in result["reply_text"].lower() or "confirm" in result["reply_text"].lower()
+
+
+def test_payment_reference_message_gets_verification_reply() -> None:
+    result = WabisReplyGenerator.generate_reply(
+        incoming_message="Transaction reference UTR123456789",
+        customer_phone="919999999975",
+        customer_name="Anu",
+        context={"journey_stage": "payment_pending"},
     )
 
     assert result["intent"] == "payment"
@@ -279,3 +305,57 @@ def test_plain_media_without_context_stays_silent() -> None:
 
     assert decision["route"] == "silent_wait"
     assert decision["reason"] == "low_confidence_media_review"
+
+
+def test_media_with_payment_context_routes_to_ai_payment() -> None:
+    sync_customer_state_from_inbound(
+        customer_id="919999999974",
+        inbound_message="paid",
+        message_type="text",
+    )
+    decision = route_message(
+        "919999999974",
+        "[[media:image]]",
+        message_meta={"message_type": "image", "has_previous_interaction": True},
+    )
+
+    assert decision["route"] == "ai"
+    assert decision["intent"] == "payment"
+
+
+def test_media_with_payment_keywords_routes_to_ai_without_prior_context() -> None:
+    decision = route_message(
+        "919999999973",
+        "[[media:image]]",
+        message_meta={
+            "message_type": "image",
+            "has_previous_interaction": True,
+            "media_text": "Google Pay payment successful UTR123456789",
+            "media_caption": "",
+        },
+    )
+
+    assert decision["route"] == "ai"
+    assert decision["intent"] == "payment"
+    assert decision["message_understanding"]["media_analysis"] in {
+        "payment_proof_detected",
+        "payment_proof_contextual",
+    }
+
+
+def test_payment_media_with_keyword_hints_gets_verification_reply() -> None:
+    result = WabisReplyGenerator.generate_reply(
+        incoming_message="[[media:image]]",
+        customer_phone="919999999972",
+        customer_name="Anu",
+        context={
+            "message_meta": {
+                "message_type": "image",
+                "media_text": "Google Pay payment successful",
+            },
+        },
+    )
+
+    assert result["intent"] == "payment"
+    assert "screenshot" in result["reply_text"].lower()
+    assert "verify" in result["reply_text"].lower() or "confirm" in result["reply_text"].lower()

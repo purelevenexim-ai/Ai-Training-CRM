@@ -7,10 +7,12 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.ai.audit_logger import log_routing_decision as audit_log_routing_decision
-from app.ai.customer_state_engine import sync_customer_state_from_inbound
+from app.ai.customer_state_engine import get_customer_state, sync_customer_state_from_inbound, update_customer_state
 from app.ai.conversation_state_manager import get_conversation_state, mark_activity, reset_conversation_state
 from app.ai.flow_helpers import flow_match, log_flow_abandoned
+from app.ai.media_understanding import analyze_media_message
 from app.ai.intent_registry import intent_metadata
+from app.ai.message_understanding import understand_customer_message
 from app.ai.product_knowledge import detect_product
 from app.storage import get_db_connection
 
@@ -89,33 +91,13 @@ def _route_catalog(reason: str, *, intent: str, product_key: str | None = None, 
     return decision
 
 
-def _route_silent_wait(reason: str, *, intent: str, metadata: dict[str, Any]) -> dict[str, Any]:
-    """Do not send generic clarification for unclear/low-confidence messages.
-
-    We intentionally reuse the existing human_only skip path so the current
-    sender does not produce a WhatsApp reply. The decision metadata still tells
-    the dashboard/audit log that this was a silent wait, not a real handoff.
-    """
-    return {
-        "route": "human_only",
-        "reason": reason,
-        "owner": "silent_wait",
-        "intent": intent,
-        "message_understanding": {
-            **metadata,
-            "silent_wait": True,
-            "should_reply": False,
-            "suggested_action": "wait_for_user",
-            "confidence": 0.0 if intent == "fallback" else 0.35,
-        },
-    }
-
-
 def route_message(phone: str, message: str, message_meta: dict[str, Any] | None = None) -> dict[str, Any]:
     message_meta = message_meta or {}
     state = get_conversation_state(phone)
+    customer_state = get_customer_state(phone) or {}
     state_product = str((state or {}).get("active_product") or (state or {}).get("context", {}).get("product_key") or "").strip()
-    product_key = detect_product(message) or (state_product or None)
+    customer_state_product = str(customer_state.get("active_product") or "").strip()
+    product_key = detect_product(message) or (state_product or customer_state_product or None)
     metadata = intent_metadata(message, product_detected=bool(product_key))
     try:
         sync_customer_state_from_inbound(
@@ -336,12 +318,97 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
             product_key=product_key,
         ) | {"message_understanding": {**metadata, "detected_product": product_key}}
 
-    if metadata["detected_intent"] == "fallback":
-        return _route_silent_wait(
-            "Low-confidence unclear message; waiting instead of sending generic clarification",
-            intent=metadata["detected_intent"],
-            metadata=metadata,
+    semantic = understand_customer_message(
+        message=message,
+        context={
+            **((state or {}).get("context") or {}),
+            **customer_state,
+        },
+        product_detected=False,
+        rule_intent=metadata["detected_intent"],
+        detected_language=metadata["detected_language"],
+        allow_gemini_fallback=False,
+    )
+
+    if _is_media_marker(message):
+        media_analysis = analyze_media_message(
+            incoming_message=message,
+            context={
+                **((state or {}).get("context") or {}),
+                **customer_state,
+            },
+            message_meta=message_meta,
+            detected_language=metadata["detected_language"],
         )
+        if media_analysis.get("intent") == "payment_proof_shared":
+            try:
+                update_customer_state(
+                    phone,
+                    inbound_message=message,
+                    message_type=str(message_meta.get("message_type") or "image"),
+                    latest_intent="payment",
+                    journey_stage="payment_review",
+                    payment_screenshot_received=True,
+                    context_updates={
+                        "media_analysis": media_analysis.get("analysis_type"),
+                        "media_text": media_analysis.get("extracted_text"),
+                        "media_keywords": media_analysis.get("keywords") or [],
+                    },
+                )
+            except Exception as exc:
+                logger.debug("Failed to update payment screenshot state for %s: %s", phone, exc)
+            return {
+                "route": "ai",
+                "reason": str(media_analysis.get("analysis_type") or "payment_proof_detected"),
+                "intent": "payment",
+                "message_understanding": {
+                    **metadata,
+                    **media_analysis,
+                    "detected_intent": "payment",
+                    "media_analysis": media_analysis.get("analysis_type"),
+                },
+            }
+        return {
+            "route": "silent_wait",
+            "reason": str(media_analysis.get("analysis_type") or "low_confidence_media_review"),
+            "intent": "media_review",
+            "message_understanding": {
+                **metadata,
+                **media_analysis,
+                "confidence": float(media_analysis.get("confidence") or 0.2),
+                "unknown_product_candidate": "",
+            },
+        }
+
+    if semantic.get("intent") in {"payment_confirmation", "payment_proof_shared"}:
+        return {
+            "route": "ai",
+            "reason": f"semantic_{semantic.get('intent')}",
+            "intent": "payment",
+            "message_understanding": {
+                **metadata,
+                **semantic,
+                "detected_intent": "payment",
+            },
+        }
+
+    if metadata["detected_intent"] == "fallback" and semantic.get("intent") not in {
+        "delivery_received_confirmation",
+        "gratitude_positive",
+        "post_delivery_feedback",
+        "payment_confirmation",
+        "payment_proof_shared",
+    }:
+        return {
+            "route": "silent_wait",
+            "reason": "low_confidence_unclear_message",
+            "intent": "fallback",
+            "message_understanding": {
+                **metadata,
+                "confidence": float(semantic.get("confidence") or 0.2),
+                "unknown_product_candidate": _unknown_product_candidate(message),
+            },
+        }
 
     return {
         "route": "ai",

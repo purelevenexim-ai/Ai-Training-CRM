@@ -243,6 +243,41 @@ export default function OwnerDashboard() {
   const [driveSyncReport, setDriveSyncReport] = useState(null);
   const productImageInputRef = useRef(null);
 
+  function resetForLockedDashboard(message) {
+    localStorage.removeItem('anu_owner_secret');
+    setAdminSecret('');
+    setSecretDraft('');
+    setSummary(null);
+    setInfrastructure(null);
+    setCustomers([]);
+    setSelectedTimeline(null);
+    setKbItems([]);
+    setKbMeta({ count: 0, search: '' });
+    setAiControl(DEFAULT_AI_CONTROL);
+    setPrompts({ items: [], count: 0 });
+    setPromptForm(DEFAULT_PROMPT_FORM);
+    setEditingPromptId('');
+    setObservatory({ items: [], count: 0 });
+    setObservatoryPhone('');
+    setGaps({ knowledge_gaps: [], missing_products: [] });
+    setProducts({ products: [], combos: [] });
+    setCustomerJourneys({ items: [], count: 0 });
+    setJourneyForm(createDefaultJourneyForm());
+    setEditingJourneyId('');
+    setProductForm(createEmptyProductForm());
+    setEditingProductKey('');
+    setProductImageUrlDraft('');
+    setProductImageCaptionDraft('');
+    setProductImagePrimaryDraft(true);
+    setProductImageUploadActive(false);
+    setProductImageError('');
+    setDriveFolderUrlDraft('');
+    setDriveSyncActive(false);
+    setDriveSyncReport(null);
+    setActiveTab('overview');
+    setError(message || 'Admin secret is required to open this dashboard.');
+  }
+
   async function apiFetch(path, options = {}, secretOverride = adminSecret) {
     const isFormData =
       typeof FormData !== 'undefined' && options.body instanceof FormData;
@@ -255,7 +290,9 @@ export default function OwnerDashboard() {
     });
 
     if (response.status === 401) {
-      throw new Error('Admin secret is required to open this dashboard.');
+      const error = new Error('Admin secret is required to open this dashboard.');
+      error.status = 401;
+      throw error;
     }
     if (!response.ok) {
       const text = await response.text();
@@ -311,49 +348,83 @@ export default function OwnerDashboard() {
     setLoading(true);
     setError('');
     try {
-      const [
-        summaryPayload,
-        infrastructurePayload,
-        customersPayload,
-        knowledgePayload,
-        aiPayload,
-        promptsPayload,
-        observatoryPayload,
-        gapsPayload,
-        productsPayload,
-        journeyPayload,
-      ] = await Promise.all([
-        apiFetch('/api/owner/dashboard/summary', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/infrastructure', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/customers?search=&label=all&limit=80', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/knowledge-base?search=&limit=1000', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/ai-control', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/prompts', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/prompt-observatory?limit=80&phone=', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/training-gaps?limit=40', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/products', {}, secretOverride),
-        apiFetch('/api/owner/dashboard/customer-journeys', {}, secretOverride),
-      ]);
+      const sections = [
+        ['summary', '/api/owner/dashboard/summary'],
+        ['infrastructure', '/api/owner/dashboard/infrastructure'],
+        ['customers', '/api/owner/dashboard/customers?search=&label=all&limit=80'],
+        ['knowledge', '/api/owner/dashboard/knowledge-base?search=&limit=1000'],
+        ['ai', '/api/owner/dashboard/ai-control'],
+        ['prompts', '/api/owner/dashboard/prompts'],
+        ['observatory', '/api/owner/dashboard/prompt-observatory?limit=80&phone='],
+        ['gaps', '/api/owner/dashboard/training-gaps?limit=40'],
+        ['products', '/api/owner/dashboard/products'],
+        ['journeys', '/api/owner/dashboard/customer-journeys'],
+      ];
+      const settled = await Promise.allSettled(
+        sections.map(([, path]) => apiFetch(path, {}, secretOverride)),
+      );
+      const payloads = {};
+      const failedSections = [];
+
+      settled.forEach((result, index) => {
+        const [sectionKey] = sections[index];
+        if (result.status === 'fulfilled') {
+          payloads[sectionKey] = result.value;
+          return;
+        }
+        if (result.reason?.status === 401) {
+          throw result.reason;
+        }
+        failedSections.push(sectionKey);
+      });
 
       startTransition(() => {
-        setSummary(summaryPayload);
-        setInfrastructure(infrastructurePayload);
-        setCustomers(customersPayload.items || []);
-        setKbItems(knowledgePayload.items || []);
+        if (payloads.summary) {
+          setSummary(payloads.summary);
+        }
+        if (payloads.infrastructure) {
+          setInfrastructure(payloads.infrastructure);
+        }
+        if (payloads.customers) {
+          setCustomers(payloads.customers.items || []);
+        }
+        if (payloads.knowledge) {
+          setKbItems(payloads.knowledge.items || []);
+        }
         setKbMeta({
-          count: knowledgePayload.count || 0,
-          search: knowledgePayload.search || '',
-          storage_mode: knowledgePayload.storage_mode || '',
-          source_kind: knowledgePayload.source_kind || '',
+          count: payloads.knowledge?.count || 0,
+          search: payloads.knowledge?.search || '',
+          storage_mode: payloads.knowledge?.storage_mode || '',
+          source_kind: payloads.knowledge?.source_kind || '',
         });
-        setAiControl({ ...DEFAULT_AI_CONTROL, ...aiPayload });
-        setPrompts(promptsPayload);
-        setObservatory(observatoryPayload);
-        setGaps(gapsPayload);
-        setProducts(productsPayload);
-        setCustomerJourneys(journeyPayload);
+        if (payloads.ai) {
+          setAiControl({ ...DEFAULT_AI_CONTROL, ...payloads.ai });
+        }
+        if (payloads.prompts) {
+          setPrompts(payloads.prompts);
+        }
+        if (payloads.observatory) {
+          setObservatory(payloads.observatory);
+        }
+        if (payloads.gaps) {
+          setGaps(payloads.gaps);
+        }
+        if (payloads.products) {
+          setProducts(payloads.products);
+        }
+        if (payloads.journeys) {
+          setCustomerJourneys(payloads.journeys);
+        }
       });
+
+      if (failedSections.length) {
+        setError(`Some dashboard sections could not load yet: ${failedSections.join(', ')}.`);
+      }
     } catch (loadError) {
+      if (loadError?.status === 401) {
+        resetForLockedDashboard('Saved admin secret is invalid. Enter the current admin secret to continue.');
+        return;
+      }
       setError(loadError.message || 'Dashboard load failed.');
     } finally {
       setLoading(false);
@@ -455,6 +526,10 @@ export default function OwnerDashboard() {
       setTimeout(() => setFlashMessage(''), 2400);
       loadAll();
     } catch (saveError) {
+      if (saveError?.status === 401) {
+        resetForLockedDashboard('Saved admin secret is invalid. Enter the current admin secret to continue.');
+        return;
+      }
       setError(saveError.message || 'Could not save AI control settings.');
     }
   }

@@ -54,7 +54,8 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "fallback": "",
         "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
         "payment": "Payment ചെയ്താൽ screenshot അല്ലെങ്കിൽ transaction reference share cheyyu 😊 Confirm cheyyam.",
-        "payment_received": "Payment screenshot received 😊 Verify cheythu confirm cheyyam.",
+        "payment_received": "Payment screenshot received 👍 We’ll verify it and confirm shortly.",
+        "payment_review_details": "Screenshot kitti 👍 Payment verify cheyyan amount / paid time onnu type cheyyamo?",
         "business_info": "PureLeven Idukki-side spices aanu. Farm story, products, delivery, എല്ലാം help cheyyാം.",
         "human_handoff": "Sure, direct support help arrange cheyyാം. Oru minute.",
         "complaint": "Sorry about that. Nammal ithu immediately support team-il raise cheyyാം.",
@@ -90,7 +91,8 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "fallback": "",
         "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
         "payment": "Payment cheythittundengil screenshot allenkil transaction reference ayacholu 😊 Confirm cheyyam.",
-        "payment_received": "Payment screenshot kitti 😊 Verify cheythu confirm cheyyam.",
+        "payment_received": "Payment screenshot kitti 👍 Njan verify cheythu order confirm cheyyam. Oru minute.",
+        "payment_review_details": "Screenshot kitti 👍 Payment verify cheyyan amount / paid time onnu type cheyyamo?",
         "business_info": "PureLeven Idukki side spices aanu. Farm-il ninnulla products aanu.",
         "human_handoff": "Sure, direct support connect cheyyam.",
         "complaint": "Sorry. Ithu support team-il immediate aayi raise cheyyam.",
@@ -130,7 +132,8 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "fallback": "",
         "footer": "കേരളത്തിൽ ₹600 കഴിഞ്ഞാൽ free delivery. കേരളത്തിന് പുറത്തേക്ക് customer charge ₹60 ആണ്.",
         "payment": "Payment ചെയ്തിട്ടുണ്ടെങ്കിൽ screenshot അല്ലെങ്കിൽ transaction reference അയയ്ക്കൂ 😊 Confirm ചെയ്യാം.",
-        "payment_received": "Payment screenshot കിട്ടി 😊 Verify ചെയ്ത് confirm ചെയ്യാം.",
+        "payment_received": "Payment screenshot കിട്ടി 👍 Verify ചെയ്ത് order confirm ചെയ്യാം. ഒരു മിനിറ്റ്.",
+        "payment_review_details": "Screenshot കിട്ടി 👍 Payment verify ചെയ്യാൻ amount / paid time ഒന്നു type ചെയ്യാമോ?",
         "business_info": "PureLeven Idukki-side spices ആണ്. Farm storyയും delivery helpഉം share ചെയ്യാം.",
         "human_handoff": "Sure, direct support connect ചെയ്യാം.",
         "complaint": "ക്ഷമിക്കണം. ഇത് support team-ലേക്ക് ഉടൻ raise ചെയ്യാം.",
@@ -471,6 +474,11 @@ class PricingFormatter:
     def build_order_delivery_cta(style: str = "english") -> str:
         style_key = PricingFormatter._style_key(style)
         return REPLY_STYLE_COPY[style_key]["order_delivery_cta"]
+
+    @staticmethod
+    def get_static_copy(copy_key: str, style: str = "english") -> str:
+        style_key = PricingFormatter._style_key(style)
+        return str(REPLY_STYLE_COPY.get(style_key, {}).get(copy_key) or "")
 
     @staticmethod
     def format_combo_response(style: str = "english") -> str:

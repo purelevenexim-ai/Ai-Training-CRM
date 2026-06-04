@@ -113,6 +113,21 @@ def set_conversation_state(
         )
         conn.commit()
         logger.warning(f"[STATE] {phone} → owner={owner}, reason={owner_reason}, flow={flow_id}")
+        try:
+            from app.ai.customer_state_engine import update_customer_state
+
+            context_fields = context or {}
+            update_customer_state(
+                phone,
+                product_key=str(context_fields.get("product_key") or context_fields.get("active_product") or "") or None,
+                latest_intent=str(context_fields.get("latest_intent") or context_fields.get("scenario") or "") or None,
+                language=str(context_fields.get("language") or context_fields.get("reply_style") or "") or None,
+                journey_stage=str(context_fields.get("journey_stage") or flow_step or "") or None,
+                followups_allowed=context_fields.get("followups_allowed"),
+                context_updates=context_fields,
+            )
+        except Exception as exc:
+            logger.debug("Failed to mirror state into customer_state columns for %s: %s", phone, exc)
     except Exception as e:
         logger.error(f"Failed to set state: {e}")
 
@@ -128,7 +143,10 @@ def get_conversation_state(phone: str) -> Optional[dict[str, Any]]:
         conn = get_db_connection()
         row = conn.execute(
             """
-            SELECT owner, owner_reason, flow_id, flow_step, expected_responses, expires_at, last_activity, context_json, updated_at
+            SELECT owner, owner_reason, flow_id, flow_step, expected_responses, expires_at, last_activity, context_json, updated_at,
+                   customer_id, language, active_product, latest_intent, price_shared, quantity_selected, address_received,
+                   pincode_received, payment_claimed, payment_screenshot_received, defer_intent, followups_allowed,
+                   journey_stage, last_ai_reply_hash, last_ai_reply_at
             FROM conversation_state
             WHERE phone = ?
             """,
@@ -138,7 +156,32 @@ def get_conversation_state(phone: str) -> Optional[dict[str, Any]]:
         if not row:
             return None
         
-        owner, owner_reason, flow_id, flow_step, expected_responses, expires_at, last_activity, context_json, updated_at = row
+        (
+            owner,
+            owner_reason,
+            flow_id,
+            flow_step,
+            expected_responses,
+            expires_at,
+            last_activity,
+            context_json,
+            updated_at,
+            customer_id,
+            language,
+            active_product,
+            latest_intent,
+            price_shared,
+            quantity_selected,
+            address_received,
+            pincode_received,
+            payment_claimed,
+            payment_screenshot_received,
+            defer_intent,
+            followups_allowed,
+            journey_stage,
+            last_ai_reply_hash,
+            last_ai_reply_at,
+        ) = row
         
         # Check if expired
         if expires_at and datetime.fromisoformat(expires_at) < datetime.now(timezone.utc):
@@ -157,6 +200,21 @@ def get_conversation_state(phone: str) -> Optional[dict[str, Any]]:
             "last_activity": last_activity,
             "context": json.loads(context_json) if context_json else {},
             "updated_at": updated_at,
+            "customer_id": customer_id or phone,
+            "language": language or "",
+            "active_product": active_product or "",
+            "latest_intent": latest_intent or "",
+            "price_shared": bool(price_shared),
+            "quantity_selected": quantity_selected or "",
+            "address_received": bool(address_received),
+            "pincode_received": pincode_received or "",
+            "payment_claimed": bool(payment_claimed),
+            "payment_screenshot_received": bool(payment_screenshot_received),
+            "defer_intent": defer_intent or "",
+            "followups_allowed": bool(followups_allowed if followups_allowed is not None else 1),
+            "journey_stage": journey_stage or flow_step or "",
+            "last_ai_reply_hash": last_ai_reply_hash or "",
+            "last_ai_reply_at": last_ai_reply_at or "",
         }
     except Exception as e:
         logger.error(f"Failed to get state: {e}")

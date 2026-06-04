@@ -241,10 +241,25 @@ class WabisReplyGenerator:
                 try:
                     from app.services.product_followup_service import cancel_product_followups
                     from app.ai.conversation_state_manager import reset_conversation_state
+                    from app.ai.customer_state_engine import update_customer_state
 
                     reason = "customer_deferred_decision" if result.get("intent") == "followup" else "customer_not_interested"
                     cancel_product_followups(customer_phone, reason=reason)
                     reset_conversation_state(customer_phone)
+                    update_customer_state(
+                        customer_phone,
+                        inbound_message=incoming_message,
+                        latest_intent=str(result.get("intent") or ""),
+                        product_key=str(analysis.get("product") or result.get("product_key") or "") or None,
+                        defer_intent=str(result.get("intent") or ""),
+                        followups_allowed=False,
+                        journey_stage="deferred",
+                        context_updates={
+                            "defer_reason": reason,
+                            "followups_allowed": False,
+                            "defer_intent": result.get("intent"),
+                        },
+                    )
                 except Exception as exc:
                     logger.warning(f"[AI] Failed to cancel queued followups/state for {customer_phone}: {exc}")
                 return {
@@ -624,7 +639,7 @@ class WabisReplyGenerator:
 
     @staticmethod
     def _build_follow_up_plan(scenario: str) -> list[dict[str, Any]]:
-        if scenario in {"availability", "price_check", "delivery", "value_objection", "clarification", "order_intent"}:
+        if scenario in {"order_request", "order_confirm", "order_intent"}:
             return [
                 {"after_minutes": 5, "stage": "gentle_reminder"},
                 {"after_minutes": 30, "stage": "combo_offer"},

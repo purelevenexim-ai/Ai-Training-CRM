@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from app.ai.conversation_state_manager import get_conversation_state, set_conversation_state
+from app.ai.customer_state_engine import record_ai_reply
 from app.ai.pricing_formatter import PricingFormatter
 from app.ai.whatsapp_delivery_service import send_whatsapp_reply_with_fallback
 from app.config import settings
@@ -26,14 +27,14 @@ def _now() -> str:
 
 FOLLOWUP_STAGE_COPY: dict[str, dict[str, str]] = {
     "gentle_reminder": {
-        "english": "Just checking in. If you'd like, I can help you choose the best pack and order it today.",
-        "manglish": "Just check cheyyan aanu. Venengil best option suggest cheythu order help cheyyam.",
-        "malayalam": "ഒന്ന് follow up ചെയ്യുന്നതാണ്. വേണമെങ്കിൽ ഏറ്റവും നല്ല option suggest ചെയ്ത് order help ചെയ്യാം.",
+        "english": "Hi 😊 If you want to continue, just reply with the product name.",
+        "manglish": "Hi 😊 Continue cheyyan aanel product name reply cheyyu.",
+        "malayalam": "ഹായ് 😊 തുടരണം എങ്കിൽ product name മാത്രം reply ചെയ്യൂ.",
     },
     "combo_offer": {
-        "english": "If you want better value, here are the combo packs customers usually like.",
-        "manglish": "Value nokkiyal combo packs aanu best. Njan thazhe options share cheyyam.",
-        "malayalam": "നല്ല വില നോക്കുകയാണെങ്കിൽ combo packs ആണ് best. താഴെ options share ചെയ്യാം.",
+        "english": "If you want better value, I can share a few combo options.",
+        "manglish": "Value nokkiyal combo options share cheyyam.",
+        "malayalam": "നല്ല value നോക്കുകയാണെങ്കിൽ combo options share ചെയ്യാം.",
     },
     "image_only": {
         "english": "",
@@ -295,6 +296,11 @@ def queue_product_followups(
             follow_up_plan = configured_plan
     except Exception as exc:
         logger.warning("Customer journey plan fallback to static plan for %s: %s", phone, exc)
+
+    state = get_conversation_state(phone)
+    if state and not bool(state.get("followups_allowed", True)):
+        logger.info("Skipping followup queue for %s because followups are disabled", phone)
+        return 0
 
     active_journey_id = str((follow_up_plan[0] or {}).get("journey_id") or "") if follow_up_plan else ""
     assignment_id = ""
@@ -654,6 +660,7 @@ def run_due_product_followups(limit: int = 100, send_live: bool | None = None) -
     now = _now()
     processed: list[dict[str, Any]] = []
     activations: list[tuple[dict[str, Any], str]] = []
+    state_sync_events: list[dict[str, Any]] = []
     control = get_ai_control_settings()
     if not control.get("ai_running", True):
         return processed
@@ -680,6 +687,38 @@ def run_due_product_followups(limit: int = 100, send_live: bool | None = None) -
         for row in rows:
             item = dict(row)
             state = get_conversation_state(item["phone"])
+
+            if state and not bool(state.get("followups_allowed", True)):
+                conn.execute(
+                    """
+                    UPDATE product_journey_followups
+                    SET sent = 1, sent_at = ?, send_status = 'suppressed', send_error = ?, updated_at = ?
+                    WHERE id = ?
+                    """,
+                    (now, "followups_disabled", now, item["id"]),
+                )
+                _write_customer_journey_log_for_followup(
+                    conn,
+                    item,
+                    event_type="step_suppressed",
+                    message_text=item.get("reply_text") or item.get("followup_stage") or "",
+                    metadata={
+                        "followup_id": item["id"],
+                        "stage": item["followup_stage"],
+                        "reason": "followups_disabled",
+                        "send_live": live_mode,
+                    },
+                )
+                processed.append(
+                    {
+                        "id": item["id"],
+                        "phone": item["phone"],
+                        "stage": item["followup_stage"],
+                        "send_status": "suppressed",
+                        "send_live": live_mode,
+                    }
+                )
+                continue
 
             if _customer_has_purchased(conn, item["phone"]):
                 conn.execute(
@@ -915,6 +954,7 @@ def run_due_product_followups(limit: int = 100, send_live: bool | None = None) -
                     continue
 
             payload = _render_followup_payload(item)
+            item_context = json.loads(item.get("context_json") or "{}") if item.get("context_json") else {}
             reply_text = payload["reply_text"]
             send_status = "logged"
             send_error = None
@@ -989,6 +1029,24 @@ def run_due_product_followups(limit: int = 100, send_live: bool | None = None) -
                     now,
                 ),
             )
+            state_sync_events.append(
+                {
+                    "customer_id": item["phone"],
+                    "inbound_message": str(item_context.get("source_message") or ""),
+                    "generated_reply": reply_text,
+                    "final_reply": reply_text,
+                    "reply_result": {
+                        "intent": f"product_followup_{item['followup_stage']}",
+                        "product_key": item.get("product_key"),
+                        "message_understanding": {"scenario": scenario},
+                    },
+                    "guard_action": send_status,
+                    "issues_found": [],
+                    "detected_intent": f"product_followup_{item['followup_stage']}",
+                    "active_product": str(item.get("product_key") or ""),
+                    "journey_stage": str(item.get("followup_stage") or scenario),
+                }
+            )
             processed.append(
                 {
                     "id": item["id"],
@@ -1000,6 +1058,12 @@ def run_due_product_followups(limit: int = 100, send_live: bool | None = None) -
             )
 
         conn.commit()
+
+    for event in state_sync_events:
+        try:
+            record_ai_reply(**event)
+        except Exception as exc:
+            logger.warning("Failed to sync followup reply state for %s: %s", event.get("customer_id"), exc)
 
     for item, scenario in activations:
         try:

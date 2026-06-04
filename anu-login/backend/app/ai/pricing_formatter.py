@@ -25,7 +25,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "details_intro": "Here’s the quick product picture.",
         "delivery_time": "Usually 4-7 days ullil reach cheyyum. Pincode share ചെയ്താൽ exact estimate പറയാം.",
         "delivery_charge": "Kerala orders ₹600 and above free aanu. Below that ₹40. Outside Kerala customer charge ₹60 aanu.",
-        "clarify": "Price aano, delivery aano, atho order cheyyan aano nokkunnath?",
+        "clarify": "Price, delivery, or order help?",
         "best_pack": "If regular use aanu, the recommended pack is usually the most practical option.",
         "order_capture": (
             "Order place cheyyan ivide details share cheyyu:\n"
@@ -51,7 +51,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery location"
         ),
-        "fallback": "Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.",
+        "fallback": "Price, delivery, payment, or order help?",
         "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
         "payment": "Payment update kandittu. Screenshot / transaction ref undo? Share ചെയ്താൽ confirm cheyyാം.",
         "business_info": "PureLeven Idukki-side spices aanu. Farm story, products, delivery, എല്ലാം help cheyyാം.",
@@ -64,7 +64,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "details_intro": "Quick details thazhe kodukkam.",
         "delivery_time": "Usually 4-7 days ullil delivery kittum. Pincode ayachal exact estimate parayam.",
         "delivery_charge": "Kerala-il ₹600 kazhinjal free delivery. Athinu thazhe ₹40 aanu. Outside Kerala customer charge ₹60 aanu.",
-        "clarify": "Price aano, delivery aano, atho order cheyyan aano nokkunnath?",
+        "clarify": "Price, delivery, atho order help?",
         "best_pack": "Regular use aanu enkil recommended pack aanu usually nalla option.",
         "order_capture": (
             "Order cheyyan:\n\n"
@@ -86,7 +86,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery place"
         ),
-        "fallback": "Kurach clear aakki parayamo? Product, delivery, payment, order ellam help cheyyam.",
+        "fallback": "Price, delivery, payment, order help?",
         "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
         "payment": "Payment update kandittu. Screenshot allenkil transaction ref undenkil ayakkamo? Confirm cheyyam.",
         "business_info": "PureLeven Idukki side spices aanu. Farm-il ninnulla products aanu.",
@@ -99,7 +99,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "details_intro": "Quick details താഴെ കൊടുക്കാം.",
         "delivery_time": "സാധാരണ 4-7 ദിവസത്തിനുള്ളിൽ delivery കിട്ടും. Pincode അയച്ചാൽ exact estimate പറയാം.",
         "delivery_charge": "കേരളത്തിൽ ₹600 കഴിഞ്ഞാൽ free delivery. അതിന് താഴെ ₹40. കേരളത്തിന് പുറത്തേക്ക് customer charge ₹60 ആണ്.",
-        "clarify": "വിലയാണോ, delivery ആണോ, അതോ order ചെയ്യാനാണോ നോക്കുന്നത്?",
+        "clarify": "വിലയോ, delivery യോ, order help യോ?",
         "best_pack": "സ്ഥിരമായി ഉപയോഗത്തിനാണെങ്കിൽ recommended pack സാധാരണ നല്ല option ആണ്.",
         "order_capture": (
             "Order place ചെയ്യാൻ ഈ details അയയ്ക്കൂ:\n"
@@ -125,7 +125,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery place"
         ),
-        "fallback": "കുറച്ച് clear ആയി പറയാമോ? Product, delivery, payment, order എല്ലാം help ചെയ്യാം.",
+        "fallback": "വില, delivery, payment, അല്ലെങ്കിൽ order help ആണോ?",
         "footer": "കേരളത്തിൽ ₹600 കഴിഞ്ഞാൽ free delivery. കേരളത്തിന് പുറത്തേക്ക് customer charge ₹60 ആണ്.",
         "payment": "Payment update കണ്ടു. Screenshot അല്ലെങ്കിൽ transaction ref ഉണ്ടെങ്കിൽ അയയ്ക്കൂ. Confirm ചെയ്യാം.",
         "business_info": "PureLeven Idukki-side spices ആണ്. Farm storyയും delivery helpഉം share ചെയ്യാം.",
@@ -551,6 +551,43 @@ class PricingFormatter:
             include_delivery=False,
         )
 
+        simple_scenarios = {"availability", "stock_check", "price"}
+        if scenario in simple_scenarios:
+            size_lines = [f"{item['size']} ₹{item['price']}" for item in product.get("sizes", []) if item.get("size")]
+            opening_map = {
+                "english": "Yes, available 😊",
+                "manglish": "Undu 😊",
+                "malayalam": "ഉണ്ട് 😊",
+            }
+            reply_lines = [opening_line or opening_map[style_key]]
+            if size_lines:
+                reply_lines.extend(["", "\n".join(size_lines)])
+            reply_text = "\n".join(line for line in reply_lines if line is not None).strip()
+            images = list(entry.get("images", []))
+            primary_image_url = str(entry.get("primary_image_url") or "")
+            image_urls = [image["url"] for image in images if image.get("url")][:1]
+            if not image_urls and primary_image_url:
+                image_urls = [primary_image_url]
+            return {
+                "reply_text": reply_text,
+                "intent": scenario,
+                "product_key": product["id"],
+                "display_name": product["name"],
+                "origin": product.get("origin"),
+                "description": product.get("story"),
+                "story": product.get("story"),
+                "quality": product.get("quality"),
+                "recommended_pack": product.get("recommended_pack"),
+                "image_urls": image_urls,
+                "primary_image_url": image_urls[0] if image_urls else "",
+                "images": images,
+                "media_mode": "image" if image_urls else "text",
+                "scenario": scenario,
+                "style": style_key,
+                "sizes": size_rows,
+                "extra_messages": [],
+            }
+
         if opening_line:
             default_opening = opening_line
         elif scenario in {"availability", "stock_check"}:
@@ -656,21 +693,7 @@ class PricingFormatter:
         }
         image_urls = [image["url"] for image in images if image.get("url")] if scenario in media_scenarios else []
         intent_name = scenario if scenario in {"delivery_time", "delivery_charge", "free_delivery"} else scenario
-        cta_scenarios = {
-            "availability",
-            "stock_check",
-            "price",
-            "details",
-            "quality",
-            "origin",
-            "processing",
-            "usage",
-            "benefits",
-            "best_pack",
-            "budget",
-            "comparison",
-            "price_objection",
-        }
+        cta_scenarios = {"order_request", "order_confirm", "order_intent"}
         extra_messages: list[str] = []
         if scenario in cta_scenarios:
             extra_messages.append(PricingFormatter.build_order_delivery_cta(style=style_key))

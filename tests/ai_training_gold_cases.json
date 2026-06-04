@@ -4,15 +4,15 @@
     "message": "cardamom",
     "expected_intent": "availability",
     "must_contain": [
-      "*CARDAMOM*",
+      "available",
       "₹460",
-      "₹3350",
-      "Available",
-      "size     | price"
+      "₹3350"
     ],
     "must_not_contain": [
+      "*CARDAMOM*",
       "i’ll share the price details below",
       "how much are you looking for",
+      "size     | price",
       "size     | price    | delivery"
     ]
   },
@@ -21,9 +21,12 @@
     "message": "elakka",
     "expected_intent": "availability",
     "must_contain": [
-      "*CARDAMOM*",
+      "available",
       "₹460",
       "₹3350"
+    ],
+    "must_not_contain": [
+      "*CARDAMOM*"
     ]
   },
   {
@@ -31,11 +34,12 @@
     "message": "black pepper",
     "expected_intent": "availability",
     "must_contain": [
-      "*BLACK PEPPER*",
+      "available",
       "₹300",
       "₹950"
     ],
     "must_not_contain": [
+      "*BLACK PEPPER*",
       "yes, we have"
     ]
   },
@@ -44,12 +48,13 @@
     "message": "white pepper undo?",
     "expected_intent": "availability",
     "must_contain": [
-      "*WHITE PEPPER*",
+      "undu",
       "₹160",
       "₹400"
     ],
     "must_not_contain": [
-      "*BLACK PEPPER*"
+      "*BLACK PEPPER*",
+      "*WHITE PEPPER*"
     ]
   },
   {
@@ -57,9 +62,12 @@
     "message": "cinnamon",
     "expected_intent": "availability",
     "must_contain": [
-      "*CEYLON CINNAMON*",
+      "available",
       "₹320",
       "₹1400"
+    ],
+    "must_not_contain": [
+      "*CEYLON CINNAMON*"
     ]
   },
   {
@@ -67,11 +75,12 @@
     "message": "clove",
     "expected_intent": "availability",
     "must_contain": [
-      "*CLOVE*",
+      "available",
       "₹180",
       "₹649"
     ],
     "must_not_contain": [
+      "*CLOVE*",
       "yes, we have clove in stock"
     ]
   },
@@ -80,9 +89,12 @@
     "message": "turmeric",
     "expected_intent": "availability",
     "must_contain": [
-      "*TURMERIC POWDER*",
+      "available",
       "₹160",
       "₹300"
+    ],
+    "must_not_contain": [
+      "*TURMERIC POWDER*"
     ]
   },
   {
@@ -140,10 +152,11 @@
     "expected_intent": "availability",
     "must_contain": [
       "undu",
-      "*black pepper*",
-      "size     | price"
+      "₹300",
+      "₹950"
     ],
     "must_not_contain": [
+      "*black pepper*",
       "yes, we have",
       "size     | price    | delivery",
       "details ayakk"
@@ -186,9 +199,12 @@
     "message": "grampu undo?",
     "expected_intent": "availability",
     "must_contain": [
-      "*CLOVE*"
+      "undu",
+      "₹180",
+      "₹649"
     ],
     "must_not_contain": [
+      "*CLOVE*",
       "how much are you looking for"
     ]
   },
@@ -197,9 +213,12 @@
     "message": "Gampoo undo?",
     "expected_intent": "availability",
     "must_contain": [
-      "*CLOVE*"
+      "undu",
+      "₹180",
+      "₹649"
     ],
     "must_not_contain": [
+      "*CLOVE*",
       "how much are you looking for"
     ]
   }

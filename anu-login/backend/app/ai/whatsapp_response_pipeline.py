@@ -55,8 +55,8 @@ def _bridge_lines(
         "scenario": scenario,
     }
     instruction_map = {
-        "availability": "Open like a warm Kerala spice seller. Keep it short. Do not use the phrase 'we have X in stock'.",
-        "price": "Introduce the size list warmly. Do not sound corporate. Do not use 'I’ll share the price details below'.",
+        "availability": "Open like a warm Kerala spice seller. Keep it short and natural.",
+        "price": "Introduce the size list warmly. Do not sound corporate.",
         "details": "Give a warm opening and a gentle invitation to continue.",
         "delivery_time": "Answer only the delivery timing question in a short human tone.",
         "delivery_charge": "Answer only the delivery charge question clearly and briefly.",
@@ -106,26 +106,7 @@ def _bridge_lines(
 
 
 def _follow_up_plan(scenario: str) -> list[dict[str, Any]]:
-    if scenario in {
-        "availability",
-        "price",
-        "details",
-        "quality",
-        "origin",
-        "processing",
-        "usage",
-        "benefits",
-        "best_pack",
-        "budget",
-        "delivery_charge",
-        "delivery_time",
-        "free_delivery",
-        "order_request",
-        "order_confirm",
-        "comparison",
-        "price_objection",
-        "fallback",
-    }:
+    if scenario in {"order_request", "order_confirm", "order_intent"}:
         return [
             {"after_minutes": 5, "stage": "gentle_reminder"},
             {"after_minutes": 30, "stage": "combo_offer"},

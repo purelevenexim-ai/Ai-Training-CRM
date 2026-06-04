@@ -11,6 +11,7 @@ import logging
 from typing import Any
 
 from app.ai.pricing_formatter import PricingFormatter
+from app.ai.response_quality_guard import guard_whatsapp_reply
 from app.meta_client import MetaAPIError, send_image_message as send_meta_image_message
 from app.ai.wabis_api_client import WabisAPIClient
 from app.url_config import URLConfig
@@ -133,6 +134,26 @@ def send_whatsapp_reply_with_fallback(
     media_only: bool = False,
 ) -> dict[str, Any]:
     """Send a WhatsApp reply, falling back to an approved template if needed."""
+    guard = guard_whatsapp_reply(
+        customer_id=phone_number,
+        inbound_message=str((reply_result or {}).get("message_understanding", {}).get("normalized_message") or ""),
+        generated_reply=message_text,
+        reply_result=reply_result,
+        final_reply=message_text,
+        allow_empty=media_only and not message_text,
+    )
+    if guard.action == "blocked":
+        logger.warning("[WHATSAPP-GUARD] %s blocked reply: %s", phone_number, guard.issues_found)
+        return {
+            "success": False,
+            "mode": "guard_blocked",
+            "error": guard.blocked_reason or "guard_blocked",
+            "issues_found": guard.issues_found,
+            "media_results": [],
+            "media_urls": [],
+        }
+
+    message_text = guard.final_reply or message_text
     reply_media_urls = media_urls if media_urls is not None else (reply_result.get("image_urls") if reply_result else [])
     normalized_media_urls = [to_public_url(url) for url in (reply_media_urls or [])]
     media_results: list[dict[str, Any]] = []

@@ -18,12 +18,12 @@ def test_core_product_reply_is_canonical_cardamom_table() -> None:
     reply = PricingFormatter.build_core_product_reply("cardamom")
 
     assert reply is not None
-    assert "*CARDAMOM*" in reply
-    assert "8.5mm A+ grade cardamom" in reply
+    assert "Yes, available" in reply or "Undu" in reply or "ഉണ്ട്" in reply
     assert "100g" in reply
     assert "₹460" in reply
     assert "₹3350" in reply
-    assert "Size     | Price" in reply
+    assert "*CARDAMOM*" not in reply
+    assert "Size     | Price" not in reply
     assert "Size     | Price    | Delivery" not in reply
     assert "Which size would you like" not in reply
     assert "I’ll share the price details below." not in reply
@@ -39,13 +39,13 @@ def test_plain_cardamom_message_returns_neat_product_reply() -> None:
     assert result["intent"] == "availability"
     assert result["should_escalate"] is False
     assert result["suggested_action"] == "send_reply"
-    assert "*CARDAMOM*" in result["reply_text"]
+    assert "*CARDAMOM*" not in result["reply_text"]
+    assert "8.5mm A+ grade" not in result["reply_text"]
     assert "₹460" in result["reply_text"]
     assert "₹3350" in result["reply_text"]
     assert "Size     | Price    | Delivery" not in result["reply_text"]
     assert "Which size" not in result["reply_text"]
-    assert result["extra_messages"]
-    assert "Name, full address, phone number, and pincode" in result["extra_messages"][0]
+    assert result["extra_messages"] == []
     assert "Yes, we have cardamom in stock." not in result["reply_text"]
     assert "I’ll share the price details below." not in result["reply_text"]
 
@@ -111,11 +111,10 @@ def test_manglish_prompt_keeps_manglish_tone() -> None:
     assert result["intent"] == "availability"
     reply_lower = result["reply_text"].lower()
     assert "undu" in reply_lower
-    assert "*black pepper*" in reply_lower
+    assert "*black pepper*" not in reply_lower
     assert "yes, we have" not in reply_lower
     assert "details ayakk" not in reply_lower
-    assert result["extra_messages"]
-    assert "peru, address, phone number, pincode" in result["extra_messages"][0].lower()
+    assert result["extra_messages"] == []
 
 
 def test_typoed_clove_aliases_map_to_clove_reply() -> None:

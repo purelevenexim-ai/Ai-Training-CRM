@@ -218,6 +218,14 @@ def log_ai_response(
     active_flow: Optional[str] = None,
     detected_intent: Optional[str] = None,
     metadata: Optional[Dict[str, Any]] = None,
+    customer_id: Optional[str] = None,
+    inbound_message: Optional[str] = None,
+    generated_reply: Optional[str] = None,
+    final_reply: Optional[str] = None,
+    guard_action: Optional[str] = None,
+    issues_found: Optional[list[str]] = None,
+    active_product: Optional[str] = None,
+    journey_stage: Optional[str] = None,
 ) -> str:
     """Log AI-generated response sent to customer"""
     return log_audit_event(
@@ -229,7 +237,17 @@ def log_ai_response(
         active_flow=active_flow,
         detected_intent=detected_intent,
         reason="ai_response",
-        metadata=metadata,
+        metadata={
+            **(metadata or {}),
+            "customer_id": customer_id or phone,
+            "inbound_message": inbound_message,
+            "generated_reply": generated_reply or response_message,
+            "final_reply": final_reply or response_message,
+            "guard_action": guard_action,
+            "issues_found": issues_found or [],
+            "active_product": active_product,
+            "journey_stage": journey_stage,
+        },
     )
 
 

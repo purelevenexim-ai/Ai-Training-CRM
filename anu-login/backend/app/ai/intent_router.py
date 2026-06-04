@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.ai.audit_logger import log_routing_decision as audit_log_routing_decision
+from app.ai.customer_state_engine import sync_customer_state_from_inbound
 from app.ai.conversation_state_manager import get_conversation_state, mark_activity, reset_conversation_state
 from app.ai.flow_helpers import flow_match, log_flow_abandoned
 from app.ai.intent_registry import intent_metadata
@@ -91,8 +92,26 @@ def _route_catalog(reason: str, *, intent: str, product_key: str | None = None, 
 def route_message(phone: str, message: str, message_meta: dict[str, Any] | None = None) -> dict[str, Any]:
     message_meta = message_meta or {}
     state = get_conversation_state(phone)
-    product_key = detect_product(message)
+    state_product = str((state or {}).get("active_product") or (state or {}).get("context", {}).get("product_key") or "").strip()
+    product_key = detect_product(message) or (state_product or None)
     metadata = intent_metadata(message, product_detected=bool(product_key))
+    try:
+        sync_customer_state_from_inbound(
+            customer_id=phone,
+            inbound_message=message,
+            message_type=str(message_meta.get("message_type") or "text"),
+            product_key=product_key,
+            intent=str(metadata.get("detected_intent") or ""),
+            language=str(metadata.get("detected_language") or ""),
+            journey_stage=str((state or {}).get("flow_step") or (state or {}).get("flow_id") or ""),
+            followups_allowed=None,
+            context_updates={
+                "source_route": "router",
+                "structured_button_click": bool(message_meta.get("structured_button_click")),
+            },
+        )
+    except Exception as exc:
+        logger.debug("Failed to sync customer state before routing for %s: %s", phone, exc)
     structured_button_click = _structured_button_click(message, message_meta)
     has_previous_interaction = bool(message_meta.get("has_previous_interaction"))
     flow_break_detection_enabled = bool(message_meta.get("flow_break_detection_enabled", True))

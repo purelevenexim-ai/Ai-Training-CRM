@@ -70,6 +70,7 @@ INTENT_KEYWORDS: dict[str, tuple[str, ...]] = {
     ),
     "free_delivery": ("free delivery", "free shipping", "free delivery undo", "free shipping undo"),
     "order_request": (
+        "order",
         "venam",
         "order cheyyam",
         "buy",

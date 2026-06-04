@@ -18,10 +18,9 @@ from app.services import product_followup_service as followup_service
 from app.services.product_followup_service import queue_latent_handoff_followup, run_due_product_followups
 
 
-def test_product_followup_workflow() -> None:
+def test_product_followup_is_not_queued_for_simple_price_or_availability_inquiry() -> None:
     ensure_runtime_tables()
     phone = "919999999931"
-    started_at = datetime.now(timezone.utc).isoformat()
     WabisReplyGenerator.generate_reply(
         incoming_message="patta undo?",
         customer_phone=phone,
@@ -31,6 +30,35 @@ def test_product_followup_workflow() -> None:
     state = get_conversation_state(phone)
     assert state is not None
     assert state["flow_id"] == "product_journey"
+    assert state["followups_allowed"] is False
+
+    with get_db_connection() as conn:
+        queued_rows = conn.execute(
+            """
+            SELECT id, followup_stage
+            FROM product_journey_followups
+            WHERE phone = ? AND send_status = 'queued'
+            ORDER BY scheduled_at ASC
+            """,
+            (phone,),
+        ).fetchall()
+        assert len(queued_rows) == 0
+
+
+def test_order_intent_queues_and_processes_followups() -> None:
+    ensure_runtime_tables()
+    phone = "919999999934"
+    started_at = datetime.now(timezone.utc).isoformat()
+    WabisReplyGenerator.generate_reply(
+        incoming_message="I want to order black pepper",
+        customer_phone=phone,
+        customer_name="Anu",
+    )
+
+    state = get_conversation_state(phone)
+    assert state is not None
+    assert state["flow_id"] == "product_journey"
+    assert state["followups_allowed"] is True
 
     with get_db_connection() as conn:
         queued_rows = conn.execute(
@@ -174,7 +202,8 @@ def test_followup_suppresses_when_customer_is_no_longer_in_product_journey() -> 
 
 
 if __name__ == "__main__":
-    test_product_followup_workflow()
+    test_product_followup_is_not_queued_for_simple_price_or_availability_inquiry()
+    test_order_intent_queues_and_processes_followups()
     test_latent_handoff_waits_for_wabis_then_activates_product_journey()
     test_followup_suppresses_when_customer_is_no_longer_in_product_journey()
     print("product_followup_workflow_ok")

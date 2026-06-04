@@ -54,11 +54,41 @@ def ensure_runtime_tables() -> None:
                 expires_at TEXT,
                 last_activity TEXT,
                 context_json TEXT,
+                customer_id TEXT,
+                language TEXT,
+                active_product TEXT,
+                latest_intent TEXT,
+                price_shared INTEGER NOT NULL DEFAULT 0,
+                quantity_selected TEXT,
+                address_received INTEGER NOT NULL DEFAULT 0,
+                pincode_received TEXT,
+                payment_claimed INTEGER NOT NULL DEFAULT 0,
+                payment_screenshot_received INTEGER NOT NULL DEFAULT 0,
+                defer_intent TEXT,
+                followups_allowed INTEGER NOT NULL DEFAULT 1,
+                journey_stage TEXT,
+                last_ai_reply_hash TEXT,
+                last_ai_reply_at TEXT,
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             )
             """
         )
+        _ensure_column(connection, "conversation_state", "customer_id TEXT")
+        _ensure_column(connection, "conversation_state", "language TEXT")
+        _ensure_column(connection, "conversation_state", "active_product TEXT")
+        _ensure_column(connection, "conversation_state", "latest_intent TEXT")
+        _ensure_column(connection, "conversation_state", "price_shared INTEGER NOT NULL DEFAULT 0")
+        _ensure_column(connection, "conversation_state", "quantity_selected TEXT")
+        _ensure_column(connection, "conversation_state", "address_received INTEGER NOT NULL DEFAULT 0")
+        _ensure_column(connection, "conversation_state", "pincode_received TEXT")
+        _ensure_column(connection, "conversation_state", "payment_claimed INTEGER NOT NULL DEFAULT 0")
+        _ensure_column(connection, "conversation_state", "payment_screenshot_received INTEGER NOT NULL DEFAULT 0")
+        _ensure_column(connection, "conversation_state", "defer_intent TEXT")
+        _ensure_column(connection, "conversation_state", "followups_allowed INTEGER NOT NULL DEFAULT 1")
+        _ensure_column(connection, "conversation_state", "journey_stage TEXT")
+        _ensure_column(connection, "conversation_state", "last_ai_reply_hash TEXT")
+        _ensure_column(connection, "conversation_state", "last_ai_reply_at TEXT")
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS product_journey_followups (

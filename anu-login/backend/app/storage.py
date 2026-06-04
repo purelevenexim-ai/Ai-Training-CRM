@@ -1771,6 +1771,21 @@ def init_database() -> None:
                 last_activity TEXT,
                 
                 context_json TEXT,
+                customer_id TEXT,
+                language TEXT,
+                active_product TEXT,
+                latest_intent TEXT,
+                price_shared INTEGER NOT NULL DEFAULT 0,
+                quantity_selected TEXT,
+                address_received INTEGER NOT NULL DEFAULT 0,
+                pincode_received TEXT,
+                payment_claimed INTEGER NOT NULL DEFAULT 0,
+                payment_screenshot_received INTEGER NOT NULL DEFAULT 0,
+                defer_intent TEXT,
+                followups_allowed INTEGER NOT NULL DEFAULT 1,
+                journey_stage TEXT,
+                last_ai_reply_hash TEXT,
+                last_ai_reply_at TEXT,
                 
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
@@ -1779,6 +1794,27 @@ def init_database() -> None:
         )
         connection.execute('CREATE INDEX IF NOT EXISTS idx_conversation_state_owner ON conversation_state(owner)')
         connection.execute('CREATE INDEX IF NOT EXISTS idx_conversation_state_expires ON conversation_state(expires_at)')
+        for _col, _ddl in [
+            ("customer_id", "TEXT"),
+            ("language", "TEXT"),
+            ("active_product", "TEXT"),
+            ("latest_intent", "TEXT"),
+            ("price_shared", "INTEGER NOT NULL DEFAULT 0"),
+            ("quantity_selected", "TEXT"),
+            ("address_received", "INTEGER NOT NULL DEFAULT 0"),
+            ("pincode_received", "TEXT"),
+            ("payment_claimed", "INTEGER NOT NULL DEFAULT 0"),
+            ("payment_screenshot_received", "INTEGER NOT NULL DEFAULT 0"),
+            ("defer_intent", "TEXT"),
+            ("followups_allowed", "INTEGER NOT NULL DEFAULT 1"),
+            ("journey_stage", "TEXT"),
+            ("last_ai_reply_hash", "TEXT"),
+            ("last_ai_reply_at", "TEXT"),
+        ]:
+            try:
+                connection.execute(f"ALTER TABLE conversation_state ADD COLUMN {_col} {_ddl}")
+            except Exception:
+                pass
 
         connection.execute(
             '''

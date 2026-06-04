@@ -25,6 +25,7 @@ from app.ai.conversation_state_manager import get_conversation_state, merge_conv
 from app.ai.clarification_flow import send_clarification_menu, log_knowledge_gap, log_missing_product
 from app.ai.audit_logger import log_customer_message
 from app.ai.audit_logger import log_ai_response
+from app.ai.customer_state_engine import get_customer_state, record_ai_reply, reply_hash
 from app.ai.whatsapp_delivery_service import send_whatsapp_reply_with_fallback
 from app.services.product_followup_service import cancel_product_followups, queue_latent_handoff_followup
 from app.services.customer_journey_service import stop_customer_journeys_for_customer
@@ -297,6 +298,7 @@ def _store_generated_reply(
     reply_result: dict[str, Any],
     route: str,
     customer_name: str = "Customer",
+    inbound_message: str = "",
 ) -> dict[str, Any]:
     """Persist a generated reply in the audit tables and send it to WhatsApp."""
     reply_text = reply_result.get("reply_text") or ""
@@ -314,34 +316,21 @@ def _store_generated_reply(
             "route": route,
         }
 
-    normalized_reply = " ".join(reply_text.lower().split())
+    state_before = get_customer_state(customer_phone)
+    normalized_reply_hash = reply_hash(reply_text)
     try:
-        conn = get_db_connection()
-        cutoff = (datetime.now(timezone.utc) - timedelta(minutes=30)).isoformat()
-        recent = conn.execute(
-            """
-            SELECT reply_text, created_at
-            FROM ai_outgoing_replies
-            WHERE customer_phone = ?
-              AND created_at >= ?
-            ORDER BY created_at DESC
-            LIMIT 1
-            """,
-            (customer_phone, cutoff),
-        ).fetchone()
-        if recent and " ".join(str(recent["reply_text"] or "").lower().split()) == normalized_reply:
-            conn.close()
+        last_hash = str(state_before.get("last_ai_reply_hash") or "").strip()
+        if last_hash and last_hash == normalized_reply_hash:
             logger.warning("[AI-RESPONSE-DEDUPE] %s duplicate reply suppressed", customer_phone)
             return {
                 "status": "skipped",
-                "reason": "duplicate_ai_reply_30m",
+                "reason": "duplicate_ai_reply_hash",
                 "reply_id": "",
                 "intent": intent,
                 "escalated": should_escalate,
                 "route": route,
                 "reply_text": reply_text,
             }
-        conn.close()
     except Exception as exc:
         logger.warning("AI reply dedupe check failed for %s: %s", customer_phone, exc)
 
@@ -428,6 +417,24 @@ def _store_generated_reply(
     except Exception as e:
         logger.error(f"[DB-ERROR] {e}")
 
+    guard_action = str(send_result.get("mode") or "sent")
+    guard_issues = list(send_result.get("issues_found") or [])
+    try:
+        record_ai_reply(
+            customer_id=customer_phone,
+            inbound_message=inbound_message,
+            generated_reply=reply_text,
+            final_reply=reply_text,
+            reply_result=reply_result,
+            guard_action=guard_action,
+            issues_found=guard_issues,
+            detected_intent=intent,
+            active_product=str(reply_result.get("product_key") or ""),
+            journey_stage=str((reply_result.get("message_understanding") or {}).get("scenario") or ""),
+        )
+    except Exception as exc:
+        logger.warning("Failed to sync customer state after AI reply for %s: %s", customer_phone, exc)
+
     try:
         log_ai_response(
             phone=customer_phone,
@@ -435,6 +442,14 @@ def _store_generated_reply(
             owner="ai",
             active_flow="product_journey" if reply_result.get("product_key") else None,
             detected_intent=intent,
+            customer_id=customer_phone,
+            inbound_message=inbound_message,
+            generated_reply=reply_text,
+            final_reply=reply_text,
+            guard_action=guard_action,
+            issues_found=guard_issues,
+            active_product=str(reply_result.get("product_key") or ""),
+            journey_stage=str((reply_result.get("message_understanding") or {}).get("scenario") or ""),
             metadata={
                 "route": route,
                 "media_mode": media_mode,
@@ -492,6 +507,14 @@ def _store_generated_reply(
                 owner="ai",
                 active_flow="product_journey" if reply_result.get("product_key") else None,
                 detected_intent=f"{intent}_cta",
+                customer_id=customer_phone,
+                inbound_message=inbound_message,
+                generated_reply=extra_text,
+                final_reply=extra_text,
+                guard_action="sent",
+                issues_found=[],
+                active_product=str(reply_result.get("product_key") or ""),
+                journey_stage=str((reply_result.get("message_understanding") or {}).get("scenario") or ""),
                 metadata={"route": route, "generated_response": extra_text, "extra_message": True},
             )
         except Exception as exc:
@@ -771,6 +794,10 @@ def _generate_and_send_reply(
             reply_context.update(decision["product_context"])
         if decision.get("resolved_product_key") and "product_key" not in reply_context:
             reply_context["product_key"] = decision["resolved_product_key"]
+        if "product_key" not in reply_context:
+            active_product = str((state_before or {}).get("active_product") or "").strip()
+            if active_product:
+                reply_context["product_key"] = active_product
         
         # Log decision
         log_routing_decision(customer_phone, incoming_message, state_before or {}, decision)
@@ -857,6 +884,7 @@ def _generate_and_send_reply(
                     reply_result,
                     route,
                     customer_name=customer_name,
+                    inbound_message=incoming_message,
                 )
                 result["status"] = "escalated"
                 return result
@@ -899,10 +927,11 @@ def _generate_and_send_reply(
                     reply_result,
                     route,
                     customer_name=customer_name,
+                    inbound_message=incoming_message,
                 )
 
             fallback_reply = {
-                "reply_text": "Price aano, delivery aano, atho order cheyyan aano nokkunnath?",
+                "reply_text": "Price, delivery, or order help?",
                 "intent": "fallback",
                 "should_escalate": False,
                 "escalation_reason": None,
@@ -916,6 +945,7 @@ def _generate_and_send_reply(
                 fallback_reply,
                 route,
                 customer_name=customer_name,
+                inbound_message=incoming_message,
             )
         
         # [7] SALES FLOW
@@ -948,6 +978,7 @@ def _generate_and_send_reply(
                 fallback_reply,
                 route,
                 customer_name=customer_name,
+                inbound_message=incoming_message,
             )
             result["gap_id"] = gap_id
             return result
@@ -983,6 +1014,7 @@ def _generate_and_send_reply(
                 reply_result,
                 route,
                 customer_name=customer_name,
+                inbound_message=incoming_message,
             )
         
         # Unknown route

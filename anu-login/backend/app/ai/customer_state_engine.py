@@ -175,6 +175,29 @@ def _detect_payment_claim(message: str) -> bool:
     )
 
 
+def _detect_address_confirmation(message: str) -> bool:
+    text = normalize_message(message)
+    if not text:
+        return False
+    return any(
+        keyword in text
+        for keyword in (
+            "yes saved",
+            "address saved",
+            "saved",
+            "sent address",
+            "address sent",
+            "ayachu",
+            "save cheythu",
+        )
+    )
+
+
+def _detect_acknowledgement(message: str) -> bool:
+    text = normalize_message(message)
+    return text in {"ok", "okay", "okk", "yes", "fine", "sure", "noted", "ശരി"}
+
+
 def _detect_screenshot(message: str, message_type: str | None = None) -> bool:
     text = normalize_message(message)
     return any(keyword in text for keyword in ("screenshot", "receipt", "proof", "payment screenshot"))
@@ -291,6 +314,8 @@ def update_customer_state(
 
     if not detected_address and _address_like(inbound_message or ""):
         detected_address = 1
+    if not detected_address and _detect_address_confirmation(inbound_message or ""):
+        detected_address = 1
     if not detected_payment_claimed and _detect_payment_claim(inbound_message or ""):
         detected_payment_claimed = 1
     if not detected_payment_screenshot and _detect_screenshot(inbound_message or "", message_type=message_type):
@@ -323,6 +348,10 @@ def update_customer_state(
             journey_stage = "deferred"
         elif detected_intent in {"order_request", "order_confirm"}:
             journey_stage = "order_capture"
+        elif detected_intent in {"address_shared"} or _detect_address_confirmation(inbound_message or ""):
+            journey_stage = "order_capture"
+        elif detected_intent in {"acknowledgement"} or _detect_acknowledgement(inbound_message or ""):
+            journey_stage = existing.get("journey_stage") or existing.get("flow_step") or "acknowledged"
         elif detected_intent in {"price", "availability", "stock_check"} and detected_product:
             journey_stage = "product_interest"
 

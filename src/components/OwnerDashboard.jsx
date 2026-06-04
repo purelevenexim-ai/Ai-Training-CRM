@@ -138,6 +138,7 @@ const TABS = [
   { key: 'customers', label: 'Customers' },
   { key: 'knowledge', label: 'Knowledge Base' },
   { key: 'ai', label: 'AI Control' },
+  { key: 'monitor', label: 'AI Monitor' },
   { key: 'prompts', label: 'Prompts' },
   { key: 'observatory', label: 'Prompt Observatory' },
   { key: 'gaps', label: 'Needs Fixing' },
@@ -220,6 +221,15 @@ export default function OwnerDashboard() {
   const [kbForm, setKbForm] = useState(DEFAULT_KB_FORM);
   const [editingKbId, setEditingKbId] = useState('');
   const [aiControl, setAiControl] = useState(DEFAULT_AI_CONTROL);
+  const [aiMonitor, setAiMonitor] = useState({
+    metrics: {},
+    journeys: [],
+    issues: [],
+    issue_breakdown: [],
+    language_breakdown: [],
+    journey_events: {},
+  });
+  const [monitorHours, setMonitorHours] = useState(4);
   const [prompts, setPrompts] = useState({ items: [], count: 0 });
   const [promptForm, setPromptForm] = useState(DEFAULT_PROMPT_FORM);
   const [editingPromptId, setEditingPromptId] = useState('');
@@ -254,6 +264,8 @@ export default function OwnerDashboard() {
     setKbItems([]);
     setKbMeta({ count: 0, search: '' });
     setAiControl(DEFAULT_AI_CONTROL);
+    setAiMonitor({ metrics: {}, journeys: [], issues: [], issue_breakdown: [], language_breakdown: [], journey_events: {} });
+    setMonitorHours(4);
     setPrompts({ items: [], count: 0 });
     setPromptForm(DEFAULT_PROMPT_FORM);
     setEditingPromptId('');
@@ -340,6 +352,15 @@ export default function OwnerDashboard() {
     setObservatory(payload);
   }
 
+  async function loadAiMonitor(secretOverride = adminSecret, hours = monitorHours) {
+    const query = new URLSearchParams({
+      hours: String(hours || 4),
+      limit: '120',
+    });
+    const payload = await apiFetch(`/api/owner/dashboard/ai-monitor?${query.toString()}`, {}, secretOverride);
+    setAiMonitor(payload);
+  }
+
   async function loadAll(secretOverride = adminSecret) {
     if (!secretOverride) {
       return;
@@ -354,6 +375,7 @@ export default function OwnerDashboard() {
         ['customers', '/api/owner/dashboard/customers?search=&label=all&limit=80'],
         ['knowledge', '/api/owner/dashboard/knowledge-base?search=&limit=1000'],
         ['ai', '/api/owner/dashboard/ai-control'],
+        ['monitor', `/api/owner/dashboard/ai-monitor?hours=${encodeURIComponent(String(monitorHours || 4))}&limit=120`],
         ['prompts', '/api/owner/dashboard/prompts'],
         ['observatory', '/api/owner/dashboard/prompt-observatory?limit=80&phone='],
         ['gaps', '/api/owner/dashboard/training-gaps?limit=40'],
@@ -399,6 +421,9 @@ export default function OwnerDashboard() {
         });
         if (payloads.ai) {
           setAiControl({ ...DEFAULT_AI_CONTROL, ...payloads.ai });
+        }
+        if (payloads.monitor) {
+          setAiMonitor(payloads.monitor);
         }
         if (payloads.prompts) {
           setPrompts(payloads.prompts);
@@ -466,6 +491,8 @@ export default function OwnerDashboard() {
     setSelectedTimeline(null);
     setKbItems([]);
     setKbMeta({ count: 0, search: '' });
+    setAiMonitor({ metrics: {}, journeys: [], issues: [], issue_breakdown: [], language_breakdown: [], journey_events: {} });
+    setMonitorHours(4);
     setPrompts({ items: [], count: 0 });
     setPromptForm(DEFAULT_PROMPT_FORM);
     setEditingPromptId('');
@@ -669,6 +696,16 @@ export default function OwnerDashboard() {
       await loadPromptObservatory(adminSecret, observatoryPhone);
     } catch (loadError) {
       setError(loadError.message || 'Could not load prompt observatory.');
+    }
+  }
+
+  async function handleMonitorRefresh(event) {
+    event?.preventDefault();
+    setError('');
+    try {
+      await loadAiMonitor(adminSecret, monitorHours);
+    } catch (loadError) {
+      setError(loadError.message || 'Could not load AI monitor.');
     }
   }
 
@@ -1714,6 +1751,175 @@ export default function OwnerDashboard() {
               <button type="submit">Save AI settings</button>
             </form>
           </article>
+        </section>
+      ) : null}
+
+      {activeTab === 'monitor' ? (
+        <section className="dashboard-panel">
+          <div className="panel-card">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">AI Monitor</p>
+                <h2>Journey health and reply failures</h2>
+                <p className="muted-copy">
+                  This view links WhatsApp turns, routing decisions, AI replies, and failure tags into one customer journey.
+                </p>
+              </div>
+              <form className="toolbar" onSubmit={handleMonitorRefresh}>
+                <select
+                  value={monitorHours}
+                  onChange={(event) => setMonitorHours(Number(event.target.value || 4))}
+                >
+                  <option value={4}>Last 4 hours</option>
+                  <option value={8}>Last 8 hours</option>
+                  <option value={24}>Last 24 hours</option>
+                  <option value={72}>Last 72 hours</option>
+                </select>
+                <button type="submit">Refresh Monitor</button>
+              </form>
+            </div>
+
+            <div className="metric-grid monitor-metric-grid">
+              {[
+                ['Journeys', aiMonitor.metrics?.journeys ?? 0],
+                ['Messages', aiMonitor.metrics?.messages ?? 0],
+                ['AI Messages', aiMonitor.metrics?.ai_messages ?? 0],
+                ['Issues', aiMonitor.metrics?.issues ?? 0],
+                ['AI Success', `${aiMonitor.metrics?.ai_success_rate ?? 0}%`],
+              ].map(([label, value]) => (
+                <article key={label} className="metric-card">
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </article>
+              ))}
+            </div>
+
+            <div className="monitor-layout">
+              <article className="monitor-section">
+                <div className="panel-heading panel-heading--tight">
+                  <div>
+                    <p className="eyebrow">Issues</p>
+                    <h2>Failure tags</h2>
+                  </div>
+                </div>
+                <div className="monitor-chip-list">
+                  {(aiMonitor.issue_breakdown || []).map((item) => (
+                    <span key={item.issue_type} className="label-chip label-chip--neutral">
+                      {item.issue_type}: {item.count}
+                    </span>
+                  ))}
+                  {!aiMonitor.issue_breakdown?.length ? <p className="muted-copy">No issues detected in this window.</p> : null}
+                </div>
+              </article>
+
+              <article className="monitor-section">
+                <div className="panel-heading panel-heading--tight">
+                  <div>
+                    <p className="eyebrow">Languages</p>
+                    <h2>Detected mix</h2>
+                  </div>
+                </div>
+                <div className="monitor-chip-list">
+                  {(aiMonitor.language_breakdown || []).map((item) => (
+                    <span key={item.language} className="label-chip label-chip--neutral">
+                      {item.language}: {item.count}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            <div className="table-wrap monitor-table-wrap">
+              <table className="owner-table owner-table--compact">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Intent</th>
+                    <th>Product</th>
+                    <th>Messages</th>
+                    <th>Issues</th>
+                    <th>Score</th>
+                    <th>Last Event</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(aiMonitor.journeys || []).map((journey) => (
+                    <tr key={journey.journey_id}>
+                      <td>
+                        <strong>{journey.customer_phone}</strong>
+                        <p className="muted-copy">{journey.conversation_id}</p>
+                      </td>
+                      <td>{journey.journey_status}</td>
+                      <td>{journey.latest_intent || '—'}</td>
+                      <td>{journey.active_product || '—'}</td>
+                      <td>{journey.total_messages}</td>
+                      <td>{journey.issue_count}</td>
+                      <td>{journey.success_score}</td>
+                      <td>{formatDateTime(journey.last_event_at)}</td>
+                    </tr>
+                  ))}
+                  {!aiMonitor.journeys?.length ? (
+                    <tr>
+                      <td colSpan="8">No monitored journeys in this window.</td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="panel-grid monitor-detail-grid">
+            <article className="panel-card">
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">Recent Issues</p>
+                  <h2>What needs attention</h2>
+                </div>
+              </div>
+              <div className="gap-stack">
+                {(aiMonitor.issues || []).slice(0, 40).map((issue) => (
+                  <article key={issue.id} className="gap-row">
+                    <strong>{issue.issue_type}</strong>
+                    <p>{issue.detail}</p>
+                    <small>
+                      {issue.customer_phone} • {formatDateTime(issue.occurred_at)}
+                    </small>
+                    <p className="helper-copy">{issue.suggested_fix}</p>
+                  </article>
+                ))}
+                {!aiMonitor.issues?.length ? <p className="muted-copy">No issue rows found.</p> : null}
+              </div>
+            </article>
+
+            <article className="panel-card">
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">Journey Events</p>
+                  <h2>Latest trace snippets</h2>
+                </div>
+              </div>
+              <div className="gap-stack">
+                {Object.entries(aiMonitor.journey_events || {}).slice(0, 20).map(([journeyId, events]) => (
+                  <details key={journeyId} className="gap-row">
+                    <summary>
+                      <strong>{journeyId}</strong> • {(events || []).length} events
+                    </summary>
+                    {(events || []).map((event) => (
+                      <div key={event.id} className="monitor-event-row">
+                        <small>{formatDateTime(event.occurred_at)} • {event.actor_type} • {event.source}</small>
+                        <p>{event.message_text || '—'}</p>
+                        {(event.issue_tags || []).length ? (
+                          <p className="helper-copy">Issues: {(event.issue_tags || []).join(', ')}</p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </details>
+                ))}
+                {!Object.keys(aiMonitor.journey_events || {}).length ? <p className="muted-copy">No trace snippets found.</p> : null}
+              </div>
+            </article>
+          </div>
         </section>
       ) : null}
 

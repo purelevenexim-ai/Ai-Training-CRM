@@ -148,6 +148,23 @@ def ensure_runtime_tables() -> None:
         )
         connection.execute(
             """
+            CREATE TABLE IF NOT EXISTS message_processing_locks (
+                id TEXT PRIMARY KEY,
+                customer_id TEXT NOT NULL,
+                incoming_message_id TEXT NOT NULL,
+                conversation_id TEXT,
+                owner TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'processing',
+                reply_message_id TEXT,
+                metadata_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                UNIQUE(customer_id, incoming_message_id)
+            )
+            """
+        )
+        connection.execute(
+            """
             CREATE TABLE IF NOT EXISTS ai_conversation_sessions (
                 id TEXT PRIMARY KEY,
                 conversation_id TEXT NOT NULL,
@@ -288,6 +305,72 @@ def ensure_runtime_tables() -> None:
             )
             """
         )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ai_monitor_journeys (
+                journey_id TEXT PRIMARY KEY,
+                customer_phone TEXT NOT NULL,
+                conversation_id TEXT,
+                channel TEXT NOT NULL DEFAULT 'whatsapp',
+                journey_status TEXT NOT NULL DEFAULT 'open',
+                journey_stage TEXT,
+                detected_language TEXT,
+                active_product TEXT,
+                latest_intent TEXT,
+                total_messages INTEGER NOT NULL DEFAULT 0,
+                customer_messages INTEGER NOT NULL DEFAULT 0,
+                ai_messages INTEGER NOT NULL DEFAULT 0,
+                automation_messages INTEGER NOT NULL DEFAULT 0,
+                issue_count INTEGER NOT NULL DEFAULT 0,
+                success_score REAL NOT NULL DEFAULT 0,
+                last_issue TEXT,
+                first_event_at TEXT,
+                last_event_at TEXT,
+                metadata_json TEXT NOT NULL DEFAULT '{}',
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ai_monitor_events (
+                id TEXT PRIMARY KEY,
+                journey_id TEXT NOT NULL,
+                event_id TEXT,
+                customer_phone TEXT NOT NULL,
+                conversation_id TEXT,
+                occurred_at TEXT NOT NULL,
+                actor_type TEXT NOT NULL,
+                source TEXT NOT NULL,
+                message_text TEXT,
+                detected_language TEXT,
+                detected_product TEXT,
+                detected_intent TEXT,
+                route_owner TEXT,
+                guard_action TEXT,
+                issue_tags_json TEXT NOT NULL DEFAULT '[]',
+                metadata_json TEXT NOT NULL DEFAULT '{}'
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ai_monitor_issues (
+                id TEXT PRIMARY KEY,
+                journey_id TEXT NOT NULL,
+                event_id TEXT,
+                customer_phone TEXT NOT NULL,
+                conversation_id TEXT,
+                occurred_at TEXT NOT NULL,
+                issue_type TEXT NOT NULL,
+                severity TEXT NOT NULL DEFAULT 'medium',
+                detail TEXT NOT NULL DEFAULT '',
+                suggested_fix TEXT NOT NULL DEFAULT '',
+                status TEXT NOT NULL DEFAULT 'open',
+                metadata_json TEXT NOT NULL DEFAULT '{}'
+            )
+            """
+        )
         connection.execute("CREATE INDEX IF NOT EXISTS idx_conversation_state_owner ON conversation_state(owner)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_conversation_state_expires ON conversation_state(expires_at)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_product_followups_phone ON product_journey_followups(phone, scheduled_at DESC)")
@@ -296,6 +379,8 @@ def ensure_runtime_tables() -> None:
         connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_outgoing_conversation ON ai_outgoing_replies(conversation_id, created_at DESC)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_outgoing_status ON ai_outgoing_replies(send_status, created_at DESC)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_processed_events_phone ON processed_events(customer_phone, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_message_locks_customer ON message_processing_locks(customer_id, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_message_locks_owner ON message_processing_locks(owner, status, created_at DESC)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_sessions_phone ON ai_conversation_sessions(customer_phone, expires_at DESC)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_jobs_due ON ai_reply_jobs(status, scheduled_at)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_jobs_phone ON ai_reply_jobs(customer_phone, created_at DESC)")
@@ -305,6 +390,12 @@ def ensure_runtime_tables() -> None:
         connection.execute("CREATE INDEX IF NOT EXISTS idx_customer_journey_assignments ON customer_journey_assignments(customer_phone, status)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_customer_journey_logs ON customer_journey_logs(customer_phone, created_at DESC)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_monitoring_alerts_created ON monitoring_alerts(created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_monitor_journeys_updated ON ai_monitor_journeys(updated_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_monitor_journeys_phone ON ai_monitor_journeys(customer_phone, last_event_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_monitor_events_journey ON ai_monitor_events(journey_id, occurred_at ASC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_monitor_events_phone ON ai_monitor_events(customer_phone, occurred_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_monitor_issues_journey ON ai_monitor_issues(journey_id, occurred_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_monitor_issues_type ON ai_monitor_issues(issue_type, occurred_at DESC)")
 
         _ensure_column(connection, "product_journey_followups", "message_mode TEXT NOT NULL DEFAULT 'text'")
         _ensure_column(connection, "product_journey_followups", "media_json TEXT")

@@ -11,7 +11,7 @@ from app.ai.customer_state_engine import get_customer_state, sync_customer_state
 from app.ai.conversation_state_manager import get_conversation_state, mark_activity, reset_conversation_state
 from app.ai.flow_helpers import flow_match, log_flow_abandoned
 from app.ai.media_understanding import analyze_media_message
-from app.ai.intent_registry import intent_metadata
+from app.ai.intent_registry import intent_metadata, normalize_message
 from app.ai.message_understanding import understand_customer_message
 from app.ai.product_knowledge import detect_product
 from app.storage import get_db_connection
@@ -36,6 +36,35 @@ def _structured_button_click(message: str, message_meta: dict[str, Any]) -> bool
         or str(message_meta.get("message_type") or "").lower() == "postback"
         or _looks_like_wabis_button_reply_text(message)
     )
+
+
+def _button_label(message: str, message_meta: dict[str, Any]) -> str:
+    for key in ("postback_id", "provider_postback_id", "reply_message_id", "button_text"):
+        value = str(message_meta.get(key) or "").strip()
+        if value:
+            return value
+    text = str(message or "").strip()
+    if text.lower().startswith("#button reply#"):
+        return text.split("#Button Reply#", 1)[-1].strip() if "#Button Reply#" in text else text.split("#button reply#", 1)[-1].strip()
+    return text
+
+
+def _button_state_update(message: str, message_meta: dict[str, Any]) -> dict[str, Any]:
+    label = _button_label(message, message_meta).strip()
+    normalized = normalize_message(label)
+    if not normalized:
+        return {}
+    if "മലയാള" in label or "malayalam" in normalized:
+        return {"language": "malayalam", "latest_intent": "button_reply", "journey_stage": "language_selected"}
+    if "english" in normalized:
+        return {"language": "english", "latest_intent": "button_reply", "journey_stage": "language_selected"}
+    if "buy now" in normalized or "order" in normalized:
+        return {"latest_intent": "order_request", "journey_stage": "order_capture", "followups_allowed": True}
+    if "വില" in label or "price" in normalized or "rate" in normalized:
+        return {"latest_intent": "price", "journey_stage": "price_requested"}
+    if "വിലാസ" in label or "address" in normalized:
+        return {"latest_intent": "address_shared", "journey_stage": "order_capture"}
+    return {"latest_intent": "button_reply"}
 
 
 def _wabis_timeout_minutes(flow_step: str | None) -> int:
@@ -91,13 +120,29 @@ def _route_catalog(reason: str, *, intent: str, product_key: str | None = None, 
     return decision
 
 
+def _allow_context_product_for_route(message: str) -> bool:
+    normalized = normalize_message(message)
+    if not normalized:
+        return False
+    if normalized in {"ok", "okay", "okk", "yes", "fine", "sure", "noted", "ശരി"}:
+        return False
+    if any(token in normalized for token in ("tomorrow", "nale", "naale", "നാളെ", "later", "pinne", "let you know")):
+        return False
+    if any(token in normalized for token in ("paid", "gpay", "payment", "screenshot", "transaction", "upi")):
+        return False
+    if any(token in normalized for token in ("saved", "address sent", "sent address", "yes saved")):
+        return False
+    return True
+
+
 def route_message(phone: str, message: str, message_meta: dict[str, Any] | None = None) -> dict[str, Any]:
     message_meta = message_meta or {}
     state = get_conversation_state(phone)
     customer_state = get_customer_state(phone) or {}
     state_product = str((state or {}).get("active_product") or (state or {}).get("context", {}).get("product_key") or "").strip()
     customer_state_product = str(customer_state.get("active_product") or "").strip()
-    product_key = detect_product(message) or (state_product or customer_state_product or None)
+    explicit_product_key = detect_product(message)
+    product_key = explicit_product_key or ((state_product or customer_state_product or None) if _allow_context_product_for_route(message) else None)
     metadata = intent_metadata(message, product_detected=bool(product_key))
     try:
         sync_customer_state_from_inbound(
@@ -126,6 +171,24 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
     ]
 
     if structured_button_click and not (state and state.get("owner") == "wabis"):
+        button_updates = _button_state_update(message, message_meta)
+        if button_updates:
+            try:
+                update_customer_state(
+                    phone,
+                    inbound_message=message,
+                    message_type="postback",
+                    language=button_updates.get("language"),
+                    latest_intent=button_updates.get("latest_intent"),
+                    journey_stage=button_updates.get("journey_stage"),
+                    followups_allowed=button_updates.get("followups_allowed"),
+                    context_updates={
+                        "button_label": _button_label(message, message_meta),
+                        "button_mapped": True,
+                    },
+                )
+            except Exception as exc:
+                logger.debug("Failed to map button state for %s: %s", phone, exc)
         return {
             "route": "wabis",
             "reason": "Structured Wabis reply without active local state",
@@ -185,6 +248,24 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
 
     if state and state.get("owner") == "wabis":
         if structured_button_click or (expected_responses and flow_match(message, expected_responses)):
+            button_updates = _button_state_update(message, message_meta) if structured_button_click else {}
+            if button_updates:
+                try:
+                    update_customer_state(
+                        phone,
+                        inbound_message=message,
+                        message_type="postback",
+                        language=button_updates.get("language"),
+                        latest_intent=button_updates.get("latest_intent"),
+                        journey_stage=button_updates.get("journey_stage"),
+                        followups_allowed=button_updates.get("followups_allowed"),
+                        context_updates={
+                            "button_label": _button_label(message, message_meta),
+                            "button_mapped": True,
+                        },
+                    )
+                except Exception as exc:
+                    logger.debug("Failed to map active Wabis button state for %s: %s", phone, exc)
             mark_activity(phone)
             response = {
                 "route": "wabis",
@@ -400,8 +481,8 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
         "payment_proof_shared",
     }:
         return {
-            "route": "silent_wait",
-            "reason": "low_confidence_unclear_message",
+            "route": "clarification",
+            "reason": "low_confidence_clarification",
             "intent": "fallback",
             "message_understanding": {
                 **metadata,

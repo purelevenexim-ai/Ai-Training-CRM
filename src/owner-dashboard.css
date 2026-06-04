@@ -288,6 +288,10 @@ button:hover {
   margin-bottom: 18px;
 }
 
+.panel-heading--tight {
+  margin-bottom: 10px;
+}
+
 .toolbar {
   display: flex;
   gap: 10px;
@@ -418,6 +422,48 @@ button:hover {
 .label-chip--neutral {
   background: rgba(89, 61, 30, 0.1);
   color: #61452a;
+}
+
+.monitor-metric-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.monitor-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.monitor-section {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.monitor-chip-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.monitor-table-wrap {
+  margin-top: 10px;
+}
+
+.monitor-detail-grid {
+  margin-top: 18px;
+}
+
+.monitor-event-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.monitor-event-row p {
+  margin: 6px 0 0;
 }
 
 .split-toggle {
@@ -653,7 +699,8 @@ button:hover {
 @media (max-width: 1180px) {
   .owner-infra-grid,
   .metric-grid,
-  .panel-grid {
+  .panel-grid,
+  .monitor-layout {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -673,7 +720,8 @@ button:hover {
 
   .owner-infra-grid,
   .metric-grid,
-  .panel-grid {
+  .panel-grid,
+  .monitor-layout {
     grid-template-columns: 1fr;
   }
 

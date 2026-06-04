@@ -4,7 +4,8 @@ import logging
 from typing import Any, Optional
 
 from app.ai.gemini_client import gemini_client
-from app.ai.intent_registry import detect_intent, detect_language, intent_metadata
+from app.ai.intent_registry import detect_intent, detect_language, intent_metadata, normalize_message
+from app.ai.message_decision_engine import deterministic_reply_for_message
 from app.ai.message_understanding import understand_customer_message
 from app.ai.pricing_formatter import PricingFormatter
 from app.ai.product_knowledge import detect_product, detect_products, get_product
@@ -37,6 +38,21 @@ INTENT_TO_SCENARIO = {
     "followup": "details",
     "fallback": "fallback",
 }
+
+
+def _allow_context_product_for_message(message: str) -> bool:
+    normalized = normalize_message(message)
+    if not normalized:
+        return False
+    if normalized in {"ok", "okay", "okk", "yes", "fine", "sure", "noted", "ശരി"}:
+        return False
+    if any(token in normalized for token in ("tomorrow", "nale", "naale", "നാളെ", "later", "pinne", "let you know")):
+        return False
+    if any(token in normalized for token in ("paid", "gpay", "payment", "screenshot", "transaction", "upi")):
+        return False
+    if any(token in normalized for token in ("saved", "address sent", "sent address", "yes saved")):
+        return False
+    return True
 
 
 def _bridge_lines(
@@ -261,6 +277,14 @@ def _non_product_reply(intent: str, style: str, context: Optional[dict[str, Any]
             "escalation_reason": None,
             "suggested_action": "send_reply",
         }
+    if intent in {"fallback", "unclear", "acknowledgement", "address_shared", "plant_inquiry"}:
+        return {
+            "reply_text": copy["fallback"],
+            "intent": intent if intent != "unclear" else "fallback",
+            "should_escalate": False,
+            "escalation_reason": None,
+            "suggested_action": "send_reply",
+        }
     if intent == "human_handoff":
         return {
             "reply_text": copy["human_handoff"],
@@ -292,7 +316,11 @@ def generate_dynamic_reply(
     explicit_products = detect_products(incoming_message)
     explicit_product = explicit_products[0] if explicit_products else None
     raw_context_product = str(context.get("product_key") or "").strip() or None
-    context_product = raw_context_product if get_product(raw_context_product) else detect_product(raw_context_product or "")
+    context_product = (
+        (raw_context_product if get_product(raw_context_product) else detect_product(raw_context_product or ""))
+        if not explicit_product and _allow_context_product_for_message(incoming_message)
+        else None
+    )
     product_id = explicit_product or context_product
     product = get_product(product_id) if product_id else None
     intent = detect_intent(incoming_message, product_detected=bool(product))
@@ -306,6 +334,25 @@ def generate_dynamic_reply(
         allow_gemini_fallback=False,
     )
     semantic_intent = str(semantic_understanding.get("intent") or "").strip()
+
+    deterministic = deterministic_reply_for_message(
+        incoming_message=incoming_message,
+        context=context,
+        semantic_intent=semantic_intent,
+        product_detected=bool(product),
+    )
+    if deterministic:
+        deterministic["message_understanding"] = {
+            **metadata,
+            **semantic_understanding,
+            **(deterministic.get("message_understanding") or {}),
+            "product": product["id"] if product else None,
+            "product_mentions": explicit_products or ([product["id"]] if product else []),
+            "reply_style": reply_style,
+            "customer_reference": _customer_product_reference(product, incoming_message) if product else None,
+        }
+        deterministic["prompt_trace"] = semantic_understanding.get("prompt_trace") or {}
+        return deterministic
 
     if semantic_intent in {
         "delivery_received_confirmation",
@@ -342,22 +389,17 @@ def generate_dynamic_reply(
 
     if not product:
         if intent == "fallback" and not bool(semantic_understanding.get("reply_needed", True)):
-            return {
-                "reply_text": None,
-                "intent": "fallback",
-                "should_escalate": False,
-                "escalation_reason": None,
-                "suggested_action": "wait_for_user",
-                "message_understanding": {
-                    **metadata,
-                    **semantic_understanding,
-                    "product": None,
-                    "product_mentions": [],
-                    "reply_style": reply_style,
-                    "customer_reference": None,
-                },
-                "knowledge_gap_reason": "low_confidence_unclear_message",
+            reply = _non_product_reply("fallback", reply_style, context=context)
+            reply["message_understanding"] = {
+                **metadata,
+                **semantic_understanding,
+                "product": None,
+                "product_mentions": [],
+                "reply_style": reply_style,
+                "customer_reference": None,
             }
+            reply["knowledge_gap_reason"] = "low_confidence_clarification"
+            return reply
         reply = _non_product_reply(intent, reply_style, context=context)
         reply["message_understanding"] = {
             **metadata,

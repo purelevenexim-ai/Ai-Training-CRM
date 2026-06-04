@@ -51,12 +51,12 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery location"
         ),
-        "fallback": "",
+        "fallback": "Sorry, I didn’t catch that clearly. Product name or question onnu parayamo?",
         "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
         "payment": "Payment ചെയ്താൽ screenshot അല്ലെങ്കിൽ transaction reference share cheyyu 😊 Confirm cheyyam.",
         "payment_received": "Payment screenshot received 👍 We’ll verify it and confirm shortly.",
         "payment_review_details": "Screenshot kitti 👍 Payment verify cheyyan amount / paid time onnu type cheyyamo?",
-        "business_info": "PureLeven Idukki-side spices aanu. Farm story, products, delivery, എല്ലാം help cheyyാം.",
+        "business_info": "PureLeven is a Kerala/Idukki-side spice brand. Orders are mainly online, courier delivery undu. Contact: https://pureleven.com/contact",
         "human_handoff": "Sure, direct support help arrange cheyyാം. Oru minute.",
         "complaint": "Sorry about that. Nammal ithu immediately support team-il raise cheyyാം.",
     },
@@ -88,12 +88,12 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery place"
         ),
-        "fallback": "",
+        "fallback": "Sorry, clear aayi manasilayilla. Product name allenkil question onnu parayamo?",
         "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
         "payment": "Payment cheythittundengil screenshot allenkil transaction reference ayacholu 😊 Confirm cheyyam.",
         "payment_received": "Payment screenshot kitti 👍 Njan verify cheythu order confirm cheyyam. Oru minute.",
         "payment_review_details": "Screenshot kitti 👍 Payment verify cheyyan amount / paid time onnu type cheyyamo?",
-        "business_info": "PureLeven Idukki side spices aanu. Farm-il ninnulla products aanu.",
+        "business_info": "PureLeven Kerala/Idukki-side spice brand aanu. Orders mainly online aanu, courier delivery undu. Contact: https://pureleven.com/contact",
         "human_handoff": "Sure, direct support connect cheyyam.",
         "complaint": "Sorry. Ithu support team-il immediate aayi raise cheyyam.",
     },
@@ -129,12 +129,12 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Approx quantity\n"
             "• Delivery place"
         ),
-        "fallback": "",
+        "fallback": "ക്ഷമിക്കണം, വ്യക്തമായി മനസ്സിലായില്ല. Product name അല്ലെങ്കിൽ question ഒന്ന് പറയാമോ?",
         "footer": "കേരളത്തിൽ ₹600 കഴിഞ്ഞാൽ free delivery. കേരളത്തിന് പുറത്തേക്ക് customer charge ₹60 ആണ്.",
         "payment": "Payment ചെയ്തിട്ടുണ്ടെങ്കിൽ screenshot അല്ലെങ്കിൽ transaction reference അയയ്ക്കൂ 😊 Confirm ചെയ്യാം.",
         "payment_received": "Payment screenshot കിട്ടി 👍 Verify ചെയ്ത് order confirm ചെയ്യാം. ഒരു മിനിറ്റ്.",
         "payment_review_details": "Screenshot കിട്ടി 👍 Payment verify ചെയ്യാൻ amount / paid time ഒന്നു type ചെയ്യാമോ?",
-        "business_info": "PureLeven Idukki-side spices ആണ്. Farm storyയും delivery helpഉം share ചെയ്യാം.",
+        "business_info": "PureLeven Kerala/Idukki-side spice brand ആണ്. Orders mainly online ആണ്, courier delivery ഉണ്ട്. Contact: https://pureleven.com/contact",
         "human_handoff": "Sure, direct support connect ചെയ്യാം.",
         "complaint": "ക്ഷമിക്കണം. ഇത് support team-ലേക്ക് ഉടൻ raise ചെയ്യാം.",
     },
@@ -342,7 +342,7 @@ class PricingFormatter:
             return f"ഇത് സാധാരണ {preview} എന്നിവയ്ക്ക് ഉപയോഗിക്കുന്നു."
         if style_key == "manglish":
             return f"Ithu saadhaaranam {preview} pole use cheyyunnu."
-        return f"Customers usually use this for {preview}."
+        return f"Good for {preview}."
 
     @staticmethod
     def _availability_opening(product_name: str, customer_reference: str, style_key: str) -> str:
@@ -385,7 +385,7 @@ class PricingFormatter:
                 lines.append(f"• Use: {use_case_text}")
             return lines if len(lines) > 1 else []
 
-        lines = ["*Why customers pick this*"]
+        lines = ["*Good points*"]
         if origin:
             lines.append(f"• Source: {origin}")
         if quality:

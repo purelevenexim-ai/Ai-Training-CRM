@@ -23,6 +23,8 @@ BANNED_PHRASES = (
     "just checking in",
     "best pack and order it today",
     "are you referring to the price, delivery, or help with your order",
+    "athu kurach clear aakki parayamo",
+    "i can help with products, delivery, payment, or orders",
 )
 
 CATALOG_PATTERNS = (

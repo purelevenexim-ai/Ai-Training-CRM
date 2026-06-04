@@ -33,6 +33,14 @@ SUPPORTED_INTENTS = (
     "human_handoff",
     "business_info",
     "payment",
+    "payment_confirmation",
+    "payment_proof_shared",
+    "address_shared",
+    "acknowledgement",
+    "plant_inquiry",
+    "location_query",
+    "button_reply",
+    "audio_received",
     "fallback",
 )
 
@@ -143,6 +151,12 @@ INTENT_KEYWORDS: dict[str, tuple[str, ...]] = {
         "payment proof",
         "transaction ref",
     ),
+    "address_shared": ("yes saved", "address saved", "sent address", "address sent", "ayachu", "save cheythu"),
+    "acknowledgement": ("ok", "okay", "fine", "sure", "noted", "ശരി"),
+    "plant_inquiry": ("plants", "plant", "plonts", "plont", "seedlings", "seedling", "green gold", "nalyani"),
+    "location_query": ("location", "where is", "shop evide", "place evide", "evide aanu", "address evide"),
+    "button_reply": ("#button reply#",),
+    "audio_received": ("[[media:audio]]", "voice note", "audio"),
 }
 
 
@@ -238,9 +252,13 @@ def detect_intent(message: str, *, product_detected: bool = False) -> str:
         "return_refund",
         "order_confirm",
         "payment",
+        "address_shared",
+        "plant_inquiry",
+        "location_query",
         "human_handoff",
         "business_info",
         "wholesale",
+        "acknowledgement",
         "followup",
         "combo",
         "delivery_charge",
@@ -250,6 +268,8 @@ def detect_intent(message: str, *, product_detected: bool = False) -> str:
         if any(keyword in normalized for keyword in INTENT_KEYWORDS.get(intent, ())):
             if intent == "order_confirm":
                 return "payment"
+            if intent == "location_query":
+                return "business_info"
             return intent
 
     if "delivery" in normalized or "shipping" in normalized or "courier" in normalized:

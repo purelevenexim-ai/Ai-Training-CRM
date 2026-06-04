@@ -26,6 +26,7 @@ from app.ai.clarification_flow import send_clarification_menu, log_knowledge_gap
 from app.ai.audit_logger import log_customer_message
 from app.ai.audit_logger import log_ai_response
 from app.ai.customer_state_engine import get_customer_state, record_ai_reply, reply_hash
+from app.ai.message_processing_lock import claim_message_owner, finish_message_owner
 from app.ai.whatsapp_delivery_service import send_whatsapp_reply_with_fallback
 from app.services.product_followup_service import cancel_product_followups, queue_latent_handoff_followup
 from app.services.customer_journey_service import stop_customer_journeys_for_customer
@@ -421,6 +422,7 @@ def _store_generated_reply(
     route: str,
     customer_name: str = "Customer",
     inbound_message: str = "",
+    message_lock_id: str = "",
 ) -> dict[str, Any]:
     """Persist a generated reply in the audit tables and send it to WhatsApp."""
     reply_text = reply_result.get("reply_text") or ""
@@ -430,6 +432,8 @@ def _store_generated_reply(
     media_mode = str(reply_result.get("media_mode") or ("image" if image_urls else "text"))
 
     if not reply_text:
+        if message_lock_id:
+            finish_message_owner(lock_id=message_lock_id, status="skipped", metadata={"reason": "empty_reply"})
         return {
             "status": "skipped",
             "reply_id": "",
@@ -444,6 +448,12 @@ def _store_generated_reply(
         last_hash = str(state_before.get("last_ai_reply_hash") or "").strip()
         if last_hash and last_hash == normalized_reply_hash:
             logger.warning("[AI-RESPONSE-DEDUPE] %s duplicate reply suppressed", customer_phone)
+            if message_lock_id:
+                finish_message_owner(
+                    lock_id=message_lock_id,
+                    status="skipped",
+                    metadata={"reason": "duplicate_ai_reply_hash"},
+                )
             return {
                 "status": "skipped",
                 "reason": "duplicate_ai_reply_hash",
@@ -584,11 +594,28 @@ def _store_generated_reply(
     except Exception as exc:
         logger.warning("Failed to write AI audit response for %s: %s", customer_phone, exc)
 
-    extra_messages = [
-        str(item or "").strip()
-        for item in list(reply_result.get("extra_messages") or [])
-        if str(item or "").strip()
-    ]
+    if message_lock_id:
+        finish_message_owner(
+            lock_id=message_lock_id,
+            status="replied" if send_result.get("success") else "failed",
+            reply_message_id=str(send_result.get("message_id") or ""),
+            metadata={
+                "route": route,
+                "intent": intent,
+                "send_mode": send_result.get("mode"),
+                "issues_found": guard_issues,
+            },
+        )
+
+    # Default: one inbound message gets one AI text reply. Extra CTA messages are
+    # disabled unless a future deterministic handler explicitly opts in.
+    extra_messages = []
+    if reply_result.get("allow_extra_messages"):
+        extra_messages = [
+            str(item or "").strip()
+            for item in list(reply_result.get("extra_messages") or [])
+            if str(item or "").strip()
+        ]
     for extra_text in extra_messages:
         try:
             extra_send = send_whatsapp_reply_with_fallback(
@@ -785,6 +812,9 @@ async def handle_wabis_incoming_message(
             except Exception as exc:
                 logger.warning("[JOURNEY-STOP] failed for %s: %s", phone, exc)
         meta = _message_meta(payload, incoming_message, phone, control=control)
+        meta["event_id"] = event_id
+        meta["incoming_message_id"] = message_id
+        meta["payload_hash"] = payload_hash
         route_preview = route_message(phone, incoming_message, message_meta=meta)
         preview_route = route_preview.get("route")
         logger.warning("[MAIN] route preview for %s: %s (%s)", phone, preview_route, route_preview.get("reason"))
@@ -917,6 +947,38 @@ def _generate_and_send_reply(
             },
         )
         route = decision.get("route")
+        lock_id = ""
+        lock_key = str((message_meta_extra or {}).get("event_id") or (message_meta_extra or {}).get("incoming_message_id") or "").strip()
+        if lock_key:
+            lock_owner = "ai" if route in {"ai", "catalog", "clarification", "escalation"} else str(route or "unknown")
+            lock = claim_message_owner(
+                customer_id=customer_phone,
+                incoming_message_id=lock_key,
+                owner=lock_owner,
+                conversation_id=conversation_id,
+                metadata={
+                    "route": route,
+                    "reason": decision.get("reason"),
+                    "incoming_message": incoming_message[:500],
+                },
+            )
+            if not lock.get("claimed"):
+                logger.warning(
+                    "[MESSAGE-LOCK] %s event=%s already owned by %s/%s; skipping route=%s",
+                    customer_phone,
+                    lock_key,
+                    lock.get("owner"),
+                    lock.get("status"),
+                    route,
+                )
+                return {
+                    "status": "skipped",
+                    "reason": "message_already_claimed",
+                    "route": route,
+                    "owner": lock.get("owner"),
+                    "lock_status": lock.get("status"),
+                }
+            lock_id = str(lock.get("lock_id") or "")
         reply_context = dict(conversation_context or {})
         reply_context.update(
             {
@@ -994,22 +1056,30 @@ def _generate_and_send_reply(
         # [1] HUMAN ONLY
         if route == "human_only":
             logger.info(f"[SKIP] {customer_phone} - human agent owns conversation")
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "human_only"})
             return {"status": "skipped", "reason": "human_only", "route": route}
         
         # [2] CAMPAIGN
         if route == "campaign":
             logger.info(f"[SKIP] {customer_phone} - campaign owns conversation")
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "campaign_owns"})
             return {"status": "skipped", "reason": "campaign_owns", "route": route}
         
         # [3] WABIS FLOW
         if route == "wabis":
             logger.info(f"[SKIP] {customer_phone} - Wabis bot owns conversation")
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "wabis_owns"})
             return {"status": "skipped", "reason": "wabis_owns", "route": route}
         
         # [4] ORDER TRACKING SYSTEM
         if route == "order_system":
             logger.info(f"[SKIP] {customer_phone} - Order tracking system")
             # TODO: Route to order tracking system
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "order_system"})
             return {"status": "skipped", "reason": "order_system", "route": route}
         
         # [5] ESCALATION
@@ -1030,6 +1100,7 @@ def _generate_and_send_reply(
                     route,
                     customer_name=customer_name,
                     inbound_message=incoming_message,
+                    message_lock_id=lock_id,
                 )
                 result["status"] = "escalated"
                 return result
@@ -1051,6 +1122,8 @@ def _generate_and_send_reply(
                 conn.commit()
             except Exception as e:
                 logger.error(f"Failed to escalate: {e}")
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="replied", metadata={"reason": "escalation_queue"})
             return {"status": "escalated", "reason": "complaint", "route": route}
         
         # [6] CATALOG SEARCH - NO AI
@@ -1073,6 +1146,8 @@ def _generate_and_send_reply(
                     decision={**decision, "message_understanding": reply_result.get("message_understanding") or decision.get("message_understanding") or {}},
                 )
                 logger.warning(f"[CATALOG-SEARCH] {customer_phone}: query='{incoming_message[:50]}' (SILENT_WAIT)")
+                if lock_id:
+                    finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id})
                 return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
 
             if reply_result.get("reply_text"):
@@ -1084,6 +1159,7 @@ def _generate_and_send_reply(
                     route,
                     customer_name=customer_name,
                     inbound_message=incoming_message,
+                    message_lock_id=lock_id,
                 )
             gap_id = _log_silent_wait_gap(
                 conversation_id=conversation_id,
@@ -1092,18 +1168,24 @@ def _generate_and_send_reply(
                 route_reason="catalog_without_useful_reply",
                 decision=decision,
             )
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id})
             return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
         
         # [7] SALES FLOW
         if route == "sales":
             logger.info(f"[SALES] {customer_phone} - Purchase intent")
             # TODO: Route to sales/cart system
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "sales_intent"})
             return {"status": "sales_intent", "route": route}
         
         # [8] FAQ
         if route == "faq":
             logger.info(f"[FAQ] {customer_phone} - FAQ question")
             # TODO: Implement FAQ knowledge base lookup
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "faq_lookup"})
             return {"status": "faq_lookup", "route": route}
 
         if route == "silent_wait":
@@ -1115,6 +1197,8 @@ def _generate_and_send_reply(
                 route_reason=str(decision.get("reason") or "low_confidence_unclear_message"),
                 decision=decision,
             )
+            if lock_id:
+                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id})
             return {"status": "skipped", "reason": "silent_wait", "route": route, "gap_id": gap_id}
 
         # [9] CLARIFICATION - Knowledge gap capture
@@ -1139,6 +1223,8 @@ def _generate_and_send_reply(
             )
             logger.warning(f"[CLARIFICATION-GAP] {customer_phone}: gap_id={gap_id}, message='{incoming_message[:50]}'")
             if fallback_reply.get("suggested_action") == "wait_for_user" or not fallback_reply.get("reply_text"):
+                if lock_id:
+                    finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id})
                 return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
             result = _store_generated_reply(
                 conversation_id,
@@ -1147,6 +1233,7 @@ def _generate_and_send_reply(
                 route,
                 customer_name=customer_name,
                 inbound_message=incoming_message,
+                message_lock_id=lock_id,
             )
             result["gap_id"] = gap_id
             return result
@@ -1178,6 +1265,8 @@ def _generate_and_send_reply(
                     route_reason=str(reply_result.get("knowledge_gap_reason") or decision.get("reason") or "low_confidence_unclear_message"),
                     decision={**decision, "message_understanding": reply_result.get("message_understanding") or decision.get("message_understanding") or {}},
                 )
+                if lock_id:
+                    finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id, "intent": intent})
                 return {
                     "status": "skipped",
                     "reason": "silent_wait",
@@ -1199,10 +1288,13 @@ def _generate_and_send_reply(
                 route,
                 customer_name=customer_name,
                 inbound_message=incoming_message,
+                message_lock_id=lock_id,
             )
         
         # Unknown route
         logger.error(f"[UNKNOWN-ROUTE] {customer_phone} → {route}")
+        if lock_id:
+            finish_message_owner(lock_id=lock_id, status="failed", metadata={"reason": f"unknown_route:{route}"})
         return {
             "status": "error",
             "error": f"Unknown route: {route}",

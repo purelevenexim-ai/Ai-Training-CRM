@@ -455,6 +455,7 @@ def _store_generated_reply(
                 "media_mode": media_mode,
                 "image_urls": image_urls,
                 "message_understanding": reply_result.get("message_understanding") or {},
+                "prompt_trace": reply_result.get("prompt_trace") or {},
                 "generated_response": reply_text,
             },
         )

@@ -17,6 +17,8 @@ from app.services.owner_dashboard_service import (
     get_customer_timeline,
     get_domain_certificate_status,
     get_owner_dashboard_summary,
+    get_prompt_observatory_payload,
+    get_prompt_registry_payload,
     get_product_catalog_payload,
     get_training_gaps,
     list_dashboard_customers,
@@ -25,6 +27,7 @@ from app.services.owner_dashboard_service import (
     save_knowledge_base_entry,
     save_product_catalog_entry,
     remove_product_catalog_image,
+    save_prompt_registry_entry,
 )
 from app.services.product_media_service import save_product_image_bytes, save_product_image_from_url
 from app.services.customer_journey_service import (
@@ -120,6 +123,15 @@ class CustomerJourneyPayload(BaseModel):
     stop_on_not_interested: bool = True
     stop_on_stop: bool = True
     steps: list[CustomerJourneyStepPayload] = Field(default_factory=list)
+
+
+class PromptRegistryPayload(BaseModel):
+    id: str = Field(default="", max_length=120)
+    name: str = Field(min_length=1, max_length=160)
+    category: str = Field(default="general", max_length=80)
+    status: str = Field(default="active", max_length=40)
+    description: str = Field(default="", max_length=400)
+    template_text: str = Field(default="", max_length=20000)
 
 
 @router.get("/owner/dashboard/summary", dependencies=[Depends(require_admin_access)])
@@ -296,3 +308,21 @@ def owner_dashboard_update_customer_journey(journey_id: str, payload: CustomerJo
 @router.delete("/owner/dashboard/customer-journeys/{journey_id}", dependencies=[Depends(require_admin_access)])
 def owner_dashboard_delete_customer_journey(journey_id: str) -> dict[str, Any]:
     return delete_customer_journey(journey_id)
+
+
+@router.get("/owner/dashboard/prompts", dependencies=[Depends(require_admin_access)])
+def owner_dashboard_prompts() -> dict[str, Any]:
+    return get_prompt_registry_payload()
+
+
+@router.put("/owner/dashboard/prompts/{prompt_id}", dependencies=[Depends(require_admin_access)])
+def owner_dashboard_save_prompt(prompt_id: str, payload: PromptRegistryPayload) -> dict[str, Any]:
+    return save_prompt_registry_entry(prompt_id, payload.model_dump())
+
+
+@router.get("/owner/dashboard/prompt-observatory", dependencies=[Depends(require_admin_access)])
+def owner_dashboard_prompt_observatory(
+    limit: int = Query(default=50, ge=1, le=200),
+    phone: str = Query(default="", max_length=40),
+) -> dict[str, Any]:
+    return get_prompt_observatory_payload(limit=limit, phone=phone)

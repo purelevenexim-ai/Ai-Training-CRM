@@ -24,6 +24,7 @@ from app.services.product_media_service import (
     normalize_product_image_entries,
     save_product_image_from_url,
 )
+from app.services.prompt_registry_service import list_prompt_configs, save_prompt_config
 from app.storage import _get_setting_value, _save_setting_value, get_db_connection, init_database
 
 AI_CONTROL_KEY = "owner_dashboard_ai_control"
@@ -242,10 +243,42 @@ def _load_json_file(path: Path, default: Any) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _safe_json_loads(raw: str | None) -> dict[str, Any]:
+    if not raw:
+        return {}
+    try:
+        parsed = json.loads(raw)
+    except Exception:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
 def _format_datetime(value: datetime | None) -> str:
     if value is None:
         return ""
     return value.astimezone(timezone.utc).isoformat()
+
+
+def _phone_variants(phone: str) -> list[str]:
+    digits = "".join(ch for ch in (phone or "") if ch.isdigit())
+    variants: list[str] = []
+    if digits:
+        variants.append(digits)
+        if len(digits) == 10:
+            variants.extend([f"91{digits}", f"+91{digits}"])
+        elif len(digits) == 12 and digits.startswith("91"):
+            local = digits[2:]
+            variants.extend([local, f"+91{local}"])
+    if phone and phone not in variants:
+        variants.append(phone)
+    seen: set[str] = set()
+    unique: list[str] = []
+    for item in variants:
+        if item in seen:
+            continue
+        seen.add(item)
+        unique.append(item)
+    return unique
 
 
 def _entry_id(entry: dict[str, Any], fallback_index: int) -> str:
@@ -1821,4 +1854,118 @@ def import_product_images_from_drive_folder(folder_url: str = PRODUCT_IMAGE_DRIV
         "products_updated": products_updated,
         "unmatched_folders": unmatched_folders,
         "skipped_files": skipped_files,
+    }
+
+
+def get_prompt_registry_payload() -> dict[str, Any]:
+    items = list_prompt_configs()
+    return {
+        "items": items,
+        "count": len(items),
+    }
+
+
+def save_prompt_registry_entry(prompt_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+    item = save_prompt_config(prompt_id, payload)
+    return {
+        "ok": True,
+        "item": item,
+    }
+
+
+def get_prompt_observatory_payload(limit: int = 50, phone: str = "") -> dict[str, Any]:
+    init_database()
+    with get_db_connection() as connection:
+        if not _table_exists(connection, "conversation_audit_log"):
+            return {"items": [], "count": 0}
+
+        params: list[Any] = []
+        phone_filter = ""
+        if phone.strip():
+            variants = _phone_variants(phone.strip())
+            placeholders = ",".join("?" for _ in variants)
+            phone_filter = f"AND phone IN ({placeholders})"
+            params.extend(variants)
+
+        params.extend([limit])
+        rows = connection.execute(
+            f"""
+            SELECT created_at, phone, message, detected_intent, active_flow, metadata_json
+            FROM conversation_audit_log
+            WHERE direction = 'outbound'
+              AND source = 'ai'
+              {phone_filter}
+            ORDER BY created_at DESC
+            LIMIT ?
+            """,
+            tuple(params),
+        ).fetchall()
+
+        items: list[dict[str, Any]] = []
+        for index, row in enumerate(rows, start=1):
+            metadata = _safe_json_loads(row["metadata_json"])
+            understanding = metadata.get("message_understanding") or {}
+            prompt_trace = metadata.get("prompt_trace") or {}
+            product_key = str(metadata.get("active_product") or understanding.get("product") or "").strip()
+            product = get_canonical_product(product_key) if product_key else None
+            state_row = _safe_fetchone(
+                connection,
+                "SELECT language, active_product, latest_intent, journey_stage FROM conversation_state WHERE customer_id = ?",
+                (row["phone"],),
+            ) if _table_exists(connection, "conversation_state") else {}
+            customer = _safe_fetchone(
+                connection,
+                """
+                SELECT COALESCE(name, first_name, phone, email, '') AS customer_name
+                FROM customers
+                WHERE REPLACE(COALESCE(phone, ''), '+', '') = REPLACE(?, '+', '')
+                LIMIT 1
+                """,
+                (row["phone"],),
+            ) if _table_exists(connection, "customers") else {}
+
+            retrieved_knowledge = {}
+            if product:
+                retrieved_knowledge = {
+                    "product": product.get("name"),
+                    "origin": product.get("origin"),
+                    "recommended_pack": product.get("recommended_pack"),
+                    "prices": [
+                        f"{variant.get('size')} ₹{variant.get('price')}"
+                        for variant in list(product.get("sizes") or [])[:5]
+                    ],
+                }
+
+            items.append(
+                {
+                    "id": f"obs-{index}",
+                    "created_at": row["created_at"],
+                    "phone": row["phone"],
+                    "customer_name": customer.get("customer_name") or row["phone"],
+                    "customer_message": metadata.get("inbound_message") or "",
+                    "ai_reply": row["message"] or "",
+                    "detected_language": understanding.get("detected_language") or understanding.get("language") or state_row.get("language") or "",
+                    "detected_intent": row["detected_intent"] or understanding.get("detected_intent") or understanding.get("intent") or "",
+                    "journey_stage": metadata.get("journey_stage") or understanding.get("journey_stage") or state_row.get("journey_stage") or "",
+                    "active_product": product_key or state_row.get("active_product") or "",
+                    "retrieved_knowledge": retrieved_knowledge,
+                    "customer_context": {
+                        "language": state_row.get("language") or "",
+                        "active_product": state_row.get("active_product") or "",
+                        "latest_intent": state_row.get("latest_intent") or "",
+                        "journey_stage": state_row.get("journey_stage") or "",
+                    },
+                    "prompt_id": prompt_trace.get("prompt_id") or "",
+                    "prompt_version": prompt_trace.get("prompt_version") or "",
+                    "final_prompt": prompt_trace.get("final_prompt") or "",
+                    "llm_response": prompt_trace.get("llm_response") or metadata.get("generated_response") or "",
+                    "guard_action": metadata.get("guard_action") or "",
+                    "issues_found": metadata.get("issues_found") or [],
+                    "route": metadata.get("route") or "",
+                }
+            )
+
+    return {
+        "items": items,
+        "count": len(items),
     }

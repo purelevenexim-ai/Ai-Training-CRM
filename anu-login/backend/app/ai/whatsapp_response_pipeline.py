@@ -5,8 +5,10 @@ from typing import Any, Optional
 
 from app.ai.gemini_client import gemini_client
 from app.ai.intent_registry import detect_intent, detect_language, intent_metadata
+from app.ai.message_understanding import understand_customer_message
 from app.ai.pricing_formatter import PricingFormatter
 from app.ai.product_knowledge import detect_product, detect_products, get_product
+from app.services.prompt_registry_service import get_prompt_config, get_prompt_text
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +47,7 @@ def _bridge_lines(
     customer_name: str,
     product: dict[str, Any] | None = None,
 ) -> dict[str, str]:
+    prompt_config = get_prompt_config("product_inquiry_prompt")
     facts = {
         "product_name": (product or {}).get("name", ""),
         "origin": (product or {}).get("origin", ""),
@@ -54,9 +57,10 @@ def _bridge_lines(
         "recommended_pack": (product or {}).get("recommended_pack", ""),
         "scenario": scenario,
     }
+    base_instruction = get_prompt_text("product_inquiry_prompt")
     instruction_map = {
-        "availability": "Open like a warm Kerala spice seller. Keep it short and natural.",
-        "price": "Introduce the size list warmly. Do not sound corporate.",
+        "availability": f"{base_instruction}\nOpen like a warm Kerala spice seller. Keep it short and natural.",
+        "price": f"{base_instruction}\nIntroduce the size list warmly. Do not sound corporate.",
         "details": "Give a warm opening and a gentle invitation to continue.",
         "delivery_time": "Answer only the delivery timing question in a short human tone.",
         "delivery_charge": "Answer only the delivery charge question clearly and briefly.",
@@ -65,6 +69,15 @@ def _bridge_lines(
         "fallback": "Ask the customer whether they mean price, delivery, or order help.",
     }
     try:
+        final_prompt = gemini_client.build_whatsapp_reply_prompt(
+            scenario=scenario,
+            customer_message=customer_message,
+            customer_name=customer_name,
+            style=style,
+            product_name=str((product or {}).get("name") or ""),
+            facts=facts,
+            instruction=instruction_map.get(scenario, "Write a short, natural WhatsApp opening and closing using only the facts."),
+        )
         lines = gemini_client.generate_whatsapp_reply_lines(
             scenario=scenario,
             customer_message=customer_message,
@@ -77,6 +90,7 @@ def _bridge_lines(
     except Exception as exc:
         logger.warning("Gemini bridge-line generation failed: %s", exc)
         lines = {"opening_line": "", "closing_line": ""}
+        final_prompt = ""
 
     banned_fragments = (
         "yes, we have",
@@ -102,6 +116,12 @@ def _bridge_lines(
     return {
         "opening_line": opening,
         "closing_line": closing,
+        "prompt_trace": {
+            "prompt_id": "product_inquiry_prompt",
+            "prompt_version": int(prompt_config.get("version") or 1),
+            "final_prompt": final_prompt,
+            "llm_response": {"opening_line": opening, "closing_line": closing},
+        },
     }
 
 
@@ -188,6 +208,32 @@ def _non_product_reply(intent: str, style: str) -> dict[str, Any]:
             "escalation_reason": None,
             "suggested_action": "send_reply",
         }
+    if intent == "delivery_received_confirmation":
+        reply_text = {
+            "english": "Thank you 😊 Glad the parcel reached safely. Use cheythu nokki feedback parayane.",
+            "manglish": "Thank you 😊 Parcel kittiyallo, santhosham. Use cheythu nokki feedback parayane.",
+            "malayalam": "നന്ദി 😊 പാർസൽ സുരക്ഷിതമായി കിട്ടിയതിൽ സന്തോഷം. ഉപയോഗിച്ച് നോക്കി feedback പറയണേ.",
+        }.get(style_key, "Thank you 😊 Parcel kittiyallo, santhosham. Use cheythu nokki feedback parayane.")
+        return {
+            "reply_text": reply_text,
+            "intent": "delivery_received_confirmation",
+            "should_escalate": False,
+            "escalation_reason": None,
+            "suggested_action": "send_reply",
+        }
+    if intent == "gratitude_positive":
+        reply_text = {
+            "english": "Thank you 😊 Happy to help.",
+            "manglish": "Thank you 😊 Santhosham.",
+            "malayalam": "നന്ദി 😊 സന്തോഷം.",
+        }.get(style_key, "Thank you 😊 Santhosham.")
+        return {
+            "reply_text": reply_text,
+            "intent": "gratitude_positive",
+            "should_escalate": False,
+            "escalation_reason": None,
+            "suggested_action": "send_reply",
+        }
     if intent == "combo":
         return {
             "reply_text": PricingFormatter.build_combo_reply(style=style_key),
@@ -248,16 +294,42 @@ def generate_dynamic_reply(
     product = get_product(product_id) if product_id else None
     intent = detect_intent(incoming_message, product_detected=bool(product))
     metadata = intent_metadata(incoming_message, product_detected=bool(product))
+    semantic_understanding = understand_customer_message(
+        message=incoming_message,
+        context=context,
+        product_detected=bool(product),
+        rule_intent=intent,
+        detected_language=reply_style,
+    )
+    semantic_intent = str(semantic_understanding.get("intent") or "").strip()
 
-    if not product:
-        reply = _non_product_reply(intent, reply_style)
+    if semantic_intent in {"delivery_received_confirmation", "gratitude_positive", "post_delivery_feedback"} and not product:
+        reply = _non_product_reply(
+            "delivery_received_confirmation" if semantic_intent == "post_delivery_feedback" else semantic_intent,
+            reply_style,
+        )
         reply["message_understanding"] = {
             **metadata,
+            **semantic_understanding,
             "product": None,
             "product_mentions": [],
             "reply_style": reply_style,
             "customer_reference": None,
         }
+        reply["prompt_trace"] = semantic_understanding.get("prompt_trace") or {}
+        return reply
+
+    if not product:
+        reply = _non_product_reply(intent, reply_style)
+        reply["message_understanding"] = {
+            **metadata,
+            **semantic_understanding,
+            "product": None,
+            "product_mentions": [],
+            "reply_style": reply_style,
+            "customer_reference": None,
+        }
+        reply["prompt_trace"] = semantic_understanding.get("prompt_trace") or {}
         return reply
 
     if intent in {"complaint", "return_refund", "human_handoff", "payment", "wholesale", "followup", "negation"}:
@@ -343,12 +415,14 @@ def generate_dynamic_reply(
             "customer_reference": resolved_customer_reference,
             "message_understanding": {
                 **metadata,
+                **semantic_understanding,
                 "product": product["id"],
                 "product_mentions": explicit_products or [product["id"]],
                 "reply_style": reply_style,
                 "scenario": scenario,
                 "customer_reference": resolved_customer_reference,
             },
+            "prompt_trace": bridge.get("prompt_trace") or {},
         }
     )
     return payload

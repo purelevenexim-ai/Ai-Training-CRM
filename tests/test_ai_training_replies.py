@@ -215,3 +215,19 @@ def test_media_marker_gets_media_aware_reply() -> None:
     assert result["intent"] == "media_received"
     assert "video" in result["reply_text"].lower()
     assert "one line" in result["reply_text"].lower()
+
+
+def test_parcel_received_message_gets_post_delivery_reply() -> None:
+    result = WabisReplyGenerator.generate_reply(
+        incoming_message="Thank u. Parcel kitti",
+        customer_phone="919999999984",
+        customer_name="Anu",
+        context={"journey_stage": "post_delivery"},
+    )
+
+    assert result["intent"] == "delivery_received_confirmation"
+    assert result["should_escalate"] is False
+    assert "parcel" in result["reply_text"].lower() or "പാർസൽ" in result["reply_text"]
+    assert "feedback" in result["reply_text"].lower() or "feedback" in result["reply_text"]
+    assert "products, delivery, payment, or orders" not in result["reply_text"].lower()
+    assert result.get("prompt_trace") is not None

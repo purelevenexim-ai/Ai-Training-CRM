@@ -30,6 +30,15 @@ const DEFAULT_KB_FORM = {
   tags: '',
 };
 
+const DEFAULT_PROMPT_FORM = {
+  id: '',
+  name: '',
+  category: 'general',
+  status: 'active',
+  description: '',
+  template_text: '',
+};
+
 const KNOWLEDGE_INTENTS = [
   'availability',
   'price',
@@ -129,6 +138,8 @@ const TABS = [
   { key: 'customers', label: 'Customers' },
   { key: 'knowledge', label: 'Knowledge Base' },
   { key: 'ai', label: 'AI Control' },
+  { key: 'prompts', label: 'Prompts' },
+  { key: 'observatory', label: 'Prompt Observatory' },
   { key: 'gaps', label: 'Needs Fixing' },
   { key: 'products', label: 'Products' },
   { key: 'journeys', label: 'Customer Journey' },
@@ -209,6 +220,11 @@ export default function OwnerDashboard() {
   const [kbForm, setKbForm] = useState(DEFAULT_KB_FORM);
   const [editingKbId, setEditingKbId] = useState('');
   const [aiControl, setAiControl] = useState(DEFAULT_AI_CONTROL);
+  const [prompts, setPrompts] = useState({ items: [], count: 0 });
+  const [promptForm, setPromptForm] = useState(DEFAULT_PROMPT_FORM);
+  const [editingPromptId, setEditingPromptId] = useState('');
+  const [observatory, setObservatory] = useState({ items: [], count: 0 });
+  const [observatoryPhone, setObservatoryPhone] = useState('');
   const [gaps, setGaps] = useState({ knowledge_gaps: [], missing_products: [] });
   const [products, setProducts] = useState({ products: [], combos: [] });
   const [customerJourneys, setCustomerJourneys] = useState({ items: [], count: 0 });
@@ -273,6 +289,20 @@ export default function OwnerDashboard() {
     });
   }
 
+  async function loadPrompts(secretOverride = adminSecret) {
+    const payload = await apiFetch('/api/owner/dashboard/prompts', {}, secretOverride);
+    setPrompts(payload);
+  }
+
+  async function loadPromptObservatory(secretOverride = adminSecret, phone = observatoryPhone) {
+    const query = new URLSearchParams({
+      limit: '80',
+      phone: phone || '',
+    });
+    const payload = await apiFetch(`/api/owner/dashboard/prompt-observatory?${query.toString()}`, {}, secretOverride);
+    setObservatory(payload);
+  }
+
   async function loadAll(secretOverride = adminSecret) {
     if (!secretOverride) {
       return;
@@ -287,6 +317,8 @@ export default function OwnerDashboard() {
         customersPayload,
         knowledgePayload,
         aiPayload,
+        promptsPayload,
+        observatoryPayload,
         gapsPayload,
         productsPayload,
         journeyPayload,
@@ -296,6 +328,8 @@ export default function OwnerDashboard() {
         apiFetch('/api/owner/dashboard/customers?search=&label=all&limit=80', {}, secretOverride),
         apiFetch('/api/owner/dashboard/knowledge-base?search=&limit=1000', {}, secretOverride),
         apiFetch('/api/owner/dashboard/ai-control', {}, secretOverride),
+        apiFetch('/api/owner/dashboard/prompts', {}, secretOverride),
+        apiFetch('/api/owner/dashboard/prompt-observatory?limit=80&phone=', {}, secretOverride),
         apiFetch('/api/owner/dashboard/training-gaps?limit=40', {}, secretOverride),
         apiFetch('/api/owner/dashboard/products', {}, secretOverride),
         apiFetch('/api/owner/dashboard/customer-journeys', {}, secretOverride),
@@ -313,6 +347,8 @@ export default function OwnerDashboard() {
           source_kind: knowledgePayload.source_kind || '',
         });
         setAiControl({ ...DEFAULT_AI_CONTROL, ...aiPayload });
+        setPrompts(promptsPayload);
+        setObservatory(observatoryPayload);
         setGaps(gapsPayload);
         setProducts(productsPayload);
         setCustomerJourneys(journeyPayload);
@@ -359,6 +395,11 @@ export default function OwnerDashboard() {
     setSelectedTimeline(null);
     setKbItems([]);
     setKbMeta({ count: 0, search: '' });
+    setPrompts({ items: [], count: 0 });
+    setPromptForm(DEFAULT_PROMPT_FORM);
+    setEditingPromptId('');
+    setObservatory({ items: [], count: 0 });
+    setObservatoryPhone('');
     setGaps({ knowledge_gaps: [], missing_products: [] });
     setProducts({ products: [], combos: [] });
     setCustomerJourneys({ items: [], count: 0 });
@@ -503,6 +544,56 @@ export default function OwnerDashboard() {
       loadAll();
     } catch (deleteError) {
       setError(deleteError.message || 'Could not delete the knowledge base entry.');
+    }
+  }
+
+  function beginPromptEdit(item) {
+    setEditingPromptId(item.id || '');
+    setPromptForm({
+      id: item.id || '',
+      name: item.name || '',
+      category: item.category || 'general',
+      status: item.status || 'active',
+      description: item.description || '',
+      template_text: item.template_text || '',
+    });
+    setActiveTab('prompts');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetPromptForm() {
+    setEditingPromptId('');
+    setPromptForm(DEFAULT_PROMPT_FORM);
+  }
+
+  async function handlePromptSave(event) {
+    event.preventDefault();
+    if (!promptForm.id) {
+      setError('Prompt id is required.');
+      return;
+    }
+    setError('');
+    try {
+      await apiFetch(`/api/owner/dashboard/prompts/${encodeURIComponent(promptForm.id)}`, {
+        method: 'PUT',
+        body: JSON.stringify(promptForm),
+      });
+      setFlashMessage('Prompt updated.');
+      setTimeout(() => setFlashMessage(''), 2400);
+      resetPromptForm();
+      loadPrompts();
+      loadPromptObservatory();
+    } catch (saveError) {
+      setError(saveError.message || 'Could not save prompt.');
+    }
+  }
+
+  async function handleObservatoryRefresh() {
+    setError('');
+    try {
+      await loadPromptObservatory(adminSecret, observatoryPhone);
+    } catch (loadError) {
+      setError(loadError.message || 'Could not load prompt observatory.');
     }
   }
 
@@ -1548,6 +1639,175 @@ export default function OwnerDashboard() {
               <button type="submit">Save AI settings</button>
             </form>
           </article>
+        </section>
+      ) : null}
+
+      {activeTab === 'prompts' ? (
+        <section className="dashboard-panel">
+          <div className="panel-grid">
+            <article className="panel-card">
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">Prompt Library</p>
+                  <h2>Versioned AI prompts</h2>
+                  <p className="muted-copy">
+                    These prompts act like business logic. Edit them here and every change is versioned.
+                  </p>
+                </div>
+              </div>
+              <div className="table-wrap">
+                <table className="owner-table owner-table--compact">
+                  <thead>
+                    <tr>
+                      <th>Prompt</th>
+                      <th>Status</th>
+                      <th>Version</th>
+                      <th>Category</th>
+                      <th>Updated</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(prompts.items || []).map((item) => (
+                      <tr key={item.id}>
+                        <td>
+                          <strong>{item.name}</strong>
+                          <p className="muted-copy">{item.description || item.id}</p>
+                        </td>
+                        <td>{item.status}</td>
+                        <td>v{item.version || 1}</td>
+                        <td>{item.category}</td>
+                        <td>{formatDateTime(item.updated_at)}</td>
+                        <td>
+                          <button type="button" className="ghost-button" onClick={() => beginPromptEdit(item)}>
+                            Edit
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {!prompts.items?.length ? (
+                      <tr>
+                        <td colSpan="6">No prompts found.</td>
+                      </tr>
+                    ) : null}
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article className="panel-card">
+              <form className="knowledge-form" onSubmit={handlePromptSave}>
+                <div className="panel-heading">
+                  <div>
+                    <p className="eyebrow">{editingPromptId ? 'Edit Prompt' : 'Prompt Details'}</p>
+                    <h2>{editingPromptId ? 'Update prompt text' : 'Select a prompt to edit'}</h2>
+                  </div>
+                </div>
+                <label>
+                  Prompt ID
+                  <input value={promptForm.id} readOnly />
+                </label>
+                <div className="form-grid">
+                  <label>
+                    Name
+                    <input
+                      value={promptForm.name}
+                      onChange={(event) => setPromptForm({ ...promptForm, name: event.target.value })}
+                    />
+                  </label>
+                  <label>
+                    Category
+                    <input
+                      value={promptForm.category}
+                      onChange={(event) => setPromptForm({ ...promptForm, category: event.target.value })}
+                    />
+                  </label>
+                </div>
+                <label>
+                  Status
+                  <select
+                    value={promptForm.status}
+                    onChange={(event) => setPromptForm({ ...promptForm, status: event.target.value })}
+                  >
+                    <option value="active">Active</option>
+                    <option value="testing">Testing</option>
+                    <option value="old">Old</option>
+                  </select>
+                </label>
+                <label>
+                  Description
+                  <textarea
+                    rows="2"
+                    value={promptForm.description}
+                    onChange={(event) => setPromptForm({ ...promptForm, description: event.target.value })}
+                  />
+                </label>
+                <label>
+                  Prompt Text
+                  <textarea
+                    rows="14"
+                    value={promptForm.template_text}
+                    onChange={(event) => setPromptForm({ ...promptForm, template_text: event.target.value })}
+                  />
+                </label>
+                <div className="toolbar">
+                  <button type="submit" disabled={!editingPromptId}>Save Prompt</button>
+                  <button type="button" className="ghost-button" onClick={resetPromptForm}>
+                    Clear
+                  </button>
+                </div>
+              </form>
+            </article>
+          </div>
+        </section>
+      ) : null}
+
+      {activeTab === 'observatory' ? (
+        <section className="dashboard-panel">
+          <div className="panel-grid">
+            <article className="panel-card">
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">Prompt Observatory</p>
+                  <h2>Why the AI replied that way</h2>
+                  <p className="muted-copy">
+                    Open any AI message to see customer input, detected intent, prompt version, final prompt, and returned text.
+                  </p>
+                </div>
+              </div>
+              <div className="toolbar">
+                <input
+                  value={observatoryPhone}
+                  onChange={(event) => setObservatoryPhone(event.target.value)}
+                  placeholder="Filter by phone"
+                />
+                <button type="button" onClick={handleObservatoryRefresh}>
+                  Refresh
+                </button>
+              </div>
+              <div className="gap-stack">
+                {(observatory.items || []).map((item) => (
+                  <details key={item.id} className="gap-row">
+                    <summary>
+                      <strong>{item.customer_name || item.phone}</strong> • {item.detected_intent || 'unknown'} • {formatDateTime(item.created_at)}
+                    </summary>
+                    <p><strong>Customer:</strong> {item.customer_message || '—'}</p>
+                    <p><strong>AI Reply:</strong> {item.ai_reply || '—'}</p>
+                    <p><strong>Language:</strong> {item.detected_language || '—'}</p>
+                    <p><strong>Product:</strong> {item.active_product || '—'}</p>
+                    <p><strong>Journey Stage:</strong> {item.journey_stage || '—'}</p>
+                    <p><strong>Prompt:</strong> {item.prompt_id || '—'} {item.prompt_version ? `(v${item.prompt_version})` : ''}</p>
+                    <p><strong>Guard:</strong> {item.guard_action || 'sent'}</p>
+                    <p><strong>Issues:</strong> {(item.issues_found || []).join(', ') || 'None'}</p>
+                    <pre className="code-block">{JSON.stringify(item.retrieved_knowledge || {}, null, 2)}</pre>
+                    <pre className="code-block">{item.final_prompt || 'No prompt trace captured for this reply.'}</pre>
+                    <pre className="code-block">{typeof item.llm_response === 'string' ? item.llm_response : JSON.stringify(item.llm_response || {}, null, 2)}</pre>
+                  </details>
+                ))}
+                {!observatory.items?.length ? <p className="muted-copy">No AI observatory records yet.</p> : null}
+              </div>
+            </article>
+          </div>
         </section>
       ) : null}
 

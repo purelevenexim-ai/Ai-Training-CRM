@@ -153,6 +153,9 @@ def detect_language(message: str) -> str:
         "ayakkum",
         "cheyyam",
         "parayamo",
+        "kitti",
+        "kitty",
+        "nale",
     )
     if any(marker in lower for marker in manglish_markers):
         return "manglish"

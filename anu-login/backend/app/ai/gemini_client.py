@@ -242,30 +242,15 @@ Keep under 80 words."""
         if not self._api_key:
             return {"opening_line": "", "closing_line": ""}
 
-        facts_json = json.dumps(facts or {}, ensure_ascii=False)
-        prompt = f"""You write short, human WhatsApp replies for PureLeven, a Kerala spice brand.
-
-Customer name: {customer_name}
-Customer style: {style}
-Scenario: {scenario}
-Customer message: {customer_message}
-Product: {product_name}
-Facts:
-{facts_json}
-
-Instruction:
-{instruction or "Write a warm, concise reply using only the facts above."}
-
-Rules:
-- opening_line is the first short sentence.
-- closing_line is an optional second sentence or call-to-action.
-- Do not invent prices, stock, offers, delivery days, or other facts.
-- If style is manglish, use English script with Malayalam rhythm.
-- Keep it natural, polite, and customer-friendly.
-- Return ONLY JSON.
-
-Example:
-{{"opening_line":"Yes, black pepper undallo stock.","closing_line":"I can share the price details below."}}"""
+        prompt = self.build_whatsapp_reply_prompt(
+            scenario=scenario,
+            customer_message=customer_message,
+            customer_name=customer_name,
+            style=style,
+            product_name=product_name,
+            facts=facts,
+            instruction=instruction,
+        )
 
         schema = {
             "type": "object",
@@ -288,6 +273,42 @@ Example:
             "opening_line": _clean(result.get("opening_line")),
             "closing_line": _clean(result.get("closing_line")),
         }
+
+    def build_whatsapp_reply_prompt(
+        self,
+        *,
+        scenario: str,
+        customer_message: str,
+        customer_name: str = "Customer",
+        style: str = "english",
+        product_name: str = "",
+        facts: Optional[dict[str, Any]] = None,
+        instruction: str = "",
+    ) -> str:
+        facts_json = json.dumps(facts or {}, ensure_ascii=False)
+        return f"""You write short, human WhatsApp replies for PureLeven, a Kerala spice brand.
+
+Customer name: {customer_name}
+Customer style: {style}
+Scenario: {scenario}
+Customer message: {customer_message}
+Product: {product_name}
+Facts:
+{facts_json}
+
+Instruction:
+{instruction or "Write a warm, concise reply using only the facts above."}
+
+Rules:
+- opening_line is the first short sentence.
+- closing_line is an optional second sentence or call-to-action.
+- Do not invent prices, stock, offers, delivery days, or other facts.
+- If style is manglish, use English script with Malayalam rhythm.
+- Keep it natural, polite, and customer-friendly.
+- Return ONLY JSON.
+
+Example:
+{{"opening_line":"Yes, black pepper undallo stock.","closing_line":"I can share the price details below."}}"""
 
 
 # ─────────────────────────────────────────────────────────────────────────────

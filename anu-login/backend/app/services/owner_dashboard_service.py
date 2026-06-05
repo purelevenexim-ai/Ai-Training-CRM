@@ -1120,6 +1120,7 @@ def get_owner_dashboard_summary() -> dict[str, Any]:
 def list_dashboard_customers(search: str = "", label: str = "all", limit: int = 100) -> list[dict[str, Any]]:
     init_database()
     with get_db_connection() as connection:
+        items: list[dict[str, Any]] = []
         if _table_exists(connection, "customers"):
             rows = connection.execute(
                 """
@@ -1134,7 +1135,6 @@ def list_dashboard_customers(search: str = "", label: str = "all", limit: int = 
                 """,
                 (limit * 3,),
             ).fetchall()
-            items = []
             for row in rows:
                 item = dict(row)
                 text_blob = " ".join([str(item.get("name", "")), str(item.get("phone", "")), str(item.get("email", ""))]).lower()
@@ -1155,7 +1155,6 @@ def list_dashboard_customers(search: str = "", label: str = "all", limit: int = 
                         "updated_at": item.get("updated_at") or "",
                     }
                 )
-            return items[:limit]
 
         if _table_exists(connection, "journey_customers"):
             rows = connection.execute(
@@ -1167,7 +1166,6 @@ def list_dashboard_customers(search: str = "", label: str = "all", limit: int = 
                 """,
                 (limit * 3,),
             ).fetchall()
-            items = []
             for row in rows:
                 item = dict(row)
                 text_blob = " ".join([str(item.get("name", "")), str(item.get("phone", "")), str(item.get("email", ""))]).lower()
@@ -1190,9 +1188,107 @@ def list_dashboard_customers(search: str = "", label: str = "all", limit: int = 
                         "updated_at": item.get("updated_at") or "",
                     }
                 )
-            return items[:limit]
 
-        return []
+        runtime_by_phone: dict[str, dict[str, Any]] = {
+            str(item.get("phone") or ""): item for item in items if item.get("phone")
+        }
+
+        def upsert_runtime_customer(phone: str, *, name: str = "", score: int = 0, stage: str = "", updated_at: str = "", label_hint: str = "") -> None:
+            normalized_phone = str(phone or "").strip()
+            if not normalized_phone:
+                return
+            existing = runtime_by_phone.get(normalized_phone, {})
+            current_score = max(int(existing.get("score") or 0), int(score or 0))
+            current_label = label_hint or existing.get("label") or _score_to_label(current_score)
+            display_name = str(existing.get("name") or name or "Unknown").strip() or "Unknown"
+            if display_name == "Unknown" and name:
+                display_name = str(name).strip() or "Unknown"
+            runtime_by_phone[normalized_phone] = {
+                "id": existing.get("id") or normalized_phone,
+                "phone": normalized_phone,
+                "name": display_name,
+                "email": existing.get("email") or "",
+                "label": current_label,
+                "score": current_score,
+                "stage": stage or existing.get("stage") or current_label.title(),
+                "updated_at": max(str(existing.get("updated_at") or ""), str(updated_at or "")),
+            }
+
+        if _table_exists(connection, "conversation_state"):
+            rows = connection.execute(
+                """
+                SELECT phone, owner, flow_step, latest_intent, active_product,
+                       journey_stage, last_activity, updated_at
+                FROM conversation_state
+                ORDER BY COALESCE(last_activity, updated_at, created_at) DESC
+                LIMIT ?
+                """,
+                (limit * 5,),
+            ).fetchall()
+            for row in rows:
+                state = dict(row)
+                intent = str(state.get("latest_intent") or "").lower()
+                score = 70 if intent in {"order_request", "payment", "price"} else 45
+                stage = state.get("journey_stage") or state.get("flow_step") or state.get("owner") or "Runtime"
+                updated = state.get("last_activity") or state.get("updated_at") or ""
+                upsert_runtime_customer(state.get("phone"), score=score, stage=stage, updated_at=updated, label_hint=_score_to_label(score))
+
+        if _table_exists(connection, "ai_incoming_messages"):
+            for row in connection.execute(
+                """
+                SELECT customer_phone, MAX(created_at) AS updated_at, COUNT(*) AS message_count
+                FROM ai_incoming_messages
+                GROUP BY customer_phone
+                ORDER BY updated_at DESC
+                LIMIT ?
+                """,
+                (limit * 5,),
+            ).fetchall():
+                score = min(75, 25 + int(row["message_count"] or 0) * 8)
+                upsert_runtime_customer(row["customer_phone"], score=score, stage="Customer Messages", updated_at=row["updated_at"], label_hint=_score_to_label(score))
+
+        if _table_exists(connection, "ai_outgoing_replies"):
+            for row in connection.execute(
+                """
+                SELECT customer_phone, MAX(created_at) AS updated_at, COUNT(*) AS reply_count
+                FROM ai_outgoing_replies
+                GROUP BY customer_phone
+                ORDER BY updated_at DESC
+                LIMIT ?
+                """,
+                (limit * 5,),
+            ).fetchall():
+                score = min(80, 30 + int(row["reply_count"] or 0) * 10)
+                upsert_runtime_customer(row["customer_phone"], score=score, stage="AI Conversation", updated_at=row["updated_at"], label_hint=_score_to_label(score))
+
+        if _table_exists(connection, "message_decisions"):
+            for row in connection.execute(
+                """
+                SELECT customer_id, MAX(created_at) AS updated_at,
+                       MAX(detected_intent) AS intent, MAX(selected_owner) AS owner, COUNT(*) AS decision_count
+                FROM message_decisions
+                GROUP BY customer_id
+                ORDER BY updated_at DESC
+                LIMIT ?
+                """,
+                (limit * 5,),
+            ).fetchall():
+                score = min(85, 35 + int(row["decision_count"] or 0) * 8)
+                stage = " / ".join(part for part in (row["owner"], row["intent"]) if part)
+                upsert_runtime_customer(row["customer_id"], score=score, stage=stage or "Message Decisions", updated_at=row["updated_at"], label_hint=_score_to_label(score))
+
+        merged_items = list(runtime_by_phone.values())
+        filtered: list[dict[str, Any]] = []
+        for item in merged_items:
+            text_blob = " ".join([str(item.get("name", "")), str(item.get("phone", "")), str(item.get("email", "")), str(item.get("stage", ""))]).lower()
+            current_label = str(item.get("label") or "cold").lower()
+            if search.strip() and search.strip().lower() not in text_blob:
+                continue
+            if label != "all" and current_label != label:
+                continue
+            filtered.append(item)
+        filtered.sort(key=lambda item: (int(item.get("score") or 0), str(item.get("updated_at") or "")), reverse=True)
+        return filtered[:limit]
 
 
 def get_customer_timeline(customer_ref: str) -> dict[str, Any]:
@@ -1265,6 +1361,69 @@ def get_customer_timeline(customer_ref: str) -> dict[str, Any]:
                         "text": row["reply_text"],
                         "status": row["send_status"],
                         "intent": row["intent"],
+                    }
+                )
+
+        if _table_exists(connection, "ai_incoming_messages"):
+            for row in connection.execute(
+                """
+                SELECT created_at, body, message_type, conversation_id
+                FROM ai_incoming_messages
+                WHERE customer_phone = ?
+                ORDER BY created_at DESC
+                LIMIT 100
+                """,
+                (phone,),
+            ).fetchall():
+                timeline.append(
+                    {
+                        "at": row["created_at"],
+                        "type": "customer_message",
+                        "text": row["body"] or row["message_type"] or "",
+                        "status": row["conversation_id"] or "",
+                    }
+                )
+
+        if _table_exists(connection, "message_decisions"):
+            for row in connection.execute(
+                """
+                SELECT created_at, incoming_message, detected_type, detected_intent,
+                       selected_owner, decision_reason, skipped_ai, score
+                FROM message_decisions
+                WHERE customer_id = ?
+                ORDER BY created_at DESC
+                LIMIT 100
+                """,
+                (phone,),
+            ).fetchall():
+                timeline.append(
+                    {
+                        "at": row["created_at"],
+                        "type": "message_decision",
+                        "text": row["incoming_message"] or row["detected_type"] or "",
+                        "status": f"{row['selected_owner'] or ''} • {'AI skipped' if row['skipped_ai'] else 'AI allowed'}",
+                        "intent": " / ".join(part for part in (row["detected_intent"], row["decision_reason"], f"score {row['score']}" if row["score"] else "") if part),
+                    }
+                )
+
+        if _table_exists(connection, "routing_log"):
+            for row in connection.execute(
+                """
+                SELECT timestamp, message, route_taken, context
+                FROM routing_log
+                WHERE phone = ?
+                ORDER BY timestamp DESC
+                LIMIT 100
+                """,
+                (phone,),
+            ).fetchall():
+                timeline.append(
+                    {
+                        "at": row["timestamp"],
+                        "type": "routing_decision",
+                        "text": row["message"] or "",
+                        "status": row["route_taken"] or "",
+                        "intent": row["context"] or "",
                     }
                 )
 

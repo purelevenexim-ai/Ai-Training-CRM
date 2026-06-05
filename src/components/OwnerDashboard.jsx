@@ -181,6 +181,24 @@ function formatPercent(value) {
   return `${value}%`;
 }
 
+function firstPresent(...values) {
+  return values.find((value) => value !== undefined && value !== null && String(value).trim() !== '') || '';
+}
+
+function decisionStateSummary(item) {
+  const metadata = item?.metadata || {};
+  const language = firstPresent(metadata.language, metadata.detected_language);
+  const product = firstPresent(metadata.product, metadata.active_product, metadata.detected_product);
+  const stage = firstPresent(metadata.journey_stage, metadata.stage, metadata.flow_step, metadata.owner_before);
+  const nextAction = firstPresent(metadata.next_best_action, metadata.next_action, metadata.decision_reason, item?.decision_reason);
+  return {
+    language,
+    product,
+    stage,
+    nextAction,
+  };
+}
+
 function toneBadge(label) {
   switch ((label || '').toLowerCase()) {
     case 'hot':
@@ -1838,31 +1856,47 @@ export default function OwnerDashboard() {
                         <th>Customer</th>
                         <th>Incoming</th>
                         <th>Intent</th>
+                        <th>Context</th>
                         <th>Owner</th>
                         <th>AI Skipped</th>
                         <th>Reason</th>
-                        <th>Score</th>
+                        <th>Confidence</th>
+                        <th>Next Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {(messageControl.decisions || []).slice(0, 60).map((item) => (
-                        <tr key={item.id}>
-                          <td>{formatDateTime(item.created_at)}</td>
-                          <td>{item.customer_id}</td>
-                          <td>
-                            <strong>{item.detected_type || 'text'}</strong>
-                            <p className="muted-copy">{item.incoming_message || item.normalized_text || '—'}</p>
-                          </td>
-                          <td>{item.detected_intent || 'fallback'}</td>
-                          <td>{item.selected_owner || '—'}</td>
-                          <td>{item.skipped_ai ? 'Yes' : 'No'}</td>
-                          <td>{item.decision_reason || '—'}</td>
-                          <td>{item.score || '—'}</td>
-                        </tr>
-                      ))}
+                      {(messageControl.decisions || []).slice(0, 60).map((item) => {
+                        const state = decisionStateSummary(item);
+                        return (
+                          <tr key={item.id}>
+                            <td>{formatDateTime(item.created_at)}</td>
+                            <td>{item.customer_id}</td>
+                            <td>
+                              <strong>{item.detected_type || 'text'}</strong>
+                              <p className="muted-copy">{item.incoming_message || item.normalized_text || '—'}</p>
+                            </td>
+                            <td>{item.detected_intent || 'fallback'}</td>
+                            <td>
+                              <strong>{state.product || '—'}</strong>
+                              <p className="muted-copy">
+                                {[state.language, state.stage].filter(Boolean).join(' • ') || 'No state yet'}
+                              </p>
+                            </td>
+                            <td>{item.selected_owner || '—'}</td>
+                            <td>{item.skipped_ai ? 'Yes' : 'No'}</td>
+                            <td>{item.decision_reason || '—'}</td>
+                            <td>
+                              {item.confidence !== undefined && item.confidence !== null
+                                ? `${Math.round(Number(item.confidence) * 100)}%`
+                                : (item.score || '—')}
+                            </td>
+                            <td>{state.nextAction || '—'}</td>
+                          </tr>
+                        );
+                      })}
                       {!messageControl.decisions?.length ? (
                         <tr>
-                          <td colSpan="8">No message decisions found in this window.</td>
+                          <td colSpan="10">No message decisions found in this window.</td>
                         </tr>
                       ) : null}
                     </tbody>

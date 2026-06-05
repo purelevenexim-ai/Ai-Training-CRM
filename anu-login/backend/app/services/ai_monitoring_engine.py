@@ -94,6 +94,19 @@ def _content_hash(text: str) -> str:
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
+def _table_exists(connection, table_name: str) -> bool:
+    row = connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+        (table_name,),
+    ).fetchone()
+    return row is not None
+
+
+def _safe_json_dict(raw: str | None) -> dict[str, Any]:
+    parsed = _safe_json_loads(raw, {})
+    return parsed if isinstance(parsed, dict) else {}
+
+
 def _conversation_id(phone: str, metadata: dict[str, Any]) -> str:
     return str(metadata.get("conversation_id") or phone or "unknown")
 
@@ -149,55 +162,230 @@ def _issue(
 
 def _load_audit_events(hours: int) -> list[dict[str, Any]]:
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat(timespec="seconds")
-    with get_db_connection() as connection:
-        rows = connection.execute(
-            """
-            SELECT id, created_at, phone, direction, source, message,
-                   owner_before, owner_after, active_flow, detected_intent,
-                   route_decision, reason, metadata_json
-            FROM conversation_audit_log
-            WHERE created_at >= ?
-            ORDER BY created_at ASC
-            """,
-            (cutoff,),
-        ).fetchall()
-
     events: list[dict[str, Any]] = []
-    for row in rows:
-        item = dict(row)
-        metadata = _safe_json_loads(item.get("metadata_json"), {})
-        if not isinstance(metadata, dict):
-            metadata = {}
-        conv_id = _conversation_id(item.get("phone") or "", metadata)
-        journey_id = f"whatsapp:{conv_id}"
-        understanding = _extract_understanding(item, metadata)
-        event = {
-            "id": item["id"],
-            "journey_id": journey_id,
-            "event_id": item["id"],
-            "customer_phone": item.get("phone") or "",
-            "conversation_id": conv_id,
-            "occurred_at": item.get("created_at") or "",
-            "actor_type": _actor_type(item.get("source") or "", item.get("direction") or ""),
-            "source": item.get("source") or "system",
-            "message_text": item.get("message") or "",
-            "detected_language": understanding["language"],
-            "detected_product": understanding["product"],
-            "detected_intent": understanding["intent"],
-            "route_owner": understanding["route_owner"],
-            "guard_action": understanding["guard_action"],
-            "metadata": {
-                "owner_before": item.get("owner_before"),
-                "owner_after": item.get("owner_after"),
-                "active_flow": item.get("active_flow"),
-                "route_decision": item.get("route_decision"),
-                "reason": item.get("reason"),
-                **metadata,
-            },
-            "issue_tags": [],
-        }
-        events.append(event)
-    return events
+
+    def append_event(
+        *,
+        event_id: str,
+        phone: str,
+        conversation_id: str,
+        occurred_at: str,
+        actor_type: str,
+        source: str,
+        message_text: str,
+        detected_language: str = "",
+        detected_product: str = "",
+        detected_intent: str = "",
+        route_owner: str = "",
+        guard_action: str = "",
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
+        conv_id = conversation_id or phone or "unknown"
+        events.append(
+            {
+                "id": event_id or str(uuid.uuid4()),
+                "journey_id": f"whatsapp:{conv_id}",
+                "event_id": event_id or "",
+                "customer_phone": phone or "",
+                "conversation_id": conv_id,
+                "occurred_at": occurred_at or "",
+                "actor_type": actor_type,
+                "source": source,
+                "message_text": message_text or "",
+                "detected_language": detected_language or "",
+                "detected_product": detected_product or "",
+                "detected_intent": detected_intent or "",
+                "route_owner": route_owner or "",
+                "guard_action": guard_action or "",
+                "metadata": metadata or {},
+                "issue_tags": [],
+            }
+        )
+
+    with get_db_connection() as connection:
+        if _table_exists(connection, "conversation_audit_log"):
+            rows = connection.execute(
+                """
+                SELECT id, created_at, phone, direction, source, message,
+                       owner_before, owner_after, active_flow, detected_intent,
+                       route_decision, reason, metadata_json
+                FROM conversation_audit_log
+                WHERE created_at >= ?
+                ORDER BY created_at ASC
+                """,
+                (cutoff,),
+            ).fetchall()
+            for row in rows:
+                item = dict(row)
+                metadata = _safe_json_dict(item.get("metadata_json"))
+                conv_id = _conversation_id(item.get("phone") or "", metadata)
+                understanding = _extract_understanding(item, metadata)
+                append_event(
+                    event_id=item["id"],
+                    phone=item.get("phone") or "",
+                    conversation_id=conv_id,
+                    occurred_at=item.get("created_at") or "",
+                    actor_type=_actor_type(item.get("source") or "", item.get("direction") or ""),
+                    source=item.get("source") or "system",
+                    message_text=item.get("message") or "",
+                    detected_language=understanding["language"],
+                    detected_product=understanding["product"],
+                    detected_intent=understanding["intent"],
+                    route_owner=understanding["route_owner"],
+                    guard_action=understanding["guard_action"],
+                    metadata={
+                        "owner_before": item.get("owner_before"),
+                        "owner_after": item.get("owner_after"),
+                        "active_flow": item.get("active_flow"),
+                        "route_decision": item.get("route_decision"),
+                        "reason": item.get("reason"),
+                        **metadata,
+                    },
+                )
+
+        if _table_exists(connection, "ai_incoming_messages"):
+            for row in connection.execute(
+                """
+                SELECT id, conversation_id, customer_phone, message_type, body, created_at
+                FROM ai_incoming_messages
+                WHERE created_at >= ?
+                ORDER BY created_at ASC
+                """,
+                (cutoff,),
+            ).fetchall():
+                append_event(
+                    event_id=row["id"],
+                    phone=row["customer_phone"],
+                    conversation_id=row["conversation_id"],
+                    occurred_at=row["created_at"],
+                    actor_type="customer",
+                    source="ai_incoming_messages",
+                    message_text=row["body"] or row["message_type"] or "",
+                    metadata={"message_type": row["message_type"]},
+                )
+
+        if _table_exists(connection, "ai_outgoing_replies"):
+            for row in connection.execute(
+                """
+                SELECT id, conversation_id, customer_phone, reply_text, intent, send_status, created_at
+                FROM ai_outgoing_replies
+                WHERE created_at >= ?
+                ORDER BY created_at ASC
+                """,
+                (cutoff,),
+            ).fetchall():
+                append_event(
+                    event_id=row["id"],
+                    phone=row["customer_phone"],
+                    conversation_id=row["conversation_id"],
+                    occurred_at=row["created_at"],
+                    actor_type="ai",
+                    source="ai_outgoing_replies",
+                    message_text=row["reply_text"],
+                    detected_intent=row["intent"],
+                    route_owner="ai",
+                    guard_action=row["send_status"],
+                )
+
+        if _table_exists(connection, "message_decisions"):
+            for row in connection.execute(
+                """
+                SELECT id, customer_id, incoming_message_id, incoming_message, normalized_text,
+                       detected_type, detected_intent, confidence, selected_owner,
+                       decision_reason, skipped_ai, route, score, metadata_json, created_at
+                FROM message_decisions
+                WHERE created_at >= ?
+                ORDER BY created_at ASC
+                """,
+                (cutoff,),
+            ).fetchall():
+                metadata = _safe_json_dict(row["metadata_json"])
+                append_event(
+                    event_id=row["id"],
+                    phone=row["customer_id"],
+                    conversation_id=str(metadata.get("conversation_id") or row["customer_id"] or ""),
+                    occurred_at=row["created_at"],
+                    actor_type="system",
+                    source="message_decisions",
+                    message_text=row["incoming_message"] or row["normalized_text"] or "",
+                    detected_intent=row["detected_intent"],
+                    route_owner=row["selected_owner"],
+                    guard_action="ai_skipped" if row["skipped_ai"] else "ai_allowed",
+                    metadata={
+                        **metadata,
+                        "confidence": row["confidence"],
+                        "decision_reason": row["decision_reason"],
+                        "detected_type": row["detected_type"],
+                        "route": row["route"],
+                        "score": row["score"],
+                    },
+                )
+
+        if _table_exists(connection, "routing_log"):
+            for row in connection.execute(
+                """
+                SELECT id, phone, message, owner_before, route_taken, context, timestamp
+                FROM routing_log
+                WHERE timestamp >= ?
+                ORDER BY timestamp ASC
+                """,
+                (cutoff,),
+            ).fetchall():
+                context = _safe_json_dict(row["context"])
+                append_event(
+                    event_id=row["id"],
+                    phone=row["phone"],
+                    conversation_id=row["phone"],
+                    occurred_at=row["timestamp"],
+                    actor_type="system",
+                    source="routing_log",
+                    message_text=row["message"] or "",
+                    detected_language=str(context.get("language") or ""),
+                    detected_product=str(context.get("product") or ""),
+                    detected_intent=str(context.get("intent") or ""),
+                    route_owner=row["route_taken"],
+                    metadata={"owner_before": row["owner_before"], **context},
+                )
+
+        if not events and _table_exists(connection, "conversation_state"):
+            for row in connection.execute(
+                """
+                SELECT phone, owner, owner_reason, flow_id, flow_step, active_product,
+                       latest_intent, language, journey_stage, last_activity, updated_at
+                FROM conversation_state
+                ORDER BY COALESCE(last_activity, updated_at, created_at) DESC
+                LIMIT 200
+                """
+            ).fetchall():
+                append_event(
+                    event_id=f"state:{row['phone']}",
+                    phone=row["phone"],
+                    conversation_id=row["phone"],
+                    occurred_at=row["last_activity"] or row["updated_at"] or "",
+                    actor_type="system",
+                    source="conversation_state",
+                    message_text=row["owner_reason"] or row["flow_step"] or row["journey_stage"] or row["owner"],
+                    detected_language=row["language"] or "",
+                    detected_product=row["active_product"] or "",
+                    detected_intent=row["latest_intent"] or "",
+                    route_owner=row["owner"] or "",
+                    metadata={
+                        "flow_id": row["flow_id"],
+                        "flow_step": row["flow_step"],
+                        "journey_stage": row["journey_stage"],
+                    },
+                )
+
+    deduped: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    for event in events:
+        key = (
+            event["customer_phone"],
+            event["occurred_at"],
+            event["actor_type"],
+            _content_hash(event["message_text"])[:16],
+        )
+        deduped.setdefault(key, event)
+    return sorted(deduped.values(), key=lambda event: _parse_dt(event["occurred_at"]))
 
 
 def _detect_issues(events: list[dict[str, Any]]) -> list[dict[str, Any]]:

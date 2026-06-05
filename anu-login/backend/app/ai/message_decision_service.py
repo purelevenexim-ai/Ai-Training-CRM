@@ -43,6 +43,14 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _table_exists(connection, table_name: str) -> bool:
+    row = connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+        (table_name,),
+    ).fetchone()
+    return row is not None
+
+
 def selected_owner_for_route(route: str) -> str:
     return OWNER_BY_ROUTE.get(str(route or "").strip(), "ai")
 
@@ -278,6 +286,76 @@ def get_message_control_payload(*, hours: int = 4, limit: int = 100) -> dict[str
                 (cutoff, int(limit)),
             ).fetchall()
         ]
+        if not decisions and _table_exists(connection, "routing_log"):
+            decisions.extend(
+                [
+                    {
+                        "id": row["id"],
+                        "customer_id": row["phone"],
+                        "incoming_message_id": row["id"],
+                        "incoming_message": row["message"] or "",
+                        "normalized_text": normalize_message(row["message"] or ""),
+                        "detected_type": "text",
+                        "detected_intent": "",
+                        "confidence": 0.65,
+                        "selected_owner": selected_owner_for_route(row["route_taken"]),
+                        "decision_reason": "routing_log_fallback",
+                        "skipped_ai": 1 if selected_owner_for_route(row["route_taken"]) != "ai" else 0,
+                        "prompt_used_id": "",
+                        "reply_message_id": "",
+                        "route": row["route_taken"],
+                        "score": 6,
+                        "metadata_json": row["context"] or "{}",
+                        "created_at": row["timestamp"],
+                        "updated_at": row["timestamp"],
+                    }
+                    for row in connection.execute(
+                        """
+                        SELECT id, phone, message, route_taken, context, timestamp
+                        FROM routing_log
+                        WHERE timestamp >= ?
+                        ORDER BY timestamp DESC
+                        LIMIT ?
+                        """,
+                        (cutoff, int(limit)),
+                    ).fetchall()
+                ]
+            )
+        if not decisions and _table_exists(connection, "ai_incoming_messages"):
+            decisions.extend(
+                [
+                    {
+                        "id": row["id"],
+                        "customer_id": row["customer_phone"],
+                        "incoming_message_id": row["id"],
+                        "incoming_message": row["body"] or "",
+                        "normalized_text": normalize_message(row["body"] or ""),
+                        "detected_type": row["message_type"] or "text",
+                        "detected_intent": "",
+                        "confidence": 0.45,
+                        "selected_owner": "unclassified",
+                        "decision_reason": "incoming_message_without_decision",
+                        "skipped_ai": 0,
+                        "prompt_used_id": "",
+                        "reply_message_id": "",
+                        "route": "",
+                        "score": 0,
+                        "metadata_json": json.dumps({"conversation_id": row["conversation_id"]}, ensure_ascii=False),
+                        "created_at": row["created_at"],
+                        "updated_at": row["created_at"],
+                    }
+                    for row in connection.execute(
+                        """
+                        SELECT id, conversation_id, customer_phone, message_type, body, created_at
+                        FROM ai_incoming_messages
+                        WHERE created_at >= ?
+                        ORDER BY created_at DESC
+                        LIMIT ?
+                        """,
+                        (cutoff, int(limit)),
+                    ).fetchall()
+                ]
+            )
         duplicate_rows = [
             dict(row)
             for row in connection.execute(

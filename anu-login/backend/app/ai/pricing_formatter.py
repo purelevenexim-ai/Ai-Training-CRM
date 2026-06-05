@@ -24,7 +24,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "price_intro": "Sharing the current size options below.",
         "details_intro": "Here’s the quick product picture.",
         "delivery_time": "Usually 4-7 days ullil reach cheyyum. Pincode share ചെയ്താൽ exact estimate പറയാം.",
-        "delivery_charge": "Kerala orders ₹600 and above free aanu. Below that ₹40. Outside Kerala customer charge ₹60 aanu.",
+        "delivery_charge": "Combo orders and orders above ₹600 have free delivery. For outside Kerala, please pay ₹40 delivery charge because usual outside-Kerala delivery is higher.",
         "clarify": "Price, delivery, or order help?",
         "best_pack": "If regular use aanu, the recommended pack is usually the most practical option.",
         "order_capture": (
@@ -36,11 +36,10 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Quantity / size"
         ),
         "order_delivery_cta": (
-            "To order, please send:\n\n"
+            "To place the order, please send:\n\n"
             "Name, full address, phone number, and pincode 😊\n\n"
-            "Kerala orders ₹600+ get free delivery.\n\n"
-            "Outside Kerala normal delivery is ₹120, but we collect only ₹60 from the customer.\n\n"
-            "Combo order or ₹600+ purchase gets free delivery."
+            "Combo orders and orders above ₹600 have free delivery.\n\n"
+            "For outside Kerala, please pay ₹40 as delivery charge, since the usual delivery charge is higher."
         ),
         "no_interest": "No problem at all 😊 If you need anything later, just message us.",
         "defer_decision": "Sure, no problem 😊 Tomorrow or later is fine. Just message us when you’re ready.",
@@ -52,7 +51,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Delivery location"
         ),
         "fallback": "Sorry, I didn’t catch that clearly. Product name or question onnu parayamo?",
-        "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
+        "footer": "Combo orders and ₹600+ orders have free delivery. Outside Kerala delivery charge is ₹40.",
         "payment": "Payment ചെയ്താൽ screenshot അല്ലെങ്കിൽ transaction reference share cheyyu 😊 Confirm cheyyam.",
         "payment_received": "Payment screenshot received 👍 We’ll verify it and confirm shortly.",
         "payment_review_details": "Screenshot kitti 👍 Payment verify cheyyan amount / paid time onnu type cheyyamo?",
@@ -65,7 +64,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "price_intro": "Current size options thazhe share cheyyam.",
         "details_intro": "Quick details thazhe kodukkam.",
         "delivery_time": "Usually 4-7 days ullil delivery kittum. Pincode ayachal exact estimate parayam.",
-        "delivery_charge": "Kerala-il ₹600 kazhinjal free delivery. Athinu thazhe ₹40 aanu. Outside Kerala customer charge ₹60 aanu.",
+        "delivery_charge": "Combo order aanenkil, allenkil ₹600 above order aanenkil delivery free aanu. Kerala-kku purath aanenkil ₹40 delivery charge mathi.",
         "clarify": "Price, delivery, atho order help?",
         "best_pack": "Regular use aanu enkil recommended pack aanu usually nalla option.",
         "order_capture": (
@@ -73,11 +72,10 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "Peru / name, address, phone number, pincode, quantity / size ayacholu 😊"
         ),
         "order_delivery_cta": (
-            "Order cheyyan:\n\n"
-            "Peru, address, phone number, pincode ayacholu 😊\n\n"
-            "🚚 Kerala-il ₹600+ orderinu free delivery undu.\n\n"
-            "🚚 Kerala-kku purathekk normal delivery charge ₹120 aanu, pakshe njangal customer-il ninn ₹60 mathram aanu edakkunnath.\n\n"
-            "Combo order allenkil ₹600+ purchase cheyyumbol free delivery kittum."
+            "Order cheyyan please ayakkane:\n\n"
+            "Name, full address, phone number, pincode 😊\n\n"
+            "Combo order aanenkil, allenkil ₹600 above order aanenkil delivery free aanu.\n\n"
+            "Kerala-kku purath aanenkil ₹40 delivery charge mathi. Outside Kerala usual delivery charge kurach higher aanu."
         ),
         "no_interest": "Shari 😊 വേറെ എന്തെങ്കിലും venengil parayu. Pinne product name ayachal mathi.",
         "defer_decision": "Shari, no problem 😊 Nale / pinne nokki paranjal mathi. Njan help cheyyam.",
@@ -89,7 +87,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Delivery place"
         ),
         "fallback": "Sorry, clear aayi manasilayilla. Product name allenkil question onnu parayamo?",
-        "footer": "Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.",
+        "footer": "Combo / ₹600 above orderinu delivery free aanu. Outside Kerala ₹40 delivery charge mathi.",
         "payment": "Payment cheythittundengil screenshot allenkil transaction reference ayacholu 😊 Confirm cheyyam.",
         "payment_received": "Payment screenshot kitti 👍 Njan verify cheythu order confirm cheyyam. Oru minute.",
         "payment_review_details": "Screenshot kitti 👍 Payment verify cheyyan amount / paid time onnu type cheyyamo?",
@@ -102,7 +100,7 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
         "price_intro": "ഇപ്പോഴത്തെ size options താഴെ കൊടുക്കുന്നു.",
         "details_intro": "Quick details താഴെ കൊടുക്കാം.",
         "delivery_time": "സാധാരണ 4-7 ദിവസത്തിനുള്ളിൽ delivery കിട്ടും. Pincode അയച്ചാൽ exact estimate പറയാം.",
-        "delivery_charge": "കേരളത്തിൽ ₹600 കഴിഞ്ഞാൽ free delivery. അതിന് താഴെ ₹40. കേരളത്തിന് പുറത്തേക്ക് customer charge ₹60 ആണ്.",
+        "delivery_charge": "Combo order ആണെങ്കിൽ, അല്ലെങ്കിൽ ₹600-നു മുകളിലുള്ള order ആണെങ്കിൽ delivery free ആണ്. Kerala-യ്ക്ക് പുറത്താണെങ്കിൽ ₹40 delivery charge മാത്രം മതി.",
         "clarify": "വിലയോ, delivery യോ, order help യോ?",
         "best_pack": "സ്ഥിരമായി ഉപയോഗത്തിനാണെങ്കിൽ recommended pack സാധാരണ നല്ല option ആണ്.",
         "order_capture": (
@@ -114,11 +112,10 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Quantity / size"
         ),
         "order_delivery_cta": (
-            "Order ചെയ്യാൻ:\n\n"
-            "പേര്, address, phone number, pincode അയച്ചോളൂ 😊\n\n"
-            "🚚 കേരളത്തിൽ ₹600+ order-ന് free delivery ഉണ്ട്.\n\n"
-            "🚚 കേരളത്തിന് പുറത്തേക്ക് normal delivery charge ₹120 ആണ്, പക്ഷേ customer-ൽ നിന്ന് ₹60 മാത്രം ആണ് എടുക്കുന്നത്.\n\n"
-            "Combo order അല്ലെങ്കിൽ ₹600+ purchase ചെയ്യുമ്പോൾ free delivery കിട്ടും."
+            "Order ചെയ്യാൻ ദയവായി അയക്കൂ:\n\n"
+            "പേര്, മുഴുവൻ അഡ്രസ്, ഫോൺ നമ്പർ, പിൻകോഡ് 😊\n\n"
+            "Combo order ആണെങ്കിൽ, അല്ലെങ്കിൽ ₹600-നു മുകളിലുള്ള order ആണെങ്കിൽ delivery free ആണ്.\n\n"
+            "Kerala-യ്ക്ക് പുറത്താണെങ്കിൽ ₹40 delivery charge മാത്രം pay ചെയ്താൽ മതി. സാധാരണ outside Kerala delivery charge കൂടുതലാണ്."
         ),
         "no_interest": "ശരി 😊 വേറെ എന്തെങ്കിലും വേണമെങ്കിൽ പറയൂ. പിന്നെ product name അയച്ചാൽ മതി.",
         "defer_decision": "ശരി, പ്രശ്നമില്ല 😊 നാളെ / പിന്നീട് നോക്കി പറഞ്ഞാൽ മതി. ഞാൻ help ചെയ്യാം.",
@@ -130,13 +127,53 @@ REPLY_STYLE_COPY: dict[str, dict[str, str]] = {
             "• Delivery place"
         ),
         "fallback": "ക്ഷമിക്കണം, വ്യക്തമായി മനസ്സിലായില്ല. Product name അല്ലെങ്കിൽ question ഒന്ന് പറയാമോ?",
-        "footer": "കേരളത്തിൽ ₹600 കഴിഞ്ഞാൽ free delivery. കേരളത്തിന് പുറത്തേക്ക് customer charge ₹60 ആണ്.",
+        "footer": "Combo order / ₹600-ന് മുകളിലുള്ള order delivery free ആണ്. Kerala-യ്ക്ക് പുറത്തേക്ക് ₹40 delivery charge മാത്രം മതി.",
         "payment": "Payment ചെയ്തിട്ടുണ്ടെങ്കിൽ screenshot അല്ലെങ്കിൽ transaction reference അയയ്ക്കൂ 😊 Confirm ചെയ്യാം.",
         "payment_received": "Payment screenshot കിട്ടി 👍 Verify ചെയ്ത് order confirm ചെയ്യാം. ഒരു മിനിറ്റ്.",
         "payment_review_details": "Screenshot കിട്ടി 👍 Payment verify ചെയ്യാൻ amount / paid time ഒന്നു type ചെയ്യാമോ?",
         "business_info": "PureLeven Kerala/Idukki-side spice brand ആണ്. Orders mainly online ആണ്, courier delivery ഉണ്ട്. Contact: https://pureleven.com/contact",
         "human_handoff": "Sure, direct support connect ചെയ്യാം.",
         "complaint": "ക്ഷമിക്കണം. ഇത് support team-ലേക്ക് ഉടൻ raise ചെയ്യാം.",
+    },
+    "hindi": {
+        "availability": "Available hai 😊",
+        "price_intro": "Current size options neeche share kar raha hoon.",
+        "details_intro": "Quick details neeche de raha hoon.",
+        "delivery_time": "Usually 4-7 days mein delivery mil jaati hai. Pincode bhejenge toh exact estimate bata denge.",
+        "delivery_charge": "Combo order ya ₹600 se upar ke orders par delivery free hai. Kerala ke bahar delivery ke liye sirf ₹40 pay karna hoga.",
+        "clarify": "Price, delivery, ya order help chahiye?",
+        "best_pack": "Regular use ke liye recommended pack usually best option hota hai.",
+        "order_capture": (
+            "Order place karne ke liye please bhejiye:\n"
+            "• Name\n"
+            "• Full address\n"
+            "• Pincode\n"
+            "• Phone number\n"
+            "• Quantity / size"
+        ),
+        "order_delivery_cta": (
+            "Order place karne ke liye please bhejiye:\n\n"
+            "Name, full address, phone number aur pincode 😊\n\n"
+            "Combo order ya ₹600 se upar ke orders par delivery free hai.\n\n"
+            "Kerala ke bahar delivery ke liye sirf ₹40 pay karna hoga, kyunki outside Kerala usual delivery charge zyada hota hai."
+        ),
+        "no_interest": "Koi problem nahi 😊 Baad mein chahiye ho toh message kar dena.",
+        "defer_decision": "Sure 😊 Kal ya baad mein batayenge toh chalega.",
+        "wholesale": (
+            "Wholesale / bulk rate available hai.\n\n"
+            "Please share:\n"
+            "• Product name\n"
+            "• Approx quantity\n"
+            "• Delivery location"
+        ),
+        "fallback": "Sorry, clearly samajh nahi aaya. Product name ya question ek baar bhejenge?",
+        "footer": "Combo orders aur ₹600+ orders par delivery free hai. Kerala ke bahar ₹40 delivery charge hai.",
+        "payment": "Payment kiya hai toh screenshot ya transaction reference bhejiye 😊 Confirm kar denge.",
+        "payment_received": "Payment screenshot received 👍 Verify karke confirm karte hain.",
+        "payment_review_details": "Screenshot mil gaya 👍 Payment verify karne ke liye amount / paid time ek baar type kar denge?",
+        "business_info": "PureLeven Kerala/Idukki-side spice brand hai. Orders mainly online hote hain, courier delivery available hai. Contact: https://pureleven.com/contact",
+        "human_handoff": "Sure, direct support connect kar dete hain.",
+        "complaint": "Sorry. Isko support team ke paas immediately raise karte hain.",
     },
 }
 
@@ -163,7 +200,7 @@ class PricingFormatter:
     @staticmethod
     def _style_key(style: str) -> str:
         value = (style or "").strip().lower()
-        if value in {"malayalam", "manglish", "english"}:
+        if value in {"malayalam", "manglish", "english", "hindi"}:
             return value
         return "english"
 
@@ -487,6 +524,7 @@ class PricingFormatter:
             "english": "*COMBO PACKS*",
             "manglish": "*COMBO PACKS*",
             "malayalam": "*COMBO PACKS*",
+            "hindi": "*COMBO PACKS*",
         }[style_key]
         lines = [intro, "", "*Combo    | Includes                            | Price*", "────────────────────────────────────────────"]
         for combo in COMBO_OFFER_LIBRARY:
@@ -572,6 +610,7 @@ class PricingFormatter:
                 "english": f"{product['name']} available 👍",
                 "manglish": f"{product['name']} undu 👍",
                 "malayalam": f"{product['name']} ഉണ്ട് 👍",
+                "hindi": f"{product['name']} available hai 👍",
             }
             reply_lines = [opening_line or opening_map[style_key]]
             if story_preview:
@@ -590,7 +629,7 @@ class PricingFormatter:
             reply_text = "\n".join(line for line in reply_lines if line is not None).strip()
             images = list(entry.get("images", []))
             primary_image_url = str(entry.get("primary_image_url") or "")
-            image_urls = [image["url"] for image in images if image.get("url")][:1]
+            image_urls = [image["url"] for image in images if image.get("url")]
             if not image_urls and primary_image_url:
                 image_urls = [primary_image_url]
             return {
@@ -662,6 +701,7 @@ class PricingFormatter:
                 "english": "Sure, I can arrange the order 😊",
                 "manglish": "Sure, order arrange cheyyam 😊",
                 "malayalam": "ശരി, order arrange ചെയ്യാം 😊",
+                "hindi": "Sure, order arrange kar dete hain 😊",
             }
             lines.extend(
                 [
@@ -717,6 +757,8 @@ class PricingFormatter:
             "fallback",
         }
         image_urls = [image["url"] for image in images if image.get("url")] if scenario in media_scenarios else []
+        if scenario in media_scenarios and not image_urls and primary_image_url:
+            image_urls = [primary_image_url]
         intent_name = scenario if scenario in {"delivery_time", "delivery_charge", "free_delivery"} else scenario
         cta_scenarios = {"order_request", "order_confirm", "order_intent"}
         extra_messages: list[str] = []

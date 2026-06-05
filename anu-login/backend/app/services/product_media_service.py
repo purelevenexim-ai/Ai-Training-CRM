@@ -6,6 +6,7 @@ import json
 import mimetypes
 import re
 import shutil
+import ssl
 import uuid
 import urllib.parse
 import urllib.request
@@ -13,6 +14,11 @@ from pathlib import Path
 from typing import Any
 
 from app.config import settings
+
+try:
+    import certifi
+except Exception:  # pragma: no cover - optional runtime dependency
+    certifi = None
 
 
 PRODUCT_MEDIA_DIRNAME = "product_media"
@@ -217,7 +223,8 @@ def save_product_image_from_url(
             "Accept": "image/*,*/*;q=0.9",
         },
     )
-    with urllib.request.urlopen(request, timeout=20) as response:  # noqa: S310
+    context = ssl.create_default_context(cafile=certifi.where()) if certifi else None
+    with urllib.request.urlopen(request, timeout=20, context=context) as response:  # noqa: S310
         content = response.read()
         content_type = response.headers.get_content_type() if hasattr(response, "headers") else DEFAULT_IMAGE_MIME
         remote_name = Path(parsed.path or "image.jpg").name or "image.jpg"
@@ -323,7 +330,8 @@ def list_public_google_drive_folder_entries(folder_url_or_id: str) -> list[dict[
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         },
     )
-    with urllib.request.urlopen(request, timeout=20) as response:  # noqa: S310
+    context = ssl.create_default_context(cafile=certifi.where()) if certifi else None
+    with urllib.request.urlopen(request, timeout=20, context=context) as response:  # noqa: S310
         html = response.read().decode("utf-8", errors="replace")
 
     payload = _decode_drive_ivd_payload(html)

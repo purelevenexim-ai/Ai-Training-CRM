@@ -171,6 +171,8 @@ def detect_language(message: str) -> str:
     lower = text.lower()
     if any("\u0D00" <= ch <= "\u0D7F" for ch in text):
         return "malayalam"
+    if any("\u0900" <= ch <= "\u097F" for ch in text):
+        return "hindi"
     manglish_markers = (
         "undo",
         "undu",
@@ -189,6 +191,18 @@ def detect_language(message: str) -> str:
     )
     if any(marker in lower for marker in manglish_markers):
         return "manglish"
+    hindi_markers = (
+        "bhejiye",
+        "kaise",
+        "kitna",
+        "bahar",
+        "upar",
+        "karne",
+        "karna",
+        "order place",
+    )
+    if any(marker in lower for marker in hindi_markers):
+        return "hindi"
     return "english"
 
 

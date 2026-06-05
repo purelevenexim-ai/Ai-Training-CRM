@@ -373,6 +373,8 @@ class WabisReplyGenerator:
 
         if any("\u0D00" <= ch <= "\u0D7F" for ch in msg):
             return "malayalam"
+        if any("\u0900" <= ch <= "\u097F" for ch in msg):
+            return "hindi"
 
         manglish_markers = (
             "undo",
@@ -403,6 +405,19 @@ class WabisReplyGenerator:
         )
         if any(marker in msg_lower for marker in manglish_markers):
             return "manglish"
+
+        hindi_markers = (
+            "bhejiye",
+            "karne",
+            "kaise",
+            "kitna",
+            "order place",
+            "bahar",
+            "upar",
+            "delivery charge",
+        )
+        if any(marker in msg_lower for marker in hindi_markers):
+            return "hindi"
 
         return "english"
 

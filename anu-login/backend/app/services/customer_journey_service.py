@@ -38,7 +38,7 @@ DEFAULT_JOURNEY_STEPS = [
         "delay_value": 10,
         "delay_unit": "hours",
         "message_type": "combo",
-        "message_text": "Combo vangumbol value nallath aanu. Kerala-il ₹600+ orderinu free delivery undu.",
+        "message_text": "Combo order aanenkil, allenkil ₹600 above order aanenkil delivery free aanu.",
     },
     {
         "step_order": 4,

@@ -26,6 +26,7 @@ const DEFAULT_HUMAN_LOOP = {
   },
   rules: [],
   learning_items: [],
+  wabis_outbound_events: [],
   summary: {},
 };
 
@@ -142,7 +143,7 @@ function createDefaultJourneyForm() {
     steps: [
       { step_order: 1, delay_value: 4, delay_unit: 'minutes', message_type: 'text', message_text: 'Order venenkil peru, address, phone number, pincode ayacholu 😊', active: true },
       { step_order: 2, delay_value: 4, delay_unit: 'hours', message_type: 'text_with_image', message_text: 'Ithu venenkil innu dispatch cheyyan try cheyyam. Fresh stock aanu 😊', active: true },
-      { step_order: 3, delay_value: 10, delay_unit: 'hours', message_type: 'combo', message_text: 'Combo vangumbol value nallath aanu. Kerala-il ₹600+ orderinu free delivery undu.', active: true },
+      { step_order: 3, delay_value: 10, delay_unit: 'hours', message_type: 'combo', message_text: 'Combo order aanenkil, allenkil ₹600 above order aanenkil delivery free aanu.', active: true },
       { step_order: 4, delay_value: 23, delay_unit: 'hours', message_type: 'text', message_text: 'Ithu close cheyyatte? Venamengil quantity paranjal order ready cheyyam 😊', active: true },
     ],
   };
@@ -293,6 +294,7 @@ export default function OwnerDashboard() {
   const [driveFolderUrlDraft, setDriveFolderUrlDraft] = useState('');
   const [driveSyncActive, setDriveSyncActive] = useState(false);
   const [driveSyncReport, setDriveSyncReport] = useState(null);
+  const [learningEditor, setLearningEditor] = useState(null);
   const productImageInputRef = useRef(null);
 
   function resetForLockedDashboard(message) {
@@ -330,6 +332,7 @@ export default function OwnerDashboard() {
     setDriveFolderUrlDraft('');
     setDriveSyncActive(false);
     setDriveSyncReport(null);
+    setLearningEditor(null);
     setActiveTab('overview');
     setError(message || 'Admin secret is required to open this dashboard.');
   }
@@ -655,62 +658,53 @@ export default function OwnerDashboard() {
     });
   }
 
-  async function handleLearningAction(item, action) {
+  function openLearningEditor(item, action) {
+    setLearningEditor({
+      item,
+      action,
+      correct_response: item.correct_response || item.final_answer || '',
+      product: item.detected_product || 'general',
+      intent: item.detected_intent || 'fallback',
+      language: item.detected_language || 'manglish',
+      admin_label: action,
+    });
+  }
+
+  async function submitLearningAction(event) {
+    event.preventDefault();
+    if (!learningEditor?.item) return;
     setError('');
     try {
-      let correctResponse = item.correct_response || item.final_answer || '';
-      let product = item.detected_product || 'general';
-      let intent = item.detected_intent || 'fallback';
-      let language = 'manglish';
-
-      if (action === 'approve' || action === 'promote') {
-        const promptedResponse = window.prompt(
-          action === 'promote'
-            ? 'Correct WhatsApp reply to promote into intent knowledge:'
-            : 'Approved answer / note for this learning item:',
-          correctResponse,
-        );
-        if (promptedResponse === null) return;
-        correctResponse = promptedResponse.trim();
-        if (!correctResponse) {
+      const action = learningEditor.action;
+      const correctResponse = (learningEditor.correct_response || '').trim();
+      if ((action === 'approve' || action === 'promote') && !correctResponse) {
           setError('Correct response is required for approve/promote.');
           return;
-        }
       }
-
-      if (action === 'promote') {
-        const promptedProduct = window.prompt('Canonical product id:', product);
-        if (promptedProduct === null) return;
-        product = promptedProduct.trim() || 'general';
-        const promptedIntent = window.prompt('Canonical intent:', intent);
-        if (promptedIntent === null) return;
-        intent = promptedIntent.trim() || 'fallback';
-        const promptedLanguage = window.prompt('Language: english / manglish / malayalam', language);
-        if (promptedLanguage === null) return;
-        language = promptedLanguage.trim() || 'manglish';
-      }
-
-      const payload = await apiFetch(`/api/owner/dashboard/human-loop-rules/learning/${item.id}`, {
+      const payload = await apiFetch(`/api/owner/dashboard/human-loop-rules/learning/${learningEditor.item.id}`, {
         method: 'POST',
         body: JSON.stringify({
           action,
           correct_response: correctResponse,
-          admin_label: action,
-          product,
-          intent,
-          language,
+          admin_label: learningEditor.admin_label || action,
+          product: learningEditor.product || 'general',
+          intent: learningEditor.intent || 'fallback',
+          language: learningEditor.language || 'manglish',
         }),
       });
       setHumanLoop({ ...DEFAULT_HUMAN_LOOP, ...(payload.payload || {}) });
       setFlashMessage(
         action === 'promote'
           ? 'Learning promoted into intent knowledge.'
+          : action === 'rollback'
+            ? 'Promoted knowledge rolled back.'
           : action === 'dismiss'
             ? 'Learning item dismissed.'
             : 'Learning item approved.',
       );
+      setLearningEditor(null);
       setTimeout(() => setFlashMessage(''), 2600);
-      if (action === 'promote') {
+      if (action === 'promote' || action === 'rollback') {
         loadKnowledgeBase();
       }
     } catch (actionError) {
@@ -2035,13 +2029,18 @@ export default function OwnerDashboard() {
                       <td>{item.status || 'open'}</td>
                       <td>
                         <div className="inline-actions">
-                          <button type="button" onClick={() => handleLearningAction(item, 'approve')}>
+                          <button type="button" onClick={() => openLearningEditor(item, 'approve')}>
                             Approve
                           </button>
-                          <button type="button" onClick={() => handleLearningAction(item, 'promote')}>
+                          <button type="button" onClick={() => openLearningEditor(item, 'promote')}>
                             Promote
                           </button>
-                          <button type="button" onClick={() => handleLearningAction(item, 'dismiss')}>
+                          {item.promoted_entry_id ? (
+                            <button type="button" onClick={() => openLearningEditor(item, 'rollback')}>
+                              Rollback
+                            </button>
+                          ) : null}
+                          <button type="button" onClick={() => openLearningEditor(item, 'dismiss')}>
                             Dismiss
                           </button>
                         </div>
@@ -2051,6 +2050,49 @@ export default function OwnerDashboard() {
                   {!humanLoop.learning_items?.length ? (
                     <tr>
                       <td colSpan="7">No human-review learning items found yet.</td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="panel-card">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">Wabis Outbound Webhooks</p>
+                <h2>Admin and status event audit</h2>
+                <p className="muted-copy">
+                  Use this to verify real Wabis admin replies, bot pause/resume events, and delivery callbacks.
+                </p>
+              </div>
+            </div>
+            <div className="table-wrap monitor-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Phone</th>
+                    <th>Event</th>
+                    <th>Status</th>
+                    <th>Message ID</th>
+                    <th>Auth</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(humanLoop.wabis_outbound_events || []).map((item) => (
+                    <tr key={item.id}>
+                      <td>{formatDateTime(item.created_at)}</td>
+                      <td>{item.customer_phone || '—'}</td>
+                      <td>{item.event_type || item.normalized?.event_type || '—'}</td>
+                      <td>{item.normalized?.delivery_status || '—'}</td>
+                      <td>{item.normalized?.message_id || item.delivery_id || '—'}</td>
+                      <td>{item.auth_verified ? 'verified' : 'not verified'}</td>
+                    </tr>
+                  ))}
+                  {!humanLoop.wabis_outbound_events?.length ? (
+                    <tr>
+                      <td colSpan="6">No Wabis outbound webhook events captured yet.</td>
                     </tr>
                   ) : null}
                 </tbody>
@@ -3104,6 +3146,97 @@ export default function OwnerDashboard() {
             </article>
           </div>
         </section>
+      ) : null}
+
+      {learningEditor ? (
+        <div className="dashboard-modal" onClick={() => setLearningEditor(null)}>
+          <form className="dashboard-modal__card" onSubmit={submitLearningAction} onClick={(event) => event.stopPropagation()}>
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">Continuous Learning</p>
+                <h2>{learningEditor.action === 'promote' ? 'Promote learning' : `${learningEditor.action} learning`}</h2>
+                <p className="muted-copy">
+                  Review the captured customer message before changing rules or intent knowledge.
+                </p>
+              </div>
+              <button type="button" className="ghost-button" onClick={() => setLearningEditor(null)}>
+                Close
+              </button>
+            </div>
+
+            <div className="learning-review-box">
+              <small>Customer message</small>
+              <p>{learningEditor.item.original_query || '—'}</p>
+              <small>Reason</small>
+              <p>{learningEditor.item.reason || '—'}</p>
+            </div>
+
+            <div className="form-grid">
+              <label>
+                Product
+                <input
+                  value={learningEditor.product}
+                  onChange={(event) => setLearningEditor({ ...learningEditor, product: event.target.value })}
+                  disabled={learningEditor.action === 'dismiss' || learningEditor.action === 'rollback'}
+                />
+              </label>
+              <label>
+                Intent
+                <input
+                  value={learningEditor.intent}
+                  onChange={(event) => setLearningEditor({ ...learningEditor, intent: event.target.value })}
+                  disabled={learningEditor.action === 'dismiss' || learningEditor.action === 'rollback'}
+                />
+              </label>
+              <label>
+                Language
+                <select
+                  value={learningEditor.language}
+                  onChange={(event) => setLearningEditor({ ...learningEditor, language: event.target.value })}
+                  disabled={learningEditor.action === 'dismiss' || learningEditor.action === 'rollback'}
+                >
+                  <option value="manglish">Manglish</option>
+                  <option value="malayalam">Malayalam</option>
+                  <option value="english">English</option>
+                  <option value="hindi">Hindi</option>
+                </select>
+              </label>
+              <label>
+                Admin label
+                <input
+                  value={learningEditor.admin_label}
+                  onChange={(event) => setLearningEditor({ ...learningEditor, admin_label: event.target.value })}
+                />
+              </label>
+            </div>
+
+            <label>
+              Correct human reply
+              <textarea
+                rows="6"
+                value={learningEditor.correct_response}
+                onChange={(event) => setLearningEditor({ ...learningEditor, correct_response: event.target.value })}
+                placeholder="Write the short WhatsApp reply that should be learned."
+                disabled={learningEditor.action === 'dismiss' || learningEditor.action === 'rollback'}
+              />
+            </label>
+
+            <div className="toolbar">
+              <button type="submit">
+                {learningEditor.action === 'promote'
+                  ? 'Promote to Knowledge'
+                  : learningEditor.action === 'rollback'
+                    ? 'Rollback Knowledge'
+                    : learningEditor.action === 'dismiss'
+                      ? 'Dismiss Item'
+                      : 'Approve Item'}
+              </button>
+              <button type="button" className="ghost-button" onClick={() => setLearningEditor(null)}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       ) : null}
 
       {selectedTimeline ? (

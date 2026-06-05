@@ -53,6 +53,48 @@
           "size_bytes": 121761,
           "uploaded_at": "",
           "updated_at": ""
+        },
+        {
+          "id": "img_baa421f33d46",
+          "url": "/api/product-media/black-pepper/img_baa421f33d46_uc.jpg",
+          "filename": "img_baa421f33d46_uc.jpg",
+          "caption": "Black Pepper - 1.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1AVeFCmxYym0f-84bHCKwcThjOsyadAvB",
+          "is_primary": false,
+          "sort_order": 1,
+          "mime_type": "image/jpeg",
+          "size_bytes": 195314,
+          "uploaded_at": "",
+          "updated_at": ""
+        },
+        {
+          "id": "img_92ca7cfd5812",
+          "url": "/api/product-media/black-pepper/img_92ca7cfd5812_uc.jpg",
+          "filename": "img_92ca7cfd5812_uc.jpg",
+          "caption": "Black Pepper - 2.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=18NmhcJcPJejzoYVhSrHAK_siY0Atp8Jg",
+          "is_primary": false,
+          "sort_order": 2,
+          "mime_type": "image/jpeg",
+          "size_bytes": 109884,
+          "uploaded_at": "",
+          "updated_at": ""
+        },
+        {
+          "id": "img_78533e4026e8",
+          "url": "/api/product-media/black-pepper/img_78533e4026e8_uc.jpg",
+          "filename": "img_78533e4026e8_uc.jpg",
+          "caption": "Black Pepper - BPWhatsApp Image 2026-06-04 at 10.10.48 PM.jpeg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1Bf-i-plRLc_sPwzT2Wx639KRC4SKrY9a",
+          "is_primary": false,
+          "sort_order": 4,
+          "mime_type": "image/jpeg",
+          "size_bytes": 189114,
+          "uploaded_at": "",
+          "updated_at": ""
         }
       ]
     },
@@ -92,7 +134,22 @@
         }
       ],
       "recommended_pack": "200g",
-      "media_links": []
+      "media_links": [
+        {
+          "id": "img_92025b5cb872",
+          "url": "/api/product-media/white-pepper/img_92025b5cb872_uc.jpg",
+          "filename": "img_92025b5cb872_uc.jpg",
+          "caption": "White Pepper - WPWhatsApp Image 2026-06-04 at 10.10.48 PM.jpeg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=11OmcPiyDZ_fDKtERtE9yqixZNfAWc9IF",
+          "is_primary": true,
+          "sort_order": 0,
+          "mime_type": "image/jpeg",
+          "size_bytes": 111914,
+          "uploaded_at": "",
+          "updated_at": ""
+        }
+      ]
     },
     {
       "id": "cardamom",
@@ -135,7 +192,78 @@
         }
       ],
       "recommended_pack": "200g",
-      "media_links": []
+      "media_links": [
+        {
+          "id": "img_ec5478d0dc1b",
+          "url": "/api/product-media/cardamom/img_ec5478d0dc1b_uc.jpg",
+          "filename": "img_ec5478d0dc1b_uc.jpg",
+          "caption": "Cardamom - 3.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1NeZ-9U34qEMaOxeqwLbDR9y0zUeKf9sb",
+          "is_primary": true,
+          "sort_order": 0,
+          "mime_type": "image/jpeg",
+          "size_bytes": 128484,
+          "uploaded_at": "",
+          "updated_at": ""
+        },
+        {
+          "id": "img_6018c420e63c",
+          "url": "/api/product-media/cardamom/img_6018c420e63c_uc.jpg",
+          "filename": "img_6018c420e63c_uc.jpg",
+          "caption": "Cardamom - 6.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1aAUId42Z1GUmcsfjVTGC3Pz1gxqRJbmv",
+          "is_primary": false,
+          "sort_order": 1,
+          "mime_type": "image/jpeg",
+          "size_bytes": 150871,
+          "uploaded_at": "",
+          "updated_at": ""
+        },
+        {
+          "id": "img_5f93534a0d96",
+          "url": "/api/product-media/cardamom/img_5f93534a0d96_uc.jpg",
+          "filename": "img_5f93534a0d96_uc.jpg",
+          "caption": "Cardamom - cardamom slider.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1fxzpE8BOC1KkbRspMzhIse8J0QEMOfaq",
+          "is_primary": false,
+          "sort_order": 2,
+          "mime_type": "image/jpeg",
+          "size_bytes": 268032,
+          "uploaded_at": "",
+          "updated_at": ""
+        },
+        {
+          "id": "img_41520957732a",
+          "url": "/api/product-media/cardamom/img_41520957732a_uc.jpg",
+          "filename": "img_41520957732a_uc.jpg",
+          "caption": "Cardamom - CAWhatsApp Image 2026-06-04 at 10.10.49 PM.jpeg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1COj8l5YsGnirLuBvOWTNqCeF9F4ZpsfP",
+          "is_primary": false,
+          "sort_order": 3,
+          "mime_type": "image/jpeg",
+          "size_bytes": 174735,
+          "uploaded_at": "",
+          "updated_at": ""
+        },
+        {
+          "id": "img_73cdd1561e0b",
+          "url": "/api/product-media/cardamom/img_73cdd1561e0b_uc.jpg",
+          "filename": "img_73cdd1561e0b_uc.jpg",
+          "caption": "Cardamom - Thank You.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1nPQZbpYw9Mgx2HUzJ-yLSXIEzHAPek5D",
+          "is_primary": false,
+          "sort_order": 4,
+          "mime_type": "image/jpeg",
+          "size_bytes": 927383,
+          "uploaded_at": "",
+          "updated_at": ""
+        }
+      ]
     },
     {
       "id": "clove",
@@ -187,6 +315,34 @@
           "size_bytes": 160072,
           "uploaded_at": "",
           "updated_at": ""
+        },
+        {
+          "id": "img_f5c71cdc9829",
+          "url": "/api/product-media/clove/img_f5c71cdc9829_uc.jpg",
+          "filename": "img_f5c71cdc9829_uc.jpg",
+          "caption": "Clove - 7.jpg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1Y99701BtGFbG1r_m0p9WJcG-zZzNs1AV",
+          "is_primary": false,
+          "sort_order": 2,
+          "mime_type": "image/jpeg",
+          "size_bytes": 164570,
+          "uploaded_at": "",
+          "updated_at": ""
+        },
+        {
+          "id": "img_a278bddb2118",
+          "url": "/api/product-media/clove/img_a278bddb2118_uc.jpg",
+          "filename": "img_a278bddb2118_uc.jpg",
+          "caption": "Clove - WhatsApp Image 2026-06-04 at 10.10.47 PM.jpeg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1i5YDvCh7JwHBsgoKWDihTOxgbkMkNvka",
+          "is_primary": false,
+          "sort_order": 3,
+          "mime_type": "image/jpeg",
+          "size_bytes": 167055,
+          "uploaded_at": "",
+          "updated_at": ""
         }
       ]
     },
@@ -221,7 +377,22 @@
         }
       ],
       "recommended_pack": "200g",
-      "media_links": []
+      "media_links": [
+        {
+          "id": "img_b0a8469fb050",
+          "url": "/api/product-media/turmeric/img_b0a8469fb050_uc.webp",
+          "filename": "img_b0a8469fb050_uc.webp",
+          "caption": "Turmeric Powder - Turmeric-Powder.webp",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1D1vAWzTpy7MLDde4yqzUBpVMHM5XW6ZC",
+          "is_primary": true,
+          "sort_order": 0,
+          "mime_type": "image/webp",
+          "size_bytes": 244130,
+          "uploaded_at": "",
+          "updated_at": ""
+        }
+      ]
     },
     {
       "id": "ceylon_cinnamon",
@@ -263,7 +434,22 @@
         }
       ],
       "recommended_pack": "200g",
-      "media_links": []
+      "media_links": [
+        {
+          "id": "img_ef3da1837a2b",
+          "url": "/api/product-media/ceylon-cinnamon/img_ef3da1837a2b_uc.jpg",
+          "filename": "img_ef3da1837a2b_uc.jpg",
+          "caption": "Ceylon Cinnamon - CIWhatsApp Image 2026-06-04 at 10.10.48 PM.jpeg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=1wYgkaAvXjodlp0f4Hiwm_SZykJjdzZ3V",
+          "is_primary": true,
+          "sort_order": 0,
+          "mime_type": "image/jpeg",
+          "size_bytes": 149354,
+          "uploaded_at": "",
+          "updated_at": ""
+        }
+      ]
     },
     {
       "id": "star_anise",
@@ -295,7 +481,22 @@
         }
       ],
       "recommended_pack": "100g",
-      "media_links": []
+      "media_links": [
+        {
+          "id": "img_39ccb5f2f0b6",
+          "url": "/api/product-media/star-anise/img_39ccb5f2f0b6_uc.jpg",
+          "filename": "img_39ccb5f2f0b6_uc.jpg",
+          "caption": "Star Anise - DSCF3370.JPG.jpeg",
+          "source": "google_drive",
+          "source_url": "https://drive.google.com/uc?export=download&id=19wD2QITCxHP5QgXC12nBQCd2wUTVBYmV",
+          "is_primary": true,
+          "sort_order": 0,
+          "mime_type": "image/jpeg",
+          "size_bytes": 2373219,
+          "uploaded_at": "",
+          "updated_at": ""
+        }
+      ]
     }
   ],
   "combos": [

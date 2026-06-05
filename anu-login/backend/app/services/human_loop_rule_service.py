@@ -9,7 +9,7 @@ from typing import Any
 from app.ai.conversation_state_manager import get_conversation_state, reset_conversation_state, set_conversation_state
 from app.runtime_db import ensure_runtime_tables, get_db_connection
 from app.storage import _get_setting_value, _save_setting_value, init_database
-from app.services.owner_dashboard_service import save_knowledge_base_entry
+from app.services.owner_dashboard_service import delete_knowledge_base_entry, save_knowledge_base_entry
 
 HUMAN_LOOP_SETTINGS_KEY = "owner_dashboard_human_loop_rules"
 
@@ -123,6 +123,7 @@ def human_inactivity_delay_seconds() -> int:
 def _recent_learning_items(limit: int = 40) -> list[dict[str, Any]]:
     init_database()
     ensure_runtime_tables()
+    _ensure_learning_columns()
     items: list[dict[str, Any]] = []
     with get_db_connection() as connection:
         try:
@@ -130,7 +131,7 @@ def _recent_learning_items(limit: int = 40) -> list[dict[str, Any]]:
                 """
                 SELECT id, phone, original_query, detected_intent, detected_product,
                        confidence, reason, status, admin_label, correct_response,
-                       final_answer, resolved_by, created_at, updated_at
+                       final_answer, resolved_by, promoted_entry_id, created_at, updated_at
                 FROM knowledge_gaps
                 ORDER BY created_at DESC
                 LIMIT ?
@@ -160,20 +161,61 @@ def _recent_learning_items(limit: int = 40) -> list[dict[str, Any]]:
     return sorted(items, key=lambda item: str(item.get("created_at") or ""), reverse=True)[:limit]
 
 
+def _recent_wabis_outbound_events(limit: int = 30) -> list[dict[str, Any]]:
+    ensure_runtime_tables()
+    with get_db_connection() as connection:
+        try:
+            rows = connection.execute(
+                """
+                SELECT id, delivery_id, event_type, customer_phone, conversation_id,
+                       auth_verified, normalized_json, created_at
+                FROM wabis_webhook_deliveries
+                ORDER BY created_at DESC
+                LIMIT ?
+                """,
+                (int(limit),),
+            ).fetchall()
+        except sqlite3.OperationalError:
+            return []
+    events: list[dict[str, Any]] = []
+    for row in rows:
+        item = dict(row)
+        try:
+            normalized = json.loads(item.get("normalized_json") or "{}")
+        except Exception:
+            normalized = {}
+        item["normalized"] = normalized if isinstance(normalized, dict) else {}
+        item.pop("normalized_json", None)
+        events.append(item)
+    return events
+
+
+def _ensure_learning_columns() -> None:
+    init_database()
+    with get_db_connection() as connection:
+        try:
+            connection.execute("ALTER TABLE knowledge_gaps ADD COLUMN promoted_entry_id TEXT")
+        except sqlite3.OperationalError:
+            pass
+        connection.commit()
+
+
 def update_learning_item(gap_id: str, payload: dict[str, Any]) -> dict[str, Any]:
     """Approve, dismiss, or promote a captured human-review item into intent knowledge."""
     action = str((payload or {}).get("action") or "").strip().lower()
     if action not in {"approve", "promote", "dismiss", "rollback"}:
         raise ValueError("Unsupported learning action.")
 
+    init_database()
     ensure_runtime_tables()
+    _ensure_learning_columns()
     now = _now()
     with get_db_connection() as connection:
         row = connection.execute(
             """
             SELECT id, phone, original_query, conversation_id, detected_intent,
                    detected_product, confidence, reason, status, admin_label,
-                   correct_response, final_answer, resolved_by, created_at, updated_at
+                   correct_response, final_answer, resolved_by, promoted_entry_id, created_at, updated_at
             FROM knowledge_gaps
             WHERE id = ?
             LIMIT 1
@@ -226,6 +268,12 @@ def update_learning_item(gap_id: str, payload: dict[str, Any]) -> dict[str, Any]
             new_status = "dismissed"
             resolved_by = "admin_dismiss"
         else:
+            promoted_entry_id = str(item.get("promoted_entry_id") or "").strip()
+            if promoted_entry_id:
+                try:
+                    delete_knowledge_base_entry(promoted_entry_id)
+                except Exception:
+                    pass
             new_status = "open"
             resolved_by = None
 
@@ -238,7 +286,8 @@ def update_learning_item(gap_id: str, payload: dict[str, Any]) -> dict[str, Any]
                 final_answer = ?,
                 resolved_by = ?,
                 resolved_at = ?,
-                updated_at = ?
+                updated_at = ?,
+                promoted_entry_id = ?
             WHERE id = ?
             """,
             (
@@ -249,6 +298,7 @@ def update_learning_item(gap_id: str, payload: dict[str, Any]) -> dict[str, Any]
                 resolved_by,
                 now if resolved_by else None,
                 now,
+                str((promoted_entry or {}).get("id") or "") if promoted_entry else ("" if action == "rollback" else str(item.get("promoted_entry_id") or "")),
                 gap_id,
             ),
         )
@@ -258,7 +308,7 @@ def update_learning_item(gap_id: str, payload: dict[str, Any]) -> dict[str, Any]
             """
             SELECT id, phone, original_query, detected_intent, detected_product,
                    confidence, reason, status, admin_label, correct_response,
-                   final_answer, resolved_by, created_at, updated_at
+                   final_answer, resolved_by, promoted_entry_id, created_at, updated_at
             FROM knowledge_gaps
             WHERE id = ?
             LIMIT 1
@@ -285,11 +335,13 @@ def get_human_loop_dashboard_payload() -> dict[str, Any]:
             for rule in RULES
         ],
         "learning_items": _recent_learning_items(),
+        "wabis_outbound_events": _recent_wabis_outbound_events(),
         "summary": {
             "human_inactivity_minutes": settings["human_inactivity_minutes"],
             "critical_rules_enabled": sum(1 for rule in RULES if rule["critical"] and settings.get(rule["key"])),
             "critical_rules_total": sum(1 for rule in RULES if rule["critical"]),
             "learning_items": len(_recent_learning_items(20)),
+            "wabis_outbound_events": len(_recent_wabis_outbound_events(20)),
         },
     }
 

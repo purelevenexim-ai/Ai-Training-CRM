@@ -159,8 +159,9 @@ def send_whatsapp_reply_with_fallback(
     media_results: list[dict[str, Any]] = []
     media_error: str | None = None
 
-    if normalized_media_urls:
-        for index, media_url in enumerate(normalized_media_urls[:3]):
+    def send_images_after_text() -> None:
+        nonlocal media_error
+        for index, media_url in enumerate(normalized_media_urls):
             if not media_url:
                 continue
             try:
@@ -179,6 +180,8 @@ def send_whatsapp_reply_with_fallback(
                 logger.warning("[WHATSAPP-MEDIA] %s image send failed: %s", phone_number, exc)
                 break
 
+    if normalized_media_urls and media_only:
+        send_images_after_text()
         if media_only and media_results:
             return {
                 "success": True,
@@ -211,6 +214,8 @@ def send_whatsapp_reply_with_fallback(
         conversation_id=conversation_id,
     )
     if text_result.get("success"):
+        if normalized_media_urls:
+            send_images_after_text()
         return {
             **text_result,
             "mode": "media+freeform" if media_results else "freeform",
@@ -251,6 +256,8 @@ def send_whatsapp_reply_with_fallback(
         body_params=body_params,
     )
     if template_result.get("status") == "sent":
+        if normalized_media_urls:
+            send_images_after_text()
         return {
             "success": True,
             "mode": "template",

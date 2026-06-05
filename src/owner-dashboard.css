@@ -260,6 +260,62 @@ button:hover {
   margin: 0 auto;
 }
 
+.inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inline-actions button {
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+}
+
+.dashboard-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(38, 29, 22, 0.46);
+  backdrop-filter: blur(8px);
+}
+
+.dashboard-modal__card {
+  width: min(760px, 100%);
+  max-height: min(86vh, 860px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(233, 207, 166, 0.36), transparent 36%),
+    #fffaf1;
+  box-shadow: 0 34px 90px rgba(52, 36, 20, 0.28);
+  padding: 24px;
+}
+
+.learning-review-box {
+  border: 1px solid rgba(143, 79, 44, 0.18);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.58);
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.learning-review-box small {
+  display: block;
+  color: var(--warm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.learning-review-box p {
+  margin: 6px 0 12px;
+}
+
 .metric-grid {
   grid-template-columns: repeat(5, minmax(0, 1fr));
   margin-bottom: 18px;

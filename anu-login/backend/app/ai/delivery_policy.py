@@ -6,8 +6,8 @@ from typing import Any
 FREE_DELIVERY_THRESHOLD_KERALA = 600
 KERALA_STANDARD_CHARGE = 40
 OUTSIDE_KERALA_STANDARD_CHARGE = 120
-OUTSIDE_KERALA_CUSTOMER_CHARGE = 60
-OUTSIDE_KERALA_SUBSIDY = 60
+OUTSIDE_KERALA_CUSTOMER_CHARGE = 40
+OUTSIDE_KERALA_SUBSIDY = 80
 
 
 def normalize_region(region: str | None) -> str:
@@ -29,8 +29,8 @@ def delivery_breakdown(amount: int, region: str | None = None) -> dict[str, Any]
             "internal_standard_charge": OUTSIDE_KERALA_STANDARD_CHARGE,
             "subsidy": OUTSIDE_KERALA_SUBSIDY,
             "is_free_delivery": False,
-            "label": "₹60",
-            "explanation": "Outside Kerala, customer charge is ₹60 and PureLeven covers the remaining ₹60.",
+            "label": "₹40",
+            "explanation": "Outside Kerala, customer pays ₹40 because the usual outside-Kerala charge is higher.",
         }
 
     if int(amount or 0) >= FREE_DELIVERY_THRESHOLD_KERALA:
@@ -41,7 +41,7 @@ def delivery_breakdown(amount: int, region: str | None = None) -> dict[str, Any]
             "subsidy": 0,
             "is_free_delivery": True,
             "label": "FREE",
-            "explanation": "Kerala orders ₹600 and above get free delivery.",
+            "explanation": "Combo orders and orders above ₹600 get free delivery.",
         }
 
     return {

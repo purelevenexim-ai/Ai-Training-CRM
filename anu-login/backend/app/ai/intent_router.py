@@ -120,6 +120,20 @@ def _route_catalog(reason: str, *, intent: str, product_key: str | None = None, 
     return decision
 
 
+def _unknown_product_candidate(message: str) -> str:
+    normalized = normalize_message(message)
+    stopwords = {
+        "available", "availability", "stock", "price", "rate", "details", "detail", "info",
+        "undo", "undu", "venam", "need", "want", "order", "delivery", "charge", "please",
+        "can", "get", "about", "help", "is", "are", "any", "do", "you", "have",
+    }
+    tokens = [token for token in normalized.split() if token not in stopwords]
+    if not tokens:
+        return ""
+    candidate = " ".join(tokens[:3]).strip()
+    return "" if candidate in {"what", "which", "hello", "hi", "hey"} else candidate
+
+
 def _allow_context_product_for_route(message: str) -> bool:
     normalized = normalize_message(message)
     if not normalized:

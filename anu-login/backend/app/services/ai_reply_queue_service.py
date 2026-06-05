@@ -10,6 +10,7 @@ from typing import Any
 from app.ai.intent_registry import intent_metadata
 from app.ai.product_knowledge import detect_product
 from app.ai.conversation_state_manager import get_conversation_state
+from app.services.human_loop_rule_service import human_lock_status, release_expired_human_lock_if_needed
 from app.runtime_db import ensure_runtime_tables, get_db_connection
 
 logger = logging.getLogger(__name__)
@@ -190,8 +191,17 @@ def enqueue_ai_reply_job(
     ensure_runtime_tables()
     with get_db_connection() as conn:
         active_session = _active_session_row(conn, customer_phone)
-        delay_seconds = ACTIVE_SESSION_DEBOUNCE_SECONDS if active_session else FIRST_LEARNING_DELAY_SECONDS
-        delay_type = "active_session_learning_60s" if active_session else "first_learning_60s"
+        metadata_payload = dict(metadata or {})
+        delay_override = metadata_payload.get("delay_seconds_override")
+        delay_type_override = str(metadata_payload.get("delay_type_override") or "").strip()
+        if delay_override is not None:
+            try:
+                delay_seconds = max(1, int(delay_override))
+            except (TypeError, ValueError):
+                delay_seconds = ACTIVE_SESSION_DEBOUNCE_SECONDS if active_session else FIRST_LEARNING_DELAY_SECONDS
+        else:
+            delay_seconds = ACTIVE_SESSION_DEBOUNCE_SECONDS if active_session else FIRST_LEARNING_DELAY_SECONDS
+        delay_type = delay_type_override or ("active_session_learning_60s" if active_session else "first_learning_60s")
 
         conn.execute(
             """
@@ -305,7 +315,7 @@ def enqueue_ai_reply_job(
                 message_type,
                 delay_type,
                 scheduled_at,
-                json.dumps(metadata or {}, ensure_ascii=False),
+                json.dumps(metadata_payload, ensure_ascii=False),
                 now,
                 now,
             ),
@@ -602,6 +612,40 @@ def run_due_ai_reply_jobs(limit: int = 20) -> list[dict[str, Any]]:
                     metadata={"job_id": job["id"], "state": state},
                 )
                 continue
+            if state and state.get("owner") == "human":
+                lock = human_lock_status(job["customer_phone"], state)
+                if lock.get("active"):
+                    reschedule_at = str(lock.get("lock_until") or (_now_dt() + timedelta(seconds=60)).isoformat())
+                    with get_db_connection() as conn:
+                        conn.execute(
+                            """
+                            UPDATE ai_reply_jobs
+                            SET status = 'pending',
+                                scheduled_at = ?,
+                                skipped_reason = 'human_lock_active_rescheduled',
+                                updated_at = ?
+                            WHERE id = ?
+                            """,
+                            (reschedule_at, _now(), job["id"]),
+                        )
+                        conn.commit()
+                    processed.append({
+                        "job_id": job["id"],
+                        "status": "requeued",
+                        "reason": "human_lock_active",
+                        "scheduled_at": reschedule_at,
+                    })
+                    log_ai_decision(
+                        conversation_id=job["conversation_id"],
+                        customer_phone=job["customer_phone"],
+                        incoming_message=job["source_message"],
+                        final_route_owner="human",
+                        matched_template="human_lock_active",
+                        metadata={"job_id": job["id"], "state": state, "lock": lock},
+                    )
+                    continue
+                if lock.get("expired"):
+                    release_expired_human_lock_if_needed(job["customer_phone"])
 
             from app.routes.wave02_wabis_routes import _generate_and_send_reply
 

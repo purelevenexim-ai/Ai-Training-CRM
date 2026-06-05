@@ -38,6 +38,11 @@ from app.ai.message_processing_lock import claim_message_owner, finish_message_o
 from app.ai.whatsapp_delivery_service import send_whatsapp_reply_with_fallback
 from app.services.product_followup_service import cancel_product_followups, queue_latent_handoff_followup
 from app.services.customer_journey_service import stop_customer_journeys_for_customer
+from app.services.human_loop_rule_service import (
+    human_inactivity_delay_seconds,
+    release_expired_human_lock_if_needed,
+    route_to_human_review,
+)
 from app.services.ai_reply_queue_service import (
     enqueue_ai_reply_job,
     log_ai_decision,
@@ -375,7 +380,7 @@ def _message_meta(
 
 
 def _ai_routes_need_queue(route: str | None) -> bool:
-    return route in {"ai", "catalog", "clarification", "escalation", "silent_wait"}
+    return route in {"ai", "catalog", "escalation", "human_only"}
 
 
 def _extract_unknown_product_candidate(message: str) -> str:
@@ -421,6 +426,57 @@ def _log_silent_wait_gap(
         except Exception as exc:
             logger.warning("Failed to log missing product candidate %s: %s", candidate, exc)
     return gap_id
+
+
+def _route_gap_to_human_review(
+    *,
+    conversation_id: str,
+    customer_phone: str,
+    incoming_message: str,
+    route_reason: str,
+    decision: dict[str, Any] | None = None,
+    lock_id: str = "",
+    incoming_message_id: str = "",
+) -> dict[str, Any]:
+    gap_id = _log_silent_wait_gap(
+        conversation_id=conversation_id,
+        customer_phone=customer_phone,
+        incoming_message=incoming_message,
+        route_reason=route_reason,
+        decision=decision,
+    )
+    result = route_to_human_review(
+        phone=customer_phone,
+        conversation_id=conversation_id,
+        incoming_message=incoming_message,
+        reason=route_reason,
+        decision=decision,
+        gap_id=gap_id,
+        incoming_message_id=incoming_message_id,
+    )
+    if lock_id:
+        finish_message_owner(
+            lock_id=lock_id,
+            status="skipped",
+            metadata={
+                "reason": "human_review_required",
+                "gap_id": gap_id,
+                "human_lock_until": result.get("human_lock_until"),
+            },
+        )
+    log_ai_decision(
+        conversation_id=conversation_id,
+        customer_phone=customer_phone,
+        incoming_message=incoming_message,
+        final_route_owner="human",
+        matched_template="human_review_required",
+        metadata={
+            "gap_id": gap_id,
+            "route_reason": route_reason,
+            "result": result,
+        },
+    )
+    return result
 
 
 def _store_generated_reply(
@@ -878,6 +934,17 @@ async def handle_wabis_incoming_message(
                 "result": result,
             }
 
+        queue_metadata = {
+            "route_preview": route_preview,
+            "event_id": event_id,
+            "postback_id": payload.postback_id or payload.postbackid,
+            "reply_message_id": payload.reply_message_id,
+            "message_meta": meta,
+        }
+        if preview_route == "human_only":
+            queue_metadata["delay_seconds_override"] = human_inactivity_delay_seconds()
+            queue_metadata["delay_type_override"] = "human_inactivity_resume"
+
         queue_result = enqueue_ai_reply_job(
             conversation_id=conversation_id,
             customer_phone=phone,
@@ -885,13 +952,7 @@ async def handle_wabis_incoming_message(
             source_message_id=message_id,
             incoming_message=incoming_message,
             message_type=payload.type or "text",
-            metadata={
-                "route_preview": route_preview,
-                "event_id": event_id,
-                "postback_id": payload.postback_id or payload.postbackid,
-                "reply_message_id": payload.reply_message_id,
-                "message_meta": meta,
-            },
+            metadata=queue_metadata,
         )
         logger.warning("[MAIN] AI reply queued for %s: %s", phone, queue_result)
         
@@ -1109,6 +1170,16 @@ def _generate_and_send_reply(
         
         # [1] HUMAN ONLY
         if route == "human_only":
+            if release_expired_human_lock_if_needed(customer_phone):
+                decision = route_message(customer_phone, incoming_message, message_meta=message_meta_extra)
+                route = decision.get("route")
+            else:
+                logger.info(f"[SKIP] {customer_phone} - human agent owns conversation")
+                if lock_id:
+                    finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "human_only"})
+                return {"status": "skipped", "reason": "human_only", "route": "human_only"}
+
+        if route == "human_only":
             logger.info(f"[SKIP] {customer_phone} - human agent owns conversation")
             if lock_id:
                 finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "human_only"})
@@ -1253,17 +1324,15 @@ def _generate_and_send_reply(
             )
 
             if reply_result.get("suggested_action") == "wait_for_user" or not reply_result.get("reply_text"):
-                gap_id = _log_silent_wait_gap(
+                return _route_gap_to_human_review(
                     conversation_id=conversation_id,
                     customer_phone=customer_phone,
                     incoming_message=incoming_message,
                     route_reason=str(reply_result.get("knowledge_gap_reason") or decision.get("reason") or "catalog_without_useful_reply"),
                     decision={**decision, "message_understanding": reply_result.get("message_understanding") or decision.get("message_understanding") or {}},
+                    lock_id=lock_id,
+                    incoming_message_id=lock_key,
                 )
-                logger.warning(f"[CATALOG-SEARCH] {customer_phone}: query='{incoming_message[:50]}' (SILENT_WAIT)")
-                if lock_id:
-                    finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id})
-                return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
 
             if reply_result.get("reply_text"):
                 logger.warning(f"[CATALOG-REPLY] {customer_phone}: reply ready for catalog topic")
@@ -1276,16 +1345,15 @@ def _generate_and_send_reply(
                     inbound_message=incoming_message,
                     message_lock_id=lock_id,
                 )
-            gap_id = _log_silent_wait_gap(
+            return _route_gap_to_human_review(
                 conversation_id=conversation_id,
                 customer_phone=customer_phone,
                 incoming_message=incoming_message,
                 route_reason="catalog_without_useful_reply",
                 decision=decision,
+                lock_id=lock_id,
+                incoming_message_id=lock_key,
             )
-            if lock_id:
-                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id})
-            return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
         
         # [7] SALES FLOW
         if route == "sales":
@@ -1305,53 +1373,28 @@ def _generate_and_send_reply(
 
         if route == "silent_wait":
             logger.info(f"[SILENT-WAIT] {customer_phone} - no useful AI reply")
-            gap_id = _log_silent_wait_gap(
+            return _route_gap_to_human_review(
                 conversation_id=conversation_id,
                 customer_phone=customer_phone,
                 incoming_message=incoming_message,
                 route_reason=str(decision.get("reason") or "low_confidence_unclear_message"),
                 decision=decision,
+                lock_id=lock_id,
+                incoming_message_id=lock_key,
             )
-            if lock_id:
-                finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id})
-            return {"status": "skipped", "reason": "silent_wait", "route": route, "gap_id": gap_id}
 
         # [9] CLARIFICATION - Knowledge gap capture
         if route == "clarification":
             logger.info(f"[CLARIFICATION] {customer_phone} - Intent unclear")
-            gap_id = log_knowledge_gap(
-                customer_phone,
-                incoming_message,
-                conversation_id,
-                detected_intent=str(decision.get("intent") or ""),
-                detected_product=str((decision.get("message_understanding") or {}).get("detected_product") or ""),
-                confidence=float(((decision.get("message_understanding") or {}).get("confidence") or 0.2)),
-                reason=str(decision.get("reason") or "clarification"),
-                status="open",
-            )
-            fallback_reply = WabisReplyGenerator.generate_reply(
-                incoming_message=incoming_message,
-                customer_phone=customer_phone,
-                customer_name=customer_name,
+            return _route_gap_to_human_review(
                 conversation_id=conversation_id,
-                context=reply_context,
+                customer_phone=customer_phone,
+                incoming_message=incoming_message,
+                route_reason=str(decision.get("reason") or "clarification"),
+                decision=decision,
+                lock_id=lock_id,
+                incoming_message_id=lock_key,
             )
-            logger.warning(f"[CLARIFICATION-GAP] {customer_phone}: gap_id={gap_id}, message='{incoming_message[:50]}'")
-            if fallback_reply.get("suggested_action") == "wait_for_user" or not fallback_reply.get("reply_text"):
-                if lock_id:
-                    finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id})
-                return {"status": "skipped", "reason": "silent_wait", "route": "silent_wait", "gap_id": gap_id}
-            result = _store_generated_reply(
-                conversation_id,
-                customer_phone,
-                fallback_reply,
-                route,
-                customer_name=customer_name,
-                inbound_message=incoming_message,
-                message_lock_id=lock_id,
-            )
-            result["gap_id"] = gap_id
-            return result
         
         # [10] AI - ONLY with knowledge grounding
         if route == "ai":
@@ -1373,22 +1416,15 @@ def _generate_and_send_reply(
             logger.warning(f"[AI-REPLY] Generated: intent={intent}, text_len={len(reply_text)}")
 
             if reply_result.get("suggested_action") == "wait_for_user" or not reply_text:
-                gap_id = _log_silent_wait_gap(
+                return _route_gap_to_human_review(
                     conversation_id=conversation_id,
                     customer_phone=customer_phone,
                     incoming_message=incoming_message,
                     route_reason=str(reply_result.get("knowledge_gap_reason") or decision.get("reason") or "low_confidence_unclear_message"),
                     decision={**decision, "message_understanding": reply_result.get("message_understanding") or decision.get("message_understanding") or {}},
+                    lock_id=lock_id,
+                    incoming_message_id=lock_key,
                 )
-                if lock_id:
-                    finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "silent_wait", "gap_id": gap_id, "intent": intent})
-                return {
-                    "status": "skipped",
-                    "reason": "silent_wait",
-                    "route": "silent_wait",
-                    "gap_id": gap_id,
-                    "intent": intent,
-                }
             
             # Augment with knowledge if flagged
             if decision.get("require_knowledge"):

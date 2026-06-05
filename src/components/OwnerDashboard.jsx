@@ -14,6 +14,21 @@ const DEFAULT_AI_CONTROL = {
   available_models: [],
 };
 
+const DEFAULT_HUMAN_LOOP = {
+  settings: {
+    unclear_to_human_enabled: true,
+    human_inactivity_resume_enabled: true,
+    human_inactivity_minutes: 5,
+    continuous_learning_enabled: true,
+    allow_customer_clarification_messages: false,
+    unknown_media_to_human_enabled: true,
+    min_ai_confidence: 0.65,
+  },
+  rules: [],
+  learning_items: [],
+  summary: {},
+};
+
 const DEFAULT_KB_FORM = {
   category: 'fallback',
   product: 'general',
@@ -138,6 +153,7 @@ const TABS = [
   { key: 'customers', label: 'Customers' },
   { key: 'knowledge', label: 'Knowledge Base' },
   { key: 'ai', label: 'AI Control' },
+  { key: 'rules', label: 'Hard Rules' },
   { key: 'monitor', label: 'AI Monitor' },
   { key: 'prompts', label: 'Prompts' },
   { key: 'observatory', label: 'Prompt Observatory' },
@@ -239,6 +255,7 @@ export default function OwnerDashboard() {
   const [kbForm, setKbForm] = useState(DEFAULT_KB_FORM);
   const [editingKbId, setEditingKbId] = useState('');
   const [aiControl, setAiControl] = useState(DEFAULT_AI_CONTROL);
+  const [humanLoop, setHumanLoop] = useState(DEFAULT_HUMAN_LOOP);
   const [aiMonitor, setAiMonitor] = useState({
     metrics: {},
     journeys: [],
@@ -289,6 +306,7 @@ export default function OwnerDashboard() {
     setKbItems([]);
     setKbMeta({ count: 0, search: '' });
     setAiControl(DEFAULT_AI_CONTROL);
+    setHumanLoop(DEFAULT_HUMAN_LOOP);
     setAiMonitor({ metrics: {}, journeys: [], issues: [], issue_breakdown: [], language_breakdown: [], journey_events: {} });
     setMessageControl({ metrics: {}, decisions: [], audits: [], duplicate_locks: [], owner_breakdown: [] });
     setMonitorHours(4);
@@ -403,6 +421,7 @@ export default function OwnerDashboard() {
         ['customers', '/api/owner/dashboard/customers?search=&label=all&limit=80'],
         ['knowledge', '/api/owner/dashboard/knowledge-base?search=&limit=1000'],
         ['ai', '/api/owner/dashboard/ai-control'],
+        ['humanLoop', '/api/owner/dashboard/human-loop-rules'],
         ['monitor', `/api/owner/dashboard/ai-monitor?hours=${encodeURIComponent(String(monitorHours || 4))}&limit=120`],
         ['messageControl', `/api/owner/dashboard/message-control?hours=${encodeURIComponent(String(monitorHours || 4))}&limit=120`],
         ['prompts', '/api/owner/dashboard/prompts'],
@@ -450,6 +469,9 @@ export default function OwnerDashboard() {
         });
         if (payloads.ai) {
           setAiControl({ ...DEFAULT_AI_CONTROL, ...payloads.ai });
+        }
+        if (payloads.humanLoop) {
+          setHumanLoop({ ...DEFAULT_HUMAN_LOOP, ...payloads.humanLoop });
         }
         if (payloads.monitor) {
           setAiMonitor(payloads.monitor);
@@ -524,6 +546,7 @@ export default function OwnerDashboard() {
     setKbItems([]);
     setKbMeta({ count: 0, search: '' });
     setAiMonitor({ metrics: {}, journeys: [], issues: [], issue_breakdown: [], language_breakdown: [], journey_events: {} });
+    setHumanLoop(DEFAULT_HUMAN_LOOP);
     setMonitorHours(4);
     setPrompts({ items: [], count: 0 });
     setPromptForm(DEFAULT_PROMPT_FORM);
@@ -591,6 +614,45 @@ export default function OwnerDashboard() {
       }
       setError(saveError.message || 'Could not save AI control settings.');
     }
+  }
+
+  async function handleSaveHumanLoopRules(event) {
+    event.preventDefault();
+    setError('');
+    try {
+      const settings = humanLoop.settings || DEFAULT_HUMAN_LOOP.settings;
+      const payload = await apiFetch('/api/owner/dashboard/human-loop-rules', {
+        method: 'PUT',
+        body: JSON.stringify({
+          unclear_to_human_enabled: Boolean(settings.unclear_to_human_enabled),
+          human_inactivity_resume_enabled: Boolean(settings.human_inactivity_resume_enabled),
+          human_inactivity_minutes: Number(settings.human_inactivity_minutes || 5),
+          continuous_learning_enabled: Boolean(settings.continuous_learning_enabled),
+          allow_customer_clarification_messages: Boolean(settings.allow_customer_clarification_messages),
+          unknown_media_to_human_enabled: Boolean(settings.unknown_media_to_human_enabled),
+          min_ai_confidence: Number(settings.min_ai_confidence || 0.65),
+        }),
+      });
+      setHumanLoop({ ...DEFAULT_HUMAN_LOOP, ...(payload.payload || {}) });
+      setFlashMessage('Human-loop hard rules updated.');
+      setTimeout(() => setFlashMessage(''), 2400);
+    } catch (saveError) {
+      if (saveError?.status === 401) {
+        resetForLockedDashboard('Saved admin secret is invalid. Enter the current admin secret to continue.');
+        return;
+      }
+      setError(saveError.message || 'Could not save human-loop rules.');
+    }
+  }
+
+  function updateHumanLoopSetting(key, value) {
+    setHumanLoop({
+      ...humanLoop,
+      settings: {
+        ...(humanLoop.settings || DEFAULT_HUMAN_LOOP.settings),
+        [key]: value,
+      },
+    });
   }
 
   function beginKbEdit(item) {
@@ -1783,6 +1845,137 @@ export default function OwnerDashboard() {
               <button type="submit">Save AI settings</button>
             </form>
           </article>
+        </section>
+      ) : null}
+
+      {activeTab === 'rules' ? (
+        <section className="dashboard-panel">
+          <div className="panel-card">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">Human Loop Rules</p>
+                <h2>Critical safety controls</h2>
+                <p className="muted-copy">
+                  These rules decide when AI must stay silent, when human takeover starts, and when AI may safely resume.
+                </p>
+              </div>
+            </div>
+
+            <div className="metric-grid monitor-metric-grid">
+              <div className="metric-card">
+                <span>Critical Rules</span>
+                <strong>
+                  {humanLoop.summary?.critical_rules_enabled || 0}/{humanLoop.summary?.critical_rules_total || 0}
+                </strong>
+                <p>Enabled</p>
+              </div>
+              <div className="metric-card">
+                <span>Human Lock</span>
+                <strong>{humanLoop.settings?.human_inactivity_minutes || 5} min</strong>
+                <p>Before AI retry</p>
+              </div>
+              <div className="metric-card">
+                <span>Learning Items</span>
+                <strong>{humanLoop.summary?.learning_items || humanLoop.learning_items?.length || 0}</strong>
+                <p>Needs review</p>
+              </div>
+            </div>
+
+            <form className="stack-form" onSubmit={handleSaveHumanLoopRules}>
+              {(humanLoop.rules || []).map((rule) => (
+                <label key={rule.key} className="checkbox-row rules-row">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(humanLoop.settings?.[rule.key])}
+                    onChange={(event) => updateHumanLoopSetting(rule.key, event.target.checked)}
+                  />
+                  <span>
+                    <strong>{rule.title}</strong>
+                    <small>{rule.description}</small>
+                  </span>
+                </label>
+              ))}
+
+              <div className="form-grid">
+                <label>
+                  Human inactivity timeout
+                  <input
+                    type="number"
+                    min="1"
+                    max="60"
+                    value={humanLoop.settings?.human_inactivity_minutes || 5}
+                    onChange={(event) => updateHumanLoopSetting('human_inactivity_minutes', Number(event.target.value || 5))}
+                  />
+                  <span className="helper-copy">
+                    AI retries only after this many minutes, and only if the pending customer turn is clear.
+                  </span>
+                </label>
+                <label>
+                  Minimum AI confidence
+                  <input
+                    type="number"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={humanLoop.settings?.min_ai_confidence ?? 0.65}
+                    onChange={(event) => updateHumanLoopSetting('min_ai_confidence', Number(event.target.value || 0.65))}
+                  />
+                  <span className="helper-copy">
+                    Lower-confidence messages become human review and learning items.
+                  </span>
+                </label>
+              </div>
+
+              <button type="submit">Save hard rules</button>
+            </form>
+          </div>
+
+          <div className="panel-card">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">Continuous Learning</p>
+                <h2>Human review queue</h2>
+                <p className="muted-copy">
+                  These are unclear or unsafe turns captured for human review. Approve learnings manually before adding rules.
+                </p>
+              </div>
+            </div>
+            <div className="table-wrap monitor-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Customer</th>
+                    <th>Message</th>
+                    <th>Detected</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(humanLoop.learning_items || []).map((item) => (
+                    <tr key={`${item.id}-${item.created_at}`}>
+                      <td>{formatDateTime(item.created_at)}</td>
+                      <td>{item.phone || '—'}</td>
+                      <td>{item.original_query || '—'}</td>
+                      <td>
+                        {item.detected_product || 'no product'}
+                        <br />
+                        <span className="muted-copy">{item.detected_intent || 'fallback'}</span>
+                      </td>
+                      <td>{item.reason || '—'}</td>
+                      <td>{item.status || 'open'}</td>
+                    </tr>
+                  ))}
+                  {!humanLoop.learning_items?.length ? (
+                    <tr>
+                      <td colSpan="6">No human-review learning items found yet.</td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
       ) : null}
 

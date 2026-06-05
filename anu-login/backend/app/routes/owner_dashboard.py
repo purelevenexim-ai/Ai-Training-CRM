@@ -37,6 +37,7 @@ from app.services.customer_journey_service import (
 )
 from app.services.ai_monitoring_engine import get_ai_monitor_payload
 from app.ai.message_decision_service import get_message_control_payload
+from app.services.human_loop_rule_service import get_human_loop_dashboard_payload, save_human_loop_settings
 
 router = APIRouter(tags=["owner-dashboard"])
 
@@ -136,6 +137,16 @@ class PromptRegistryPayload(BaseModel):
     template_text: str = Field(default="", max_length=20000)
 
 
+class HumanLoopSettingsPayload(BaseModel):
+    unclear_to_human_enabled: bool = True
+    human_inactivity_resume_enabled: bool = True
+    human_inactivity_minutes: int = Field(default=5, ge=1, le=60)
+    continuous_learning_enabled: bool = True
+    allow_customer_clarification_messages: bool = False
+    unknown_media_to_human_enabled: bool = True
+    min_ai_confidence: float = Field(default=0.65, ge=0.0, le=1.0)
+
+
 @router.get("/owner/dashboard/summary", dependencies=[Depends(require_admin_access)])
 def owner_dashboard_summary() -> dict[str, Any]:
     return get_owner_dashboard_summary()
@@ -205,6 +216,17 @@ def owner_dashboard_ai_control() -> dict[str, Any]:
 @router.put("/owner/dashboard/ai-control", dependencies=[Depends(require_admin_access)])
 def owner_dashboard_save_ai_control(payload: AIControlPayload) -> dict[str, Any]:
     return save_ai_control_settings(payload.model_dump())
+
+
+@router.get("/owner/dashboard/human-loop-rules", dependencies=[Depends(require_admin_access)])
+def owner_dashboard_human_loop_rules() -> dict[str, Any]:
+    return get_human_loop_dashboard_payload()
+
+
+@router.put("/owner/dashboard/human-loop-rules", dependencies=[Depends(require_admin_access)])
+def owner_dashboard_save_human_loop_rules(payload: HumanLoopSettingsPayload) -> dict[str, Any]:
+    settings = save_human_loop_settings(payload.model_dump())
+    return {"ok": True, "settings": settings, "payload": get_human_loop_dashboard_payload()}
 
 
 @router.get("/owner/dashboard/training-gaps", dependencies=[Depends(require_admin_access)])

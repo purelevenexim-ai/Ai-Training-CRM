@@ -13,7 +13,7 @@ for path in (str(ROOT), str(BACKEND_ROOT)):
     if path not in sys.path:
         sys.path.insert(0, path)
 
-from app.ai.conversation_state_manager import reset_conversation_state, set_conversation_state
+from app.ai.conversation_state_manager import get_conversation_state, reset_conversation_state, set_conversation_state
 from app.ai.clarification_flow import send_clarification_menu
 from app.runtime_db import ensure_runtime_tables, get_db_connection
 from app.services.ai_reply_queue_service import enqueue_ai_reply_job, run_due_ai_reply_jobs
@@ -28,6 +28,7 @@ def _cleanup_phone(phone: str) -> None:
     reset_conversation_state(phone)
     ensure_runtime_tables()
     with get_db_connection() as conn:
+        conn.execute("DELETE FROM conversation_state WHERE phone = ?", (phone,))
         for table, column in (
             ("ai_incoming_messages", "customer_phone"),
             ("ai_outgoing_replies", "customer_phone"),
@@ -367,3 +368,147 @@ def test_customer_reply_stops_active_journey_and_pending_followups() -> None:
     assert "customer_message" in assignment["stop_reason"]
     assert followup["send_status"] == "cancelled"
     assert journey_log["event_type"] == "journey_stopped"
+
+
+def test_unclear_message_routes_to_human_review_without_sending() -> None:
+    phone = "919999777010"
+    _cleanup_phone(phone)
+
+    from app.routes import wave02_wabis_routes
+
+    result = wave02_wabis_routes._generate_and_send_reply(
+        conversation_id="human-loop-test-1",
+        customer_phone=phone,
+        customer_name="Test",
+        incoming_message="asdf qwerty random",
+        message_type="text",
+        message_meta_extra={"incoming_message_id": str(uuid.uuid4()), "has_previous_interaction": True},
+    )
+
+    assert result["status"] == "skipped"
+    assert result["reason"] == "human_review_required"
+    state = get_conversation_state(phone)
+    assert state and state["owner"] == "human"
+    assert state["flow_id"] == "human_review"
+    assert state["context"]["pending_customer_turn"] == "asdf qwerty random"
+    with get_db_connection() as conn:
+        outgoing = conn.execute(
+            "SELECT COUNT(*) AS count FROM ai_outgoing_replies WHERE customer_phone = ?",
+            (phone,),
+        ).fetchone()
+    assert outgoing["count"] == 0
+
+
+def test_human_lock_active_ai_job_is_requeued(monkeypatch) -> None:
+    phone = "919999777011"
+    _cleanup_phone(phone)
+    lock_until = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
+    set_conversation_state(
+        phone,
+        owner="human",
+        owner_reason="unclear_requires_human",
+        flow_id="human_review",
+        flow_step="awaiting_human",
+        context={"human_lock_until": lock_until, "pending_customer_turn": "black pepper"},
+    )
+    source_message_id = str(uuid.uuid4())
+    now = _now()
+    with get_db_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO ai_incoming_messages
+            (id, conversation_id, customer_phone, message_type, body, created_at)
+            VALUES (?, ?, ?, 'text', ?, ?)
+            """,
+            (source_message_id, "human-loop-test-2", phone, "black pepper", now),
+        )
+        conn.commit()
+
+    queued = enqueue_ai_reply_job(
+        conversation_id="human-loop-test-2",
+        customer_phone=phone,
+        customer_name="Test",
+        source_message_id=source_message_id,
+        incoming_message="black pepper",
+        metadata={"delay_seconds_override": 1, "delay_type_override": "human_inactivity_resume"},
+    )
+    with get_db_connection() as conn:
+        conn.execute(
+            "UPDATE ai_reply_jobs SET scheduled_at = ? WHERE id = ?",
+            ((datetime.now(timezone.utc) - timedelta(seconds=1)).isoformat(), queued["job_id"]),
+        )
+        conn.commit()
+
+    from app.routes import wave02_wabis_routes
+
+    def fail_generate_and_send_reply(**_kwargs):
+        raise AssertionError("AI sender should not run while human lock is active")
+
+    monkeypatch.setattr(wave02_wabis_routes, "_generate_and_send_reply", fail_generate_and_send_reply)
+
+    processed = run_due_ai_reply_jobs(limit=10)
+
+    assert any(item["job_id"] == queued["job_id"] and item["status"] == "requeued" for item in processed)
+    with get_db_connection() as conn:
+        job = conn.execute(
+            "SELECT status, skipped_reason FROM ai_reply_jobs WHERE id = ?",
+            (queued["job_id"],),
+        ).fetchone()
+    assert job["status"] == "pending"
+    assert job["skipped_reason"] == "human_lock_active_rescheduled"
+
+
+def test_expired_human_lock_allows_ai_retry(monkeypatch) -> None:
+    phone = "919999777012"
+    _cleanup_phone(phone)
+    lock_until = (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat()
+    set_conversation_state(
+        phone,
+        owner="human",
+        owner_reason="unclear_requires_human",
+        flow_id="human_review",
+        flow_step="awaiting_human",
+        context={"human_lock_until": lock_until, "pending_customer_turn": "black pepper"},
+    )
+    source_message_id = str(uuid.uuid4())
+    now = _now()
+    with get_db_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO ai_incoming_messages
+            (id, conversation_id, customer_phone, message_type, body, created_at)
+            VALUES (?, ?, ?, 'text', ?, ?)
+            """,
+            (source_message_id, "human-loop-test-3", phone, "black pepper", now),
+        )
+        conn.commit()
+
+    queued = enqueue_ai_reply_job(
+        conversation_id="human-loop-test-3",
+        customer_phone=phone,
+        customer_name="Test",
+        source_message_id=source_message_id,
+        incoming_message="black pepper",
+        metadata={"delay_seconds_override": 1, "delay_type_override": "human_inactivity_resume"},
+    )
+    with get_db_connection() as conn:
+        conn.execute(
+            "UPDATE ai_reply_jobs SET scheduled_at = ? WHERE id = ?",
+            ((datetime.now(timezone.utc) - timedelta(seconds=1)).isoformat(), queued["job_id"]),
+        )
+        conn.commit()
+
+    from app.routes import wave02_wabis_routes
+
+    calls: list[dict[str, str]] = []
+
+    def fake_generate_and_send_reply(**kwargs):
+        calls.append(kwargs)
+        return {"status": "sent", "reply_text": "Available", "intent": "availability"}
+
+    monkeypatch.setattr(wave02_wabis_routes, "_generate_and_send_reply", fake_generate_and_send_reply)
+
+    processed = run_due_ai_reply_jobs(limit=10)
+
+    assert calls and calls[0]["customer_phone"] == phone
+    assert any(item["job_id"] == queued["job_id"] and item["status"] == "sent" for item in processed)

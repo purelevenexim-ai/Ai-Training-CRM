@@ -466,6 +466,24 @@ button:hover {
   margin: 6px 0 0;
 }
 
+.rules-row {
+  align-items: flex-start;
+  border: 1px solid rgba(32, 83, 57, 0.12);
+  border-radius: 18px;
+  padding: 0.9rem 1rem;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.rules-row span {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.rules-row small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .split-toggle {
   display: inline-flex;
   gap: 10px;

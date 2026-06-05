@@ -26,6 +26,13 @@ from app.ai.clarification_flow import send_clarification_menu, log_knowledge_gap
 from app.ai.audit_logger import log_customer_message
 from app.ai.audit_logger import log_ai_response
 from app.ai.customer_state_engine import get_customer_state, record_ai_reply, reply_hash
+from app.ai.message_decision_engine import deterministic_reply_for_message
+from app.ai.message_decision_service import (
+    audit_reply_quality,
+    log_message_decision,
+    selected_owner_for_route,
+    upsert_customer_journey_state,
+)
 from app.ai.message_processing_lock import claim_message_owner, finish_message_owner
 from app.ai.whatsapp_delivery_service import send_whatsapp_reply_with_fallback
 from app.services.product_followup_service import cancel_product_followups, queue_latent_handoff_followup
@@ -599,6 +606,7 @@ def _store_generated_reply(
             lock_id=message_lock_id,
             status="replied" if send_result.get("success") else "failed",
             reply_message_id=str(send_result.get("message_id") or ""),
+            reason=route,
             metadata={
                 "route": route,
                 "intent": intent,
@@ -606,6 +614,32 @@ def _store_generated_reply(
                 "issues_found": guard_issues,
             },
         )
+
+    try:
+        inbound_id = str((reply_result.get("message_understanding") or {}).get("incoming_message_id") or "")
+        quality = audit_reply_quality(
+            customer_id=customer_phone,
+            incoming_message_id=inbound_id,
+            reply_message_id=str(send_result.get("message_id") or reply_id),
+            reply_text=reply_text,
+            intent=intent,
+            journey_stage=str((reply_result.get("message_understanding") or {}).get("scenario") or ""),
+        )
+        upsert_customer_journey_state(
+            customer_id=customer_phone,
+            current_stage=str(reply_result.get("journey_stage") or (reply_result.get("message_understanding") or {}).get("scenario") or ""),
+            active_product=str(reply_result.get("product_key") or ""),
+            active_language=str(reply_result.get("style") or (reply_result.get("message_understanding") or {}).get("detected_language") or ""),
+            last_intent=str(intent or ""),
+            last_customer_message_id=inbound_id,
+            last_ai_reply_id=str(send_result.get("message_id") or reply_id),
+            waiting_for=str(reply_result.get("waiting_for") or ""),
+            payment_status="payment_verification_pending" if intent == "payment" else "",
+            order_status="address_requested" if str(reply_result.get("waiting_for") or "") == "address" else "",
+            context={"quality": quality, "route": route},
+        )
+    except Exception as exc:
+        logger.warning("Failed to write message quality/journey audit for %s: %s", customer_phone, exc)
 
     # Default: one inbound message gets one AI text reply. Extra CTA messages are
     # disabled unless a future deterministic handler explicitly opts in.
@@ -950,7 +984,7 @@ def _generate_and_send_reply(
         lock_id = ""
         lock_key = str((message_meta_extra or {}).get("event_id") or (message_meta_extra or {}).get("incoming_message_id") or "").strip()
         if lock_key:
-            lock_owner = "ai" if route in {"ai", "catalog", "clarification", "escalation"} else str(route or "unknown")
+            lock_owner = selected_owner_for_route(str(route or ""))
             lock = claim_message_owner(
                 customer_id=customer_phone,
                 incoming_message_id=lock_key,
@@ -1008,6 +1042,21 @@ def _generate_and_send_reply(
         
         # Log decision
         log_routing_decision(customer_phone, incoming_message, state_before or {}, decision)
+        try:
+            log_message_decision(
+                customer_id=customer_phone,
+                incoming_message_id=lock_key or stable_payload_hash({"phone": customer_phone, "message": incoming_message, "conversation_id": conversation_id}),
+                incoming_message=incoming_message,
+                decision=decision,
+                selected_owner=selected_owner_for_route(str(route or "")),
+                metadata={
+                    "conversation_id": conversation_id,
+                    "lock_id": lock_id,
+                    "message_type": message_type,
+                },
+            )
+        except Exception as exc:
+            logger.warning("Failed to log message decision for %s: %s", customer_phone, exc)
         
         logger.warning(f"[ROUTE-DECISION] {customer_phone} → {route} ({decision.get('reason')})")
         
@@ -1081,6 +1130,67 @@ def _generate_and_send_reply(
             if lock_id:
                 finish_message_owner(lock_id=lock_id, status="skipped", metadata={"reason": "order_system"})
             return {"status": "skipped", "reason": "order_system", "route": route}
+
+        if route in {"payment_handler", "button_handler", "order_handler"}:
+            logger.info("[DETERMINISTIC-HANDLER] %s - %s", customer_phone, route)
+            reply_result = deterministic_reply_for_message(
+                incoming_message=incoming_message,
+                context={
+                    **reply_context,
+                    "message_meta": {
+                        **dict(message_meta_extra or {}),
+                        "message_type": message_type,
+                        "postback_id": postback_id,
+                        "reply_message_id": reply_message_id,
+                        "structured_button_click": bool(postback_id or reply_message_id or message_type == "postback" or incoming_message.strip().lower().startswith("#button reply#")),
+                    },
+                },
+                semantic_intent=str((decision.get("message_understanding") or {}).get("intent") or (decision.get("message_understanding") or {}).get("detected_intent") or decision.get("intent") or ""),
+                product_detected=bool(decision.get("resolved_product_key")),
+            )
+            if not reply_result:
+                reply_result = {
+                    "reply_text": "Okay 👍",
+                    "intent": str(decision.get("intent") or "acknowledgement"),
+                    "suggested_action": "send_reply",
+                    "should_escalate": False,
+                    "message_understanding": {
+                        **(decision.get("message_understanding") or {}),
+                        "scenario": route,
+                    },
+                }
+            reply_result["message_understanding"] = {
+                **(reply_result.get("message_understanding") or {}),
+                "incoming_message_id": lock_key,
+                "route_owner": selected_owner_for_route(route),
+                "scenario": (reply_result.get("message_understanding") or {}).get("scenario") or route,
+            }
+            result = _store_generated_reply(
+                conversation_id,
+                customer_phone,
+                reply_result,
+                route,
+                customer_name=customer_name,
+                inbound_message=incoming_message,
+                message_lock_id=lock_id,
+            )
+            try:
+                log_message_decision(
+                    customer_id=customer_phone,
+                    incoming_message_id=lock_key or stable_payload_hash({"phone": customer_phone, "message": incoming_message, "conversation_id": conversation_id}),
+                    incoming_message=incoming_message,
+                    decision=decision,
+                    selected_owner=selected_owner_for_route(route),
+                    reply_message_id=str(result.get("reply_id") or ""),
+                    score=8,
+                    metadata={
+                        "conversation_id": conversation_id,
+                        "handler_result": result,
+                    },
+                )
+            except Exception as exc:
+                logger.warning("Failed to update deterministic message decision for %s: %s", customer_phone, exc)
+            return result
         
         # [5] ESCALATION
         if route == "escalation":

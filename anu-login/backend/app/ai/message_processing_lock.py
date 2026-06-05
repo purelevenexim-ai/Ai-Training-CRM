@@ -85,6 +85,7 @@ def finish_message_owner(
     lock_id: str,
     status: str,
     reply_message_id: str = "",
+    reason: str = "",
     metadata: dict[str, Any] | None = None,
 ) -> None:
     if not lock_id:
@@ -96,6 +97,7 @@ def finish_message_owner(
             UPDATE message_processing_locks
             SET status = ?,
                 reply_message_id = COALESCE(NULLIF(?, ''), reply_message_id),
+                reason = COALESCE(NULLIF(?, ''), reason),
                 metadata_json = ?,
                 updated_at = ?
             WHERE id = ?
@@ -103,6 +105,7 @@ def finish_message_owner(
             (
                 status,
                 reply_message_id or "",
+                reason or str((metadata or {}).get("reason") or ""),
                 json.dumps(metadata or {}, ensure_ascii=False),
                 _now(),
                 lock_id,

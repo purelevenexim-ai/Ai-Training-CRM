@@ -73,10 +73,10 @@ def test_acknowledgement_does_not_reuse_old_active_product() -> None:
     )
     assert reply["intent"] == "acknowledgement"
     assert "250g" not in reply["reply_text"]
-    assert reply["reply_text"].strip().startswith("Okay") or reply["reply_text"].strip().startswith("ശരി")
+    assert "address" in reply["reply_text"].lower() or "pincode" in reply["reply_text"].lower()
 
 
-def test_button_reply_maps_state_but_keeps_wabis_owner() -> None:
+def test_orphan_button_reply_maps_to_button_handler() -> None:
     _reset()
     phone = "919999111223"
     decision = route_message(
@@ -84,7 +84,7 @@ def test_button_reply_maps_state_but_keeps_wabis_owner() -> None:
         "#Button Reply#Buy Now",
         message_meta={"structured_button_click": True, "postback_id": "Buy Now"},
     )
-    assert decision["route"] == "wabis"
+    assert decision["route"] == "button_handler"
     state = get_customer_state(phone)
     assert state["latest_intent"] == "order_request"
     assert state["journey_stage"] == "order_capture"
@@ -94,4 +94,4 @@ if __name__ == "__main__":
     test_payment_confirmation_is_not_unclear_fallback()
     test_plant_inquiry_gets_supported_category_reply()
     test_acknowledgement_does_not_reuse_old_active_product()
-    test_button_reply_maps_state_but_keeps_wabis_owner()
+    test_orphan_button_reply_maps_to_button_handler()

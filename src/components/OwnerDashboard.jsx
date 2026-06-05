@@ -229,6 +229,13 @@ export default function OwnerDashboard() {
     language_breakdown: [],
     journey_events: {},
   });
+  const [messageControl, setMessageControl] = useState({
+    metrics: {},
+    decisions: [],
+    audits: [],
+    duplicate_locks: [],
+    owner_breakdown: [],
+  });
   const [monitorHours, setMonitorHours] = useState(4);
   const [prompts, setPrompts] = useState({ items: [], count: 0 });
   const [promptForm, setPromptForm] = useState(DEFAULT_PROMPT_FORM);
@@ -265,6 +272,7 @@ export default function OwnerDashboard() {
     setKbMeta({ count: 0, search: '' });
     setAiControl(DEFAULT_AI_CONTROL);
     setAiMonitor({ metrics: {}, journeys: [], issues: [], issue_breakdown: [], language_breakdown: [], journey_events: {} });
+    setMessageControl({ metrics: {}, decisions: [], audits: [], duplicate_locks: [], owner_breakdown: [] });
     setMonitorHours(4);
     setPrompts({ items: [], count: 0 });
     setPromptForm(DEFAULT_PROMPT_FORM);
@@ -359,6 +367,8 @@ export default function OwnerDashboard() {
     });
     const payload = await apiFetch(`/api/owner/dashboard/ai-monitor?${query.toString()}`, {}, secretOverride);
     setAiMonitor(payload);
+    const controlPayload = await apiFetch(`/api/owner/dashboard/message-control?${query.toString()}`, {}, secretOverride);
+    setMessageControl(controlPayload);
   }
 
   async function loadAll(secretOverride = adminSecret) {
@@ -376,6 +386,7 @@ export default function OwnerDashboard() {
         ['knowledge', '/api/owner/dashboard/knowledge-base?search=&limit=1000'],
         ['ai', '/api/owner/dashboard/ai-control'],
         ['monitor', `/api/owner/dashboard/ai-monitor?hours=${encodeURIComponent(String(monitorHours || 4))}&limit=120`],
+        ['messageControl', `/api/owner/dashboard/message-control?hours=${encodeURIComponent(String(monitorHours || 4))}&limit=120`],
         ['prompts', '/api/owner/dashboard/prompts'],
         ['observatory', '/api/owner/dashboard/prompt-observatory?limit=80&phone='],
         ['gaps', '/api/owner/dashboard/training-gaps?limit=40'],
@@ -424,6 +435,9 @@ export default function OwnerDashboard() {
         }
         if (payloads.monitor) {
           setAiMonitor(payloads.monitor);
+        }
+        if (payloads.messageControl) {
+          setMessageControl(payloads.messageControl);
         }
         if (payloads.prompts) {
           setPrompts(payloads.prompts);
@@ -1786,12 +1800,75 @@ export default function OwnerDashboard() {
                 ['AI Messages', aiMonitor.metrics?.ai_messages ?? 0],
                 ['Issues', aiMonitor.metrics?.issues ?? 0],
                 ['AI Success', `${aiMonitor.metrics?.ai_success_rate ?? 0}%`],
+                ['Decisions', messageControl.metrics?.decisions ?? 0],
+                ['AI Skipped', messageControl.metrics?.ai_skipped ?? 0],
+                ['Duplicate Locks', messageControl.metrics?.duplicate_lock_groups ?? 0],
               ].map(([label, value]) => (
                 <article key={label} className="metric-card">
                   <span>{label}</span>
                   <strong>{value}</strong>
                 </article>
               ))}
+            </div>
+
+            <div className="monitor-layout">
+              <article className="monitor-section monitor-section--wide">
+                <div className="panel-heading panel-heading--tight">
+                  <div>
+                    <p className="eyebrow">AI Message Control</p>
+                    <h2>Message decisions</h2>
+                    <p className="muted-copy">
+                      One inbound message should have one selected owner: automation, payment, order, product, admin, or AI.
+                    </p>
+                  </div>
+                </div>
+                <div className="monitor-chip-list">
+                  {(messageControl.owner_breakdown || []).map((item) => (
+                    <span key={item.owner} className="label-chip label-chip--neutral">
+                      {item.owner}: {item.count}
+                    </span>
+                  ))}
+                  {!messageControl.owner_breakdown?.length ? <p className="muted-copy">No owner decisions in this window.</p> : null}
+                </div>
+                <div className="table-wrap monitor-table-wrap">
+                  <table className="owner-table owner-table--compact">
+                    <thead>
+                      <tr>
+                        <th>Time</th>
+                        <th>Customer</th>
+                        <th>Incoming</th>
+                        <th>Intent</th>
+                        <th>Owner</th>
+                        <th>AI Skipped</th>
+                        <th>Reason</th>
+                        <th>Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(messageControl.decisions || []).slice(0, 60).map((item) => (
+                        <tr key={item.id}>
+                          <td>{formatDateTime(item.created_at)}</td>
+                          <td>{item.customer_id}</td>
+                          <td>
+                            <strong>{item.detected_type || 'text'}</strong>
+                            <p className="muted-copy">{item.incoming_message || item.normalized_text || '—'}</p>
+                          </td>
+                          <td>{item.detected_intent || 'fallback'}</td>
+                          <td>{item.selected_owner || '—'}</td>
+                          <td>{item.skipped_ai ? 'Yes' : 'No'}</td>
+                          <td>{item.decision_reason || '—'}</td>
+                          <td>{item.score || '—'}</td>
+                        </tr>
+                      ))}
+                      {!messageControl.decisions?.length ? (
+                        <tr>
+                          <td colSpan="8">No message decisions found in this window.</td>
+                        </tr>
+                      ) : null}
+                    </tbody>
+                  </table>
+                </div>
+              </article>
             </div>
 
             <div className="monitor-layout">

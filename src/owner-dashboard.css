@@ -696,6 +696,10 @@ button:hover {
   color: #24533b;
 }
 
+.monitor-section--wide {
+  grid-column: 1 / -1;
+}
+
 @media (max-width: 1180px) {
   .owner-infra-grid,
   .metric-grid,

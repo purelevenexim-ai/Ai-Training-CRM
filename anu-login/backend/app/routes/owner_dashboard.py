@@ -36,6 +36,7 @@ from app.services.customer_journey_service import (
     save_customer_journey,
 )
 from app.services.ai_monitoring_engine import get_ai_monitor_payload
+from app.ai.message_decision_service import get_message_control_payload
 
 router = APIRouter(tags=["owner-dashboard"])
 
@@ -335,3 +336,11 @@ def owner_dashboard_ai_monitor(
     limit: int = Query(default=80, ge=1, le=200),
 ) -> dict[str, Any]:
     return get_ai_monitor_payload(hours=hours, limit=limit)
+
+
+@router.get("/owner/dashboard/message-control", dependencies=[Depends(require_admin_access)])
+def owner_dashboard_message_control(
+    hours: int = Query(default=4, ge=1, le=72),
+    limit: int = Query(default=100, ge=1, le=250),
+) -> dict[str, Any]:
+    return get_message_control_payload(hours=hours, limit=limit)

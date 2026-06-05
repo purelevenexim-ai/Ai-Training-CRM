@@ -52,6 +52,8 @@ def _allow_context_product_for_message(message: str) -> bool:
         return False
     if any(token in normalized for token in ("saved", "address sent", "sent address", "yes saved")):
         return False
+    if any(token in normalized for token in ("plant", "plants", "plont", "plonts", "seedling", "seedlings", "green gold", "location", "shop evide", "where is")):
+        return False
     return True
 
 

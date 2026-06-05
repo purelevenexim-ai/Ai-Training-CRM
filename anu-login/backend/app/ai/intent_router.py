@@ -132,7 +132,14 @@ def _allow_context_product_for_route(message: str) -> bool:
         return False
     if any(token in normalized for token in ("saved", "address sent", "sent address", "yes saved")):
         return False
+    if any(token in normalized for token in ("plant", "plants", "plont", "plonts", "seedling", "seedlings", "green gold", "location", "shop evide", "where is")):
+        return False
     return True
+
+
+def _is_media_marker(message: str) -> bool:
+    normalized = normalize_message(message)
+    return normalized.startswith("[[media:") or "[[media:" in normalized
 
 
 def route_message(phone: str, message: str, message_meta: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -190,21 +197,10 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
             except Exception as exc:
                 logger.debug("Failed to map button state for %s: %s", phone, exc)
         return {
-            "route": "wabis",
-            "reason": "Structured Wabis reply without active local state",
+            "route": "button_handler",
+            "reason": "Structured button mapped without active Wabis owner",
             "intent": metadata["detected_intent"],
             "message_understanding": metadata,
-            "action_set_owner": {
-                "owner": "wabis",
-                "flow_id": "automation_flow",
-                "flow_step": "automation_active",
-                "reason": "structured_wabis_reply",
-                "timeout_minutes": AUTOMATION_IDLE_TIMEOUT_MINUTES,
-                "context": {
-                    "timeout_minutes": AUTOMATION_IDLE_TIMEOUT_MINUTES,
-                    "wabis_status": "automation_active",
-                },
-            },
         }
 
     if state and state.get("owner") == "human":
@@ -439,7 +435,7 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
             except Exception as exc:
                 logger.debug("Failed to update payment screenshot state for %s: %s", phone, exc)
             return {
-                "route": "ai",
+                "route": "payment_handler",
                 "reason": str(media_analysis.get("analysis_type") or "payment_proof_detected"),
                 "intent": "payment",
                 "message_understanding": {
@@ -461,9 +457,39 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
             },
         }
 
+    if metadata["detected_intent"] == "payment":
+        try:
+            update_customer_state(
+                phone,
+                inbound_message=message,
+                message_type=str(message_meta.get("message_type") or "text"),
+                latest_intent="payment",
+                journey_stage="payment_pending",
+                payment_claimed=True,
+            )
+        except Exception as exc:
+            logger.debug("Failed to update payment state for %s: %s", phone, exc)
+        return {
+            "route": "payment_handler",
+            "reason": "payment_keyword_detected",
+            "intent": "payment",
+            "message_understanding": {
+                **metadata,
+                "detected_intent": "payment",
+            },
+        }
+
+    if metadata["detected_intent"] == "plant_inquiry":
+        return {
+            "route": "catalog",
+            "reason": "plant_or_seedling_category_detected",
+            "intent": "plant_inquiry",
+            "message_understanding": metadata,
+        }
+
     if semantic.get("intent") in {"payment_confirmation", "payment_proof_shared"}:
         return {
-            "route": "ai",
+            "route": "payment_handler",
             "reason": f"semantic_{semantic.get('intent')}",
             "intent": "payment",
             "message_understanding": {
@@ -471,6 +497,23 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
                 **semantic,
                 "detected_intent": "payment",
             },
+        }
+
+    if metadata["detected_intent"] == "address_shared":
+        return {
+            "route": "order_handler",
+            "reason": "address_shared_detected",
+            "intent": "address_shared",
+            "message_understanding": metadata,
+        }
+
+    if metadata["detected_intent"] == "acknowledgement":
+        stage = str(customer_state.get("journey_stage") or customer_state.get("latest_intent") or "").lower()
+        return {
+            "route": "order_handler" if any(token in stage for token in ("price", "order", "address", "payment")) else "ai",
+            "reason": "acknowledgement_with_journey_context" if stage else "plain_acknowledgement",
+            "intent": "acknowledgement",
+            "message_understanding": metadata,
         }
 
     if metadata["detected_intent"] == "fallback" and semantic.get("intent") not in {

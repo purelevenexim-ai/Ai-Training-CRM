@@ -163,6 +163,114 @@ def ensure_runtime_tables() -> None:
             )
             """
         )
+        _ensure_column(connection, "message_processing_locks", "reason TEXT")
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS customer_journey_state (
+                customer_id TEXT PRIMARY KEY,
+                current_stage TEXT NOT NULL DEFAULT 'new_customer',
+                active_product TEXT,
+                active_language TEXT NOT NULL DEFAULT 'manglish',
+                last_intent TEXT,
+                last_customer_message_id TEXT,
+                last_ai_reply_id TEXT,
+                waiting_for TEXT,
+                payment_status TEXT NOT NULL DEFAULT 'not_started',
+                order_status TEXT NOT NULL DEFAULT 'not_started',
+                followup_stage TEXT,
+                last_interaction_at TEXT NOT NULL,
+                expires_at TEXT,
+                context_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS message_decisions (
+                id TEXT PRIMARY KEY,
+                customer_id TEXT NOT NULL,
+                incoming_message_id TEXT NOT NULL,
+                incoming_message TEXT,
+                normalized_text TEXT,
+                detected_type TEXT,
+                detected_intent TEXT,
+                confidence REAL NOT NULL DEFAULT 0,
+                selected_owner TEXT,
+                decision_reason TEXT,
+                skipped_ai INTEGER NOT NULL DEFAULT 0,
+                prompt_used_id TEXT,
+                reply_message_id TEXT,
+                route TEXT,
+                score REAL NOT NULL DEFAULT 0,
+                metadata_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                UNIQUE(customer_id, incoming_message_id)
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ai_reply_audit (
+                id TEXT PRIMARY KEY,
+                customer_id TEXT NOT NULL,
+                incoming_message_id TEXT NOT NULL,
+                reply_message_id TEXT,
+                intent_match_score REAL NOT NULL DEFAULT 0,
+                tone_score REAL NOT NULL DEFAULT 0,
+                length_score REAL NOT NULL DEFAULT 0,
+                journey_score REAL NOT NULL DEFAULT 0,
+                duplicate_risk_score REAL NOT NULL DEFAULT 0,
+                overall_score REAL NOT NULL DEFAULT 0,
+                issues_json TEXT NOT NULL DEFAULT '[]',
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS button_action_mappings (
+                id TEXT PRIMARY KEY,
+                button_text TEXT NOT NULL,
+                normalized_button_text TEXT NOT NULL UNIQUE,
+                action TEXT NOT NULL,
+                language TEXT,
+                next_stage TEXT,
+                is_active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        now_for_seed = "1970-01-01T00:00:00+00:00"
+        default_buttons = [
+            ("Buy Now", "buy now", "ASK_ORDER_DETAILS", "", "waiting_for_address"),
+            ("വിലാസം നൽകുക", "വിലാസം നൽകുക", "ASK_ADDRESS_FORMAT", "malayalam", "waiting_for_address"),
+            ("🇮🇳 മലയാളം", "മലയാളം", "SET_LANGUAGE_ML", "malayalam", "language_selected"),
+            ("English", "english", "SET_LANGUAGE_EN", "english", "language_selected"),
+            ("🍃 Spices Price", "spices price", "SHOW_CATEGORY_PRICE", "english", "product_interest"),
+            ("🍃 വില കാണം", "വില കാണം", "SHOW_PRICE_ML", "malayalam", "product_interest"),
+        ]
+        for button_text, normalized, action, language, next_stage in default_buttons:
+            connection.execute(
+                """
+                INSERT OR IGNORE INTO button_action_mappings
+                (id, button_text, normalized_button_text, action, language, next_stage, is_active, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
+                """,
+                (
+                    f"default:{normalized}",
+                    button_text,
+                    normalized,
+                    action,
+                    language,
+                    next_stage,
+                    now_for_seed,
+                    now_for_seed,
+                ),
+            )
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS ai_conversation_sessions (
@@ -381,6 +489,12 @@ def ensure_runtime_tables() -> None:
         connection.execute("CREATE INDEX IF NOT EXISTS idx_processed_events_phone ON processed_events(customer_phone, created_at DESC)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_message_locks_customer ON message_processing_locks(customer_id, created_at DESC)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_message_locks_owner ON message_processing_locks(owner, status, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_customer_journey_state_stage ON customer_journey_state(current_stage, updated_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_message_decisions_customer ON message_decisions(customer_id, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_message_decisions_owner ON message_decisions(selected_owner, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_message_decisions_intent ON message_decisions(detected_intent, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_reply_audit_customer ON ai_reply_audit(customer_id, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_button_action_mappings_active ON button_action_mappings(is_active, normalized_button_text)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_sessions_phone ON ai_conversation_sessions(customer_phone, expires_at DESC)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_jobs_due ON ai_reply_jobs(status, scheduled_at)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_ai_jobs_phone ON ai_reply_jobs(customer_phone, created_at DESC)")

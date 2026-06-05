@@ -50,6 +50,20 @@ ADDRESS_CONFIRM_TERMS = (
 )
 
 
+def _button_label(message: str, context: dict[str, Any] | None = None) -> str:
+    context = context or {}
+    meta = context.get("message_meta") if isinstance(context.get("message_meta"), dict) else {}
+    for key in ("button_text", "postback_id", "provider_postback_id", "reply_message_id"):
+        value = str(meta.get(key) or context.get(key) or "").strip()
+        if value:
+            return value
+    raw = str(message or "").strip()
+    if raw.lower().startswith("#button reply#"):
+        marker = "#Button Reply#" if "#Button Reply#" in raw else "#button reply#"
+        return raw.split(marker, 1)[-1].strip()
+    return raw
+
+
 def _style(message: str, context: dict[str, Any] | None = None) -> str:
     context = context or {}
     existing = str(context.get("language") or context.get("reply_style") or "").strip().lower()
@@ -80,6 +94,12 @@ def _ack_reply(style: str, context: dict[str, Any]) -> str:
             "manglish": "Okay 👍 Verify cheythu confirm cheyyam.",
             "malayalam": "ശരി 👍 Verify ചെയ്ത് confirm ചെയ്യാം.",
         }.get(style, "Okay 👍 Verify cheythu confirm cheyyam.")
+    if "price" in stage or "product_interest" in stage:
+        return {
+            "english": "Order venel name, address, phone number, pincode ayacholu.",
+            "manglish": "Order venel name, address, phone number, pincode ayacholu.",
+            "malayalam": "Order വേണമെങ്കിൽ name, address, phone number, pincode അയച്ചോളൂ.",
+        }.get(style, "Order venel name, address, phone number, pincode ayacholu.")
     if context.get("address_received") or "address" in stage or "order" in stage:
         return {
             "english": "Okay 👍 Address details received.",
@@ -87,10 +107,10 @@ def _ack_reply(style: str, context: dict[str, Any]) -> str:
             "malayalam": "ശരി 👍 Address details കിട്ടി.",
         }.get(style, "Okay 👍 Address details kitti.")
     return {
-        "english": "Okay 👍",
-        "manglish": "Okay 👍",
-        "malayalam": "ശരി 👍",
-    }.get(style, "Okay 👍")
+        "english": "Okay 👍 Which product are you looking for?",
+        "manglish": "Okay 👍 Eth product aanu nokkunnath?",
+        "malayalam": "ശരി 👍 ഏത് product ആണ് നോക്കുന്നത്?",
+    }.get(style, "Okay 👍 Eth product aanu nokkunnath?")
 
 
 def _address_reply(style: str) -> str:
@@ -118,6 +138,65 @@ def _location_reply(style: str) -> str:
     }.get(style, f"PureLeven Kerala/Idukki-side spice brand aanu. Contact: {contact_link}")
 
 
+def _button_reply(style: str, label: str) -> dict[str, Any]:
+    normalized = normalize_message(label)
+    if "മലയാള" in label or "malayalam" in normalized:
+        return {
+            "reply_text": "ശരി 👍 ഇനി മലയാളത്തിൽ സംസാരിക്കാം.\nഏത് product ആണ് നോക്കുന്നത്?",
+            "intent": "button_reply",
+            "journey_stage": "language_selected",
+            "active_language": "malayalam",
+            "waiting_for": "product",
+        }
+    if "english" in normalized:
+        return {
+            "reply_text": "Sure 👍 We can continue in English.\nWhich product are you looking for?",
+            "intent": "button_reply",
+            "journey_stage": "language_selected",
+            "active_language": "english",
+            "waiting_for": "product",
+        }
+    if "buy now" in normalized or "order" in normalized:
+        return {
+            "reply_text": {
+                "english": "To order, send name, address, phone number, pincode, product and quantity.",
+                "manglish": "Order cheyyan name, address, phone number, pincode, product, quantity ayacholu.",
+                "malayalam": "Order ചെയ്യാൻ name, address, phone number, pincode, product, quantity അയച്ചോളൂ.",
+            }.get(style, "Order cheyyan name, address, phone number, pincode, product, quantity ayacholu."),
+            "intent": "order_request",
+            "journey_stage": "waiting_for_address",
+            "waiting_for": "address",
+        }
+    if "വിലാസ" in label or "address" in normalized:
+        return {
+            "reply_text": "Ith format-il ayacholu:\n\nName:\nPhone:\nAddress:\nPincode:\nProduct:\nQuantity:",
+            "intent": "address_shared",
+            "journey_stage": "waiting_for_address",
+            "waiting_for": "address",
+        }
+    if "വില" in label or "price" in normalized or "spices" in normalized:
+        return {
+            "reply_text": {
+                "english": "Spices price list ayakkam 👍\nBlack pepper, cardamom, clove, turmeric, cinnamon available aanu.\n\nWhich product price do you need?",
+                "manglish": "Spices price list ayakkam 👍\nBlack pepper, cardamom, clove, turmeric, cinnamon available aanu.\n\nEth product vila aanu vendath?",
+                "malayalam": "Spices price list അയക്കാം 👍\nBlack pepper, cardamom, clove, turmeric, cinnamon available ആണ്.\n\nഏത് product വില ആണ് വേണ്ടത്?",
+            }.get(style, "Spices price list ayakkam 👍 Eth product vila aanu vendath?"),
+            "intent": "price",
+            "journey_stage": "product_interest",
+            "waiting_for": "product",
+        }
+    return {
+        "reply_text": {
+            "english": "Button response received 👍 Which product are you looking for?",
+            "manglish": "Button response kitti 👍 Eth product aanu nokkunnath?",
+            "malayalam": "Button response കിട്ടി 👍 ഏത് product ആണ് നോക്കുന്നത്?",
+        }.get(style, "Button response kitti 👍 Eth product aanu nokkunnath?"),
+        "intent": "button_reply",
+        "journey_stage": "product_interest",
+        "waiting_for": "product",
+    }
+
+
 def deterministic_reply_for_message(
     *,
     incoming_message: str,
@@ -133,7 +212,21 @@ def deterministic_reply_for_message(
     normalized = normalize_message(incoming_message)
     style = _style(incoming_message, context)
 
-    if semantic_intent == "payment_proof_shared":
+    meta = context.get("message_meta") if isinstance(context.get("message_meta"), dict) else {}
+    if normalized.startswith("#button reply#") or meta.get("structured_button_click") or str(meta.get("message_type") or "").lower() == "postback":
+        mapped = _button_reply(style, _button_label(incoming_message, context))
+        return {
+            **mapped,
+            "suggested_action": "send_reply",
+            "should_escalate": False,
+            "message_understanding": {
+                "detected_intent": mapped.get("intent") or "button_reply",
+                "detected_language": mapped.get("active_language") or style,
+                "scenario": "button_handler",
+            },
+        }
+
+    if semantic_intent == "payment_proof_shared" or ("[[media:image]]" in normalized and any(token in normalized for token in ("payment", "screenshot", "paid", "gpay", "upi"))):
         return {
             "reply_text": _payment_reply(style, proof_received=True),
             "intent": "payment",
@@ -143,7 +236,7 @@ def deterministic_reply_for_message(
             "message_understanding": {"detected_intent": "payment", "detected_language": style, "scenario": "payment_review"},
         }
 
-    if semantic_intent == "payment_confirmation":
+    if semantic_intent in {"payment_confirmation", "payment"}:
         return {
             "reply_text": _payment_reply(style, proof_received=bool(context.get("payment_screenshot_received"))),
             "intent": "payment",
@@ -151,6 +244,19 @@ def deterministic_reply_for_message(
             "should_escalate": False,
             "journey_stage": "payment_pending",
             "message_understanding": {"detected_intent": "payment", "detected_language": style, "scenario": "payment_pending"},
+        }
+
+    if "[[media:audio]]" in normalized:
+        return {
+            "reply_text": {
+                "english": "Audio kitti 👍 Text aayi product/order detail ayachaal fast aayi help cheyyam.",
+                "manglish": "Audio kitti 👍 Product/order detail text aayi ayachaal fast aayi help cheyyam.",
+                "malayalam": "Audio കിട്ടി 👍 Product/order detail text ആയി അയച്ചാൽ fast ആയി help ചെയ്യാം.",
+            }.get(style, "Audio kitti 👍 Product/order detail text aayi ayachaal fast aayi help cheyyam."),
+            "intent": "audio_received",
+            "suggested_action": "send_reply",
+            "should_escalate": False,
+            "message_understanding": {"detected_intent": "audio_received", "detected_language": style, "scenario": "audio_received"},
         }
 
     if not product_detected and any(term in normalized for term in PLANT_TERMS):

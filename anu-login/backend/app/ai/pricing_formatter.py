@@ -564,15 +564,29 @@ class PricingFormatter:
 
         simple_scenarios = {"availability", "stock_check", "price"}
         if scenario in simple_scenarios:
-            size_lines = [f"{item['size']} ₹{item['price']}" for item in product.get("sizes", []) if item.get("size")]
+            size_lines = [f"{item['size']} - ₹{item['price']}" for item in product.get("sizes", []) if item.get("size")]
+            product_slug = str(product["name"] or "").strip().lower()
+            story_preview = story_line.split(".")[0].strip() if story_line else ""
+            recommended_pack = str(product.get("recommended_pack") or "").strip()
             opening_map = {
-                "english": "Yes, available 😊",
-                "manglish": "Undu 😊",
-                "malayalam": "ഉണ്ട് 😊",
+                "english": f"{product['name']} available 👍",
+                "manglish": f"{product['name']} undu 👍",
+                "malayalam": f"{product['name']} ഉണ്ട് 👍",
             }
             reply_lines = [opening_line or opening_map[style_key]]
+            if story_preview:
+                reply_lines.append(story_preview + ".")
             if size_lines:
                 reply_lines.extend(["", "\n".join(size_lines)])
+            if recommended_pack:
+                if style_key == "english":
+                    reply_lines.extend(["", f"{recommended_pack} is usually the best value option."])
+                elif style_key == "malayalam":
+                    reply_lines.extend(["", f"{recommended_pack} എടുത്താൽ നല്ല value option ആണ്."])
+                else:
+                    reply_lines.extend(["", f"{recommended_pack} eduthal nalla value option aanu."])
+            elif "black pepper" in product_slug:
+                reply_lines.extend(["", "500g eduthal Kerala-il free delivery kittum."])
             reply_text = "\n".join(line for line in reply_lines if line is not None).strip()
             images = list(entry.get("images", []))
             primary_image_url = str(entry.get("primary_image_url") or "")

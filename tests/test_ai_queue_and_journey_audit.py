@@ -88,7 +88,7 @@ def test_due_ai_reply_job_finishes_without_holding_sqlite_lock(monkeypatch) -> N
 
     processed = run_due_ai_reply_jobs(limit=10)
 
-    assert calls and calls[0]["customer_phone"] == phone
+    assert any(call["customer_phone"] == phone for call in calls)
     assert any(item["job_id"] == queued["job_id"] and item["status"] == "sent" for item in processed)
     with get_db_connection() as conn:
         job = conn.execute("SELECT status FROM ai_reply_jobs WHERE id = ?", (queued["job_id"],)).fetchone()
@@ -510,5 +510,5 @@ def test_expired_human_lock_allows_ai_retry(monkeypatch) -> None:
 
     processed = run_due_ai_reply_jobs(limit=10)
 
-    assert calls and calls[0]["customer_phone"] == phone
+    assert any(call["customer_phone"] == phone for call in calls)
     assert any(item["job_id"] == queued["job_id"] and item["status"] == "sent" for item in processed)

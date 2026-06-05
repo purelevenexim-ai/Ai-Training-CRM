@@ -655,6 +655,73 @@ export default function OwnerDashboard() {
     });
   }
 
+  async function handleLearningAction(item, action) {
+    setError('');
+    try {
+      let correctResponse = item.correct_response || item.final_answer || '';
+      let product = item.detected_product || 'general';
+      let intent = item.detected_intent || 'fallback';
+      let language = 'manglish';
+
+      if (action === 'approve' || action === 'promote') {
+        const promptedResponse = window.prompt(
+          action === 'promote'
+            ? 'Correct WhatsApp reply to promote into intent knowledge:'
+            : 'Approved answer / note for this learning item:',
+          correctResponse,
+        );
+        if (promptedResponse === null) return;
+        correctResponse = promptedResponse.trim();
+        if (!correctResponse) {
+          setError('Correct response is required for approve/promote.');
+          return;
+        }
+      }
+
+      if (action === 'promote') {
+        const promptedProduct = window.prompt('Canonical product id:', product);
+        if (promptedProduct === null) return;
+        product = promptedProduct.trim() || 'general';
+        const promptedIntent = window.prompt('Canonical intent:', intent);
+        if (promptedIntent === null) return;
+        intent = promptedIntent.trim() || 'fallback';
+        const promptedLanguage = window.prompt('Language: english / manglish / malayalam', language);
+        if (promptedLanguage === null) return;
+        language = promptedLanguage.trim() || 'manglish';
+      }
+
+      const payload = await apiFetch(`/api/owner/dashboard/human-loop-rules/learning/${item.id}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          action,
+          correct_response: correctResponse,
+          admin_label: action,
+          product,
+          intent,
+          language,
+        }),
+      });
+      setHumanLoop({ ...DEFAULT_HUMAN_LOOP, ...(payload.payload || {}) });
+      setFlashMessage(
+        action === 'promote'
+          ? 'Learning promoted into intent knowledge.'
+          : action === 'dismiss'
+            ? 'Learning item dismissed.'
+            : 'Learning item approved.',
+      );
+      setTimeout(() => setFlashMessage(''), 2600);
+      if (action === 'promote') {
+        loadKnowledgeBase();
+      }
+    } catch (actionError) {
+      if (actionError?.status === 401) {
+        resetForLockedDashboard('Saved admin secret is invalid. Enter the current admin secret to continue.');
+        return;
+      }
+      setError(actionError.message || 'Could not update learning item.');
+    }
+  }
+
   function beginKbEdit(item) {
     setEditingKbId(item.id);
     setKbForm({
@@ -1950,6 +2017,7 @@ export default function OwnerDashboard() {
                     <th>Detected</th>
                     <th>Reason</th>
                     <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1965,11 +2033,24 @@ export default function OwnerDashboard() {
                       </td>
                       <td>{item.reason || '—'}</td>
                       <td>{item.status || 'open'}</td>
+                      <td>
+                        <div className="inline-actions">
+                          <button type="button" onClick={() => handleLearningAction(item, 'approve')}>
+                            Approve
+                          </button>
+                          <button type="button" onClick={() => handleLearningAction(item, 'promote')}>
+                            Promote
+                          </button>
+                          <button type="button" onClick={() => handleLearningAction(item, 'dismiss')}>
+                            Dismiss
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                   {!humanLoop.learning_items?.length ? (
                     <tr>
-                      <td colSpan="6">No human-review learning items found yet.</td>
+                      <td colSpan="7">No human-review learning items found yet.</td>
                     </tr>
                   ) : null}
                 </tbody>

@@ -38,6 +38,7 @@ from app.services.customer_journey_service import (
 from app.services.ai_monitoring_engine import get_ai_monitor_payload
 from app.ai.message_decision_service import get_message_control_payload
 from app.services.human_loop_rule_service import get_human_loop_dashboard_payload, save_human_loop_settings
+from app.services.human_loop_rule_service import update_learning_item
 
 router = APIRouter(tags=["owner-dashboard"])
 
@@ -147,6 +148,15 @@ class HumanLoopSettingsPayload(BaseModel):
     min_ai_confidence: float = Field(default=0.65, ge=0.0, le=1.0)
 
 
+class HumanLearningActionPayload(BaseModel):
+    action: str = Field(max_length=20)
+    correct_response: str = Field(default="", max_length=6000)
+    admin_label: str = Field(default="", max_length=120)
+    product: str = Field(default="", max_length=120)
+    intent: str = Field(default="", max_length=120)
+    language: str = Field(default="manglish", max_length=40)
+
+
 @router.get("/owner/dashboard/summary", dependencies=[Depends(require_admin_access)])
 def owner_dashboard_summary() -> dict[str, Any]:
     return get_owner_dashboard_summary()
@@ -227,6 +237,15 @@ def owner_dashboard_human_loop_rules() -> dict[str, Any]:
 def owner_dashboard_save_human_loop_rules(payload: HumanLoopSettingsPayload) -> dict[str, Any]:
     settings = save_human_loop_settings(payload.model_dump())
     return {"ok": True, "settings": settings, "payload": get_human_loop_dashboard_payload()}
+
+
+@router.post("/owner/dashboard/human-loop-rules/learning/{gap_id}", dependencies=[Depends(require_admin_access)])
+def owner_dashboard_update_learning_item(gap_id: str, payload: HumanLearningActionPayload) -> dict[str, Any]:
+    try:
+        item = update_learning_item(gap_id, payload.model_dump())
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True, "item": item, "payload": get_human_loop_dashboard_payload()}
 
 
 @router.get("/owner/dashboard/training-gaps", dependencies=[Depends(require_admin_access)])

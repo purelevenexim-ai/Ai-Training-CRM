@@ -9,6 +9,7 @@ from typing import Any
 from app.ai.conversation_state_manager import get_conversation_state, reset_conversation_state, set_conversation_state
 from app.runtime_db import ensure_runtime_tables, get_db_connection
 from app.storage import _get_setting_value, _save_setting_value, init_database
+from app.services.owner_dashboard_service import save_knowledge_base_entry
 
 HUMAN_LOOP_SETTINGS_KEY = "owner_dashboard_human_loop_rules"
 
@@ -120,6 +121,7 @@ def human_inactivity_delay_seconds() -> int:
 
 
 def _recent_learning_items(limit: int = 40) -> list[dict[str, Any]]:
+    init_database()
     ensure_runtime_tables()
     items: list[dict[str, Any]] = []
     with get_db_connection() as connection:
@@ -127,7 +129,8 @@ def _recent_learning_items(limit: int = 40) -> list[dict[str, Any]]:
             rows = connection.execute(
                 """
                 SELECT id, phone, original_query, detected_intent, detected_product,
-                       confidence, reason, status, created_at, updated_at
+                       confidence, reason, status, admin_label, correct_response,
+                       final_answer, resolved_by, created_at, updated_at
                 FROM knowledge_gaps
                 ORDER BY created_at DESC
                 LIMIT ?
@@ -155,6 +158,118 @@ def _recent_learning_items(limit: int = 40) -> list[dict[str, Any]]:
         except sqlite3.OperationalError:
             pass
     return sorted(items, key=lambda item: str(item.get("created_at") or ""), reverse=True)[:limit]
+
+
+def update_learning_item(gap_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+    """Approve, dismiss, or promote a captured human-review item into intent knowledge."""
+    action = str((payload or {}).get("action") or "").strip().lower()
+    if action not in {"approve", "promote", "dismiss", "rollback"}:
+        raise ValueError("Unsupported learning action.")
+
+    ensure_runtime_tables()
+    now = _now()
+    with get_db_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT id, phone, original_query, conversation_id, detected_intent,
+                   detected_product, confidence, reason, status, admin_label,
+                   correct_response, final_answer, resolved_by, created_at, updated_at
+            FROM knowledge_gaps
+            WHERE id = ?
+            LIMIT 1
+            """,
+            (gap_id,),
+        ).fetchone()
+        if not row:
+            raise ValueError("Learning item not found.")
+        item = dict(row)
+
+        response = str(
+            (payload or {}).get("correct_response")
+            or (payload or {}).get("final_answer")
+            or item.get("correct_response")
+            or item.get("final_answer")
+            or ""
+        ).strip()
+        label = str((payload or {}).get("admin_label") or item.get("admin_label") or action).strip()
+        product = str((payload or {}).get("product") or item.get("detected_product") or "general").strip() or "general"
+        intent = str((payload or {}).get("intent") or item.get("detected_intent") or "fallback").strip() or "fallback"
+        language = str((payload or {}).get("language") or "manglish").strip() or "manglish"
+
+        promoted_entry: dict[str, Any] | None = None
+        if action == "promote":
+            if not response:
+                raise ValueError("Correct response is required before promoting.")
+            promoted_entry = save_knowledge_base_entry(
+                {
+                    "category": intent,
+                    "intent": intent,
+                    "product": product,
+                    "product_name": product.replace("_", " ").title() if product != "general" else "",
+                    "trigger_examples": [str(item.get("original_query") or "").strip()],
+                    "input_variations": [str(item.get("original_query") or "").strip()],
+                    "answer_primary": response,
+                    "ideal_response": response,
+                    "language": language,
+                    "needs_review": False,
+                    "review_reason": "",
+                    "tone": "short_human_whatsapp",
+                    "tags": ["human_promoted", product, intent],
+                }
+            )
+            new_status = "promoted"
+            resolved_by = "admin_promote"
+        elif action == "approve":
+            new_status = "approved"
+            resolved_by = "admin_approve"
+        elif action == "dismiss":
+            new_status = "dismissed"
+            resolved_by = "admin_dismiss"
+        else:
+            new_status = "open"
+            resolved_by = None
+
+        connection.execute(
+            """
+            UPDATE knowledge_gaps
+            SET status = ?,
+                admin_label = ?,
+                correct_response = ?,
+                final_answer = ?,
+                resolved_by = ?,
+                resolved_at = ?,
+                updated_at = ?
+            WHERE id = ?
+            """,
+            (
+                new_status,
+                label,
+                response,
+                response,
+                resolved_by,
+                now if resolved_by else None,
+                now,
+                gap_id,
+            ),
+        )
+        connection.commit()
+
+        updated = connection.execute(
+            """
+            SELECT id, phone, original_query, detected_intent, detected_product,
+                   confidence, reason, status, admin_label, correct_response,
+                   final_answer, resolved_by, created_at, updated_at
+            FROM knowledge_gaps
+            WHERE id = ?
+            LIMIT 1
+            """,
+            (gap_id,),
+        ).fetchone()
+
+    result = dict(updated) if updated else {**item, "status": new_status}
+    if promoted_entry is not None:
+        result["promoted_entry"] = promoted_entry
+    return result
 
 
 def get_human_loop_dashboard_payload() -> dict[str, Any]:

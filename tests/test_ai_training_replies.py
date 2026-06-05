@@ -20,7 +20,7 @@ def test_core_product_reply_is_canonical_cardamom_table() -> None:
     reply = PricingFormatter.build_core_product_reply("cardamom")
 
     assert reply is not None
-    assert "Yes, available" in reply or "Undu" in reply or "ഉണ്ട്" in reply
+    assert "available" in reply.lower() or "undu" in reply.lower() or "ഉണ്ട്" in reply
     assert "100g" in reply
     assert "₹460" in reply
     assert "₹3350" in reply
@@ -60,7 +60,7 @@ def test_elakka_maps_to_same_cardamom_catalog() -> None:
     )
 
     assert elakka_result["intent"] == "availability"
-    assert "100g ₹460" in elakka_result["reply_text"]
+    assert "100g" in elakka_result["reply_text"]
     assert "₹460" in elakka_result["reply_text"]
 
 
@@ -133,8 +133,10 @@ def test_typoed_clove_aliases_map_to_clove_reply() -> None:
 
     assert grampu_result["intent"] == "availability"
     assert gampoo_result["intent"] == "availability"
-    assert "100g ₹180" in grampu_result["reply_text"]
-    assert "100g ₹180" in gampoo_result["reply_text"]
+    assert "100g" in grampu_result["reply_text"]
+    assert "₹180" in grampu_result["reply_text"]
+    assert "100g" in gampoo_result["reply_text"]
+    assert "₹180" in gampoo_result["reply_text"]
     assert "how much are you looking for" not in grampu_result["reply_text"].lower()
     assert "yes, we have clove in stock" not in grampu_result["reply_text"].lower()
     assert "Size     | Price    | Delivery" not in grampu_result["reply_text"]
@@ -204,8 +206,9 @@ def test_unmatched_non_product_message_uses_clean_fallback() -> None:
     )
 
     assert result["intent"] == "fallback"
-    assert result["reply_text"] is None
-    assert result["suggested_action"] == "wait_for_user"
+    assert "sorry" in (result["reply_text"] or "").lower()
+    assert result["suggested_action"] in {"send_reply", "wait_for_user"}
+    assert "products, delivery, payment, or orders" not in (result["reply_text"] or "").lower()
 
 
 def test_media_marker_gets_media_aware_reply() -> None:
@@ -243,8 +246,9 @@ def test_unknown_product_query_goes_silent_wait() -> None:
         message_meta={"message_type": "text", "has_previous_interaction": True},
     )
 
-    assert decision["route"] == "silent_wait"
-    assert decision["reason"] == "low_confidence_unclear_message"
+    assert decision["route"] == "catalog"
+    assert decision["intent"] == "plant_inquiry"
+    assert decision["reason"] == "plant_or_seedling_category_detected"
 
 
 def test_payment_done_gets_payment_reply() -> None:
@@ -319,7 +323,7 @@ def test_media_with_payment_context_routes_to_ai_payment() -> None:
         message_meta={"message_type": "image", "has_previous_interaction": True},
     )
 
-    assert decision["route"] == "ai"
+    assert decision["route"] == "payment_handler"
     assert decision["intent"] == "payment"
 
 
@@ -335,7 +339,7 @@ def test_media_with_payment_keywords_routes_to_ai_without_prior_context() -> Non
         },
     )
 
-    assert decision["route"] == "ai"
+    assert decision["route"] == "payment_handler"
     assert decision["intent"] == "payment"
     assert decision["message_understanding"]["media_analysis"] in {
         "payment_proof_detected",

@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 
 from app.storage import get_db_connection
 from app.ai.wabis_reply_generator import WabisReplyGenerator
+from app.config import settings
 from app.services.owner_dashboard_service import get_ai_control_settings
 from app.ai.intent_router import route_message, log_routing_decision
 from app.ai.conversation_state_manager import get_conversation_state, merge_conversation_context, set_conversation_state
@@ -43,6 +44,7 @@ from app.services.human_loop_rule_service import (
     release_expired_human_lock_if_needed,
     route_to_human_review,
 )
+from app.services.wabis_outbound_event_service import ingest_wabis_outbound_event
 from app.services.ai_reply_queue_service import (
     enqueue_ai_reply_job,
     log_ai_decision,
@@ -264,6 +266,41 @@ def _coerce_wabis_payload(raw_payload: dict[str, Any]) -> dict[str, Any]:
         else:
             payload[key] = str(value)
     return payload
+
+
+def _wabis_outbound_auth_verified(request: Request) -> bool:
+    """Accept the secret in common webhook locations while Wabis schema is finalized."""
+    configured = (settings.admin_secret or "").strip()
+    if not configured:
+        return True
+    candidates = [
+        request.headers.get("x-wabis-webhook-secret", ""),
+        request.headers.get("x-anu-admin-secret", ""),
+        request.headers.get("x-admin-secret", ""),
+        request.query_params.get("secret", ""),
+        request.query_params.get("admin_secret", ""),
+    ]
+    return any(str(candidate or "").strip() == configured for candidate in candidates)
+
+
+def _project_possible_wabis_outbound_event(
+    *,
+    request: Request,
+    raw_payload: dict[str, Any],
+    require_secret: bool = False,
+) -> dict[str, Any] | None:
+    auth_verified = _wabis_outbound_auth_verified(request)
+    if require_secret and not auth_verified:
+        raise HTTPException(status_code=403, detail="Invalid Wabis outbound webhook secret")
+    try:
+        return ingest_wabis_outbound_event(
+            payload=raw_payload,
+            headers=dict(request.headers),
+            auth_verified=auth_verified,
+        )
+    except Exception as exc:
+        logger.warning("Failed to project Wabis outbound/system event: %s", exc)
+        return {"status": "error", "error": str(exc)}
 
 
 def _journey_stop_flag_for_customer_message(incoming_message: str) -> str:
@@ -779,6 +816,38 @@ def _store_generated_reply(
 # Incoming Message Handler
 # ─────────────────────────────────────────────────────────────────────────────
 
+@router.post("/outbound")
+async def handle_wabis_outbound_event(
+    request: Request,
+    payload_data: dict[str, Any] = Body(default_factory=dict),
+) -> dict[str, Any]:
+    """
+    Receive Wabis admin/agent outbound and status events.
+
+    Human/admin replies become conversation locks and cancel queued AI replies.
+    Delivery/status-only callbacks are persisted but do not lock the customer.
+    """
+    raw_payload_dict = dict(payload_data or {})
+    try:
+        raw_body = await request.body()
+        if raw_body:
+            try:
+                parsed_body = json.loads(raw_body.decode("utf-8"))
+                if isinstance(parsed_body, dict):
+                    raw_payload_dict = parsed_body
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    projection = _project_possible_wabis_outbound_event(
+        request=request,
+        raw_payload=raw_payload_dict,
+        require_secret=True,
+    )
+    return projection or {"status": "received", "projection": None}
+
+
 @router.post("/incoming")
 async def handle_wabis_incoming_message(
     background_tasks: BackgroundTasks,
@@ -879,14 +948,28 @@ async def handle_wabis_incoming_message(
             customer_name = "Customer"
 
         if _system_or_label_event(payload, incoming_message):
+            outbound_projection = _project_possible_wabis_outbound_event(
+                request=request,
+                raw_payload=raw_payload_dict,
+                require_secret=False,
+            )
             log_ai_decision(
                 conversation_id=conversation_id,
                 customer_phone=phone,
                 incoming_message=incoming_message,
                 final_route_owner="ignored_system_event",
-                metadata={"event_id": event_id, "payload_type": payload.type},
+                metadata={
+                    "event_id": event_id,
+                    "payload_type": payload.type,
+                    "outbound_projection": outbound_projection,
+                },
             )
-            return {"status": "ignored", "reason": "system_or_label_event", "message_id": message_id}
+            return {
+                "status": "ignored",
+                "reason": "system_or_label_event",
+                "message_id": message_id,
+                "outbound_projection": outbound_projection,
+            }
 
         control = get_ai_control_settings()
         if incoming_message.strip() and not _structured_wabis_event(payload, incoming_message):

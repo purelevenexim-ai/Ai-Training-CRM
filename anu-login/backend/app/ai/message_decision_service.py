@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import sqlite3
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -37,6 +38,14 @@ BANNED_REPLY_PHRASES = (
     "i'll keep this open for now",
     "i’ll keep this open for now",
 )
+
+
+def _safe_ensure_runtime_tables() -> None:
+    try:
+        ensure_runtime_tables()
+    except sqlite3.OperationalError as exc:
+        if "database is locked" not in str(exc).lower():
+            raise
 
 
 def _now() -> str:
@@ -270,7 +279,7 @@ def audit_reply_quality(
 
 
 def get_message_control_payload(*, hours: int = 4, limit: int = 100) -> dict[str, Any]:
-    ensure_runtime_tables()
+    _safe_ensure_runtime_tables()
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=int(hours))).isoformat(timespec="seconds")
     with get_db_connection() as connection:
         decisions = [

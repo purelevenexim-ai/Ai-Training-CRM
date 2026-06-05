@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import sqlite3
 import uuid
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
@@ -47,6 +48,14 @@ PRODUCT_HINTS = (
     "star anise",
     "thakkolam",
 )
+
+
+def _safe_ensure_runtime_tables() -> None:
+    try:
+        ensure_runtime_tables()
+    except sqlite3.OperationalError as exc:
+        if "database is locked" not in str(exc).lower():
+            raise
 
 PAYMENT_HINTS = (
     "paid",
@@ -689,11 +698,15 @@ def _upsert_materialized(events: list[dict[str, Any]], issues: list[dict[str, An
 
 
 def get_ai_monitor_payload(hours: int = 4, limit: int = 80) -> dict[str, Any]:
-    ensure_runtime_tables()
+    _safe_ensure_runtime_tables()
     events = _load_audit_events(hours=hours)
     issues = _detect_issues(events)
     summaries = _journey_summary(events, issues)
-    _upsert_materialized(events, issues, summaries)
+    try:
+        _upsert_materialized(events, issues, summaries)
+    except sqlite3.OperationalError as exc:
+        if "database is locked" not in str(exc).lower():
+            raise
 
     total_journeys = len(summaries)
     total_ai = sum(item["ai_messages"] for item in summaries)

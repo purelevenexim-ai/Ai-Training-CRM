@@ -356,6 +356,51 @@ def get_message_control_payload(*, hours: int = 4, limit: int = 100) -> dict[str
                     ).fetchall()
                 ]
             )
+        if not decisions and _table_exists(connection, "conversation_state"):
+            decisions.extend(
+                [
+                    {
+                        "id": f"state:{row['phone']}",
+                        "customer_id": row["phone"],
+                        "incoming_message_id": "",
+                        "incoming_message": row["owner_reason"] or row["flow_step"] or row["journey_stage"] or "",
+                        "normalized_text": normalize_message(row["owner_reason"] or row["flow_step"] or row["journey_stage"] or ""),
+                        "detected_type": "state_snapshot",
+                        "detected_intent": row["latest_intent"] or "",
+                        "confidence": 0.35,
+                        "selected_owner": row["owner"] or "unknown",
+                        "decision_reason": "conversation_state_fallback",
+                        "skipped_ai": 1 if (row["owner"] or "") not in {"", "ai"} else 0,
+                        "prompt_used_id": "",
+                        "reply_message_id": "",
+                        "route": row["owner"] or "",
+                        "score": 0,
+                        "metadata_json": json.dumps(
+                            {
+                                "active_product": row["active_product"],
+                                "language": row["language"],
+                                "journey_stage": row["journey_stage"],
+                                "flow_id": row["flow_id"],
+                                "flow_step": row["flow_step"],
+                                "next_best_action": row["owner_reason"] or "Review current customer state",
+                            },
+                            ensure_ascii=False,
+                        ),
+                        "created_at": row["last_activity"] or row["updated_at"] or "",
+                        "updated_at": row["updated_at"] or row["last_activity"] or "",
+                    }
+                    for row in connection.execute(
+                        """
+                        SELECT phone, owner, owner_reason, flow_id, flow_step, active_product,
+                               latest_intent, language, journey_stage, last_activity, updated_at
+                        FROM conversation_state
+                        ORDER BY COALESCE(last_activity, updated_at, created_at) DESC
+                        LIMIT ?
+                        """,
+                        (int(limit),),
+                    ).fetchall()
+                ]
+            )
         duplicate_rows = [
             dict(row)
             for row in connection.execute(

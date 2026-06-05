@@ -156,6 +156,65 @@ def _is_media_marker(message: str) -> bool:
     return normalized.startswith("[[media:") or "[[media:" in normalized
 
 
+def _route_media_message(
+    *,
+    phone: str,
+    message: str,
+    message_meta: dict[str, Any],
+    metadata: dict[str, Any],
+    state: dict[str, Any] | None,
+    customer_state: dict[str, Any],
+) -> dict[str, Any]:
+    media_analysis = analyze_media_message(
+        incoming_message=message,
+        context={
+            **((state or {}).get("context") or {}),
+            **customer_state,
+        },
+        message_meta=message_meta,
+        detected_language=metadata["detected_language"],
+    )
+    if media_analysis.get("intent") == "payment_proof_shared":
+        try:
+            update_customer_state(
+                phone,
+                inbound_message=message,
+                message_type=str(message_meta.get("message_type") or "image"),
+                latest_intent="payment",
+                journey_stage="payment_review",
+                payment_screenshot_received=True,
+                context_updates={
+                    "media_analysis": media_analysis.get("analysis_type"),
+                    "media_text": media_analysis.get("extracted_text"),
+                    "media_keywords": media_analysis.get("keywords") or [],
+                },
+            )
+        except Exception as exc:
+            logger.debug("Failed to update payment screenshot state for %s: %s", phone, exc)
+        return {
+            "route": "payment_handler",
+            "reason": str(media_analysis.get("analysis_type") or "payment_proof_detected"),
+            "intent": "payment",
+            "message_understanding": {
+                **metadata,
+                **media_analysis,
+                "detected_intent": "payment",
+                "media_analysis": media_analysis.get("analysis_type"),
+            },
+        }
+    return {
+        "route": "silent_wait",
+        "reason": str(media_analysis.get("analysis_type") or "low_confidence_media_review"),
+        "intent": "media_review",
+        "message_understanding": {
+            **metadata,
+            **media_analysis,
+            "confidence": float(media_analysis.get("confidence") or 0.2),
+            "unknown_product_candidate": "",
+        },
+    }
+
+
 def route_message(phone: str, message: str, message_meta: dict[str, Any] | None = None) -> dict[str, Any]:
     message_meta = message_meta or {}
     state = get_conversation_state(phone)
@@ -235,6 +294,16 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
             "intent": metadata["detected_intent"],
             "message_understanding": metadata,
         }
+
+    if _is_media_marker(message) and not (state and state.get("owner") == "wabis" and _within_timeout(state)):
+        return _route_media_message(
+            phone=phone,
+            message=message,
+            message_meta=message_meta,
+            metadata=metadata,
+            state=state,
+            customer_state=customer_state,
+        )
 
     if state and state.get("flow_id") == "product_journey":
         product_context = dict(state.get("context") or {})
@@ -422,54 +491,14 @@ def route_message(phone: str, message: str, message_meta: dict[str, Any] | None 
     )
 
     if _is_media_marker(message):
-        media_analysis = analyze_media_message(
-            incoming_message=message,
-            context={
-                **((state or {}).get("context") or {}),
-                **customer_state,
-            },
+        return _route_media_message(
+            phone=phone,
+            message=message,
             message_meta=message_meta,
-            detected_language=metadata["detected_language"],
+            metadata=metadata,
+            state=state,
+            customer_state=customer_state,
         )
-        if media_analysis.get("intent") == "payment_proof_shared":
-            try:
-                update_customer_state(
-                    phone,
-                    inbound_message=message,
-                    message_type=str(message_meta.get("message_type") or "image"),
-                    latest_intent="payment",
-                    journey_stage="payment_review",
-                    payment_screenshot_received=True,
-                    context_updates={
-                        "media_analysis": media_analysis.get("analysis_type"),
-                        "media_text": media_analysis.get("extracted_text"),
-                        "media_keywords": media_analysis.get("keywords") or [],
-                    },
-                )
-            except Exception as exc:
-                logger.debug("Failed to update payment screenshot state for %s: %s", phone, exc)
-            return {
-                "route": "payment_handler",
-                "reason": str(media_analysis.get("analysis_type") or "payment_proof_detected"),
-                "intent": "payment",
-                "message_understanding": {
-                    **metadata,
-                    **media_analysis,
-                    "detected_intent": "payment",
-                    "media_analysis": media_analysis.get("analysis_type"),
-                },
-            }
-        return {
-            "route": "silent_wait",
-            "reason": str(media_analysis.get("analysis_type") or "low_confidence_media_review"),
-            "intent": "media_review",
-            "message_understanding": {
-                **metadata,
-                **media_analysis,
-                "confidence": float(media_analysis.get("confidence") or 0.2),
-                "unknown_product_candidate": "",
-            },
-        }
 
     if metadata["detected_intent"] == "payment":
         try:

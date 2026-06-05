@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sqlite3
 import socket
 import ssl
 from datetime import datetime, timedelta, timezone
@@ -70,6 +71,15 @@ LEGACY_INTENT_ALIASES: dict[str, str] = {
     "wholesale_inquiry": "wholesale",
     "complaint": "complaint",
 }
+
+
+def _safe_init_database() -> None:
+    """Dashboard reads should not fail just because a background job holds SQLite briefly."""
+    try:
+        init_database()
+    except sqlite3.OperationalError as exc:
+        if "database is locked" not in str(exc).lower():
+            raise
 
 DEFAULT_AI_CONTROL: dict[str, Any] = {
     "ai_running": True,
@@ -1026,7 +1036,7 @@ def _build_counts(connection, today_iso: str) -> dict[str, int]:
 
 
 def get_owner_dashboard_summary() -> dict[str, Any]:
-    init_database()
+    _safe_init_database()
     today_iso = datetime.now(timezone.utc).date().isoformat()
     seven_days_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
     ai_control = get_ai_control_settings()
@@ -1118,7 +1128,7 @@ def get_owner_dashboard_summary() -> dict[str, Any]:
 
 
 def list_dashboard_customers(search: str = "", label: str = "all", limit: int = 100) -> list[dict[str, Any]]:
-    init_database()
+    _safe_init_database()
     with get_db_connection() as connection:
         items: list[dict[str, Any]] = []
         if _table_exists(connection, "customers"):
@@ -1292,7 +1302,7 @@ def list_dashboard_customers(search: str = "", label: str = "all", limit: int = 
 
 
 def get_customer_timeline(customer_ref: str) -> dict[str, Any]:
-    init_database()
+    _safe_init_database()
     with get_db_connection() as connection:
         customer: dict[str, Any] | None = None
         if _table_exists(connection, "journey_customers"):
@@ -1601,7 +1611,7 @@ def get_customer_timeline(customer_ref: str) -> dict[str, Any]:
 
 
 def get_training_gaps(limit: int = 30) -> dict[str, list[dict[str, Any]]]:
-    init_database()
+    _safe_init_database()
     with get_db_connection() as connection:
         gaps: list[dict[str, Any]] = []
         if _table_exists(connection, "knowledge_gaps"):
@@ -2034,7 +2044,7 @@ def save_prompt_registry_entry(prompt_id: str, payload: dict[str, Any]) -> dict[
 
 
 def get_prompt_observatory_payload(limit: int = 50, phone: str = "") -> dict[str, Any]:
-    init_database()
+    _safe_init_database()
     with get_db_connection() as connection:
         if not _table_exists(connection, "conversation_audit_log"):
             return {"items": [], "count": 0}

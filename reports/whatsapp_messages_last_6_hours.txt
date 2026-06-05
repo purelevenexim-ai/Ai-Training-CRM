@@ -1,0 +1,91 @@
+PureLeven WhatsApp Messages Report
+Window: last 6 hours
+Generated from live production database on 2026-06-05 UTC
+
+Raw customer messages
+No customer messages were stored in the primary raw message tables during this window.
+Checked tables:
+- conversation_audit_log
+- ai_incoming_messages
+- ai_outgoing_replies
+
+Related automation/system events seen in the same window
+
+[2026-06-05T04:31:37.812914+00:00] [system] [customer_journey_logs] [5ae229a6-f72c-41b6-9958-ce5fa17d931a]
+phone=919000000001 | product=cardamom | event=step_suppressed | stage=text
+message=text
+metadata={"followup_id":"2dfb1f92-ae4b-4c42-a239-fd77987ce97d","stage":"text","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:32:07.850346+00:00] [system] [customer_journey_logs] [79255988-0dbb-44e1-a67e-2dbf8b014b0d]
+phone=919000000002 | product=clove | event=step_suppressed | stage=text
+message=text
+metadata={"followup_id":"60ad5300-7736-4bed-9ab6-416a99b91a57","stage":"text","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:32:37.887092+00:00] [system] [customer_journey_logs] [9cf810cb-e43f-4872-b8e1-83db5d798c39]
+phone=919000000001 | product=cardamom | event=step_suppressed | stage=text_with_image
+message=text_with_image
+metadata={"followup_id":"1584a1f2-12f9-4d0e-9f13-976cad1f9179","stage":"text_with_image","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:33:07.923685+00:00] [system] [customer_journey_logs] [3a64a653-b1bb-46d6-b115-592337a45de5]
+phone=919000000002 | product=clove | event=step_suppressed | stage=text_with_image
+message=text_with_image
+metadata={"followup_id":"23c0bb87-0ad5-4051-aaa1-c0e12aeea5a9","stage":"text_with_image","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:33:37.963042+00:00] [system] [customer_journey_logs] [72420706-750d-48fa-bfe1-64c67b65f3d6]
+phone=919000000001 | product=cardamom | event=step_suppressed | stage=combo
+message=combo
+metadata={"followup_id":"c9ffaad5-230e-4abb-abf2-562f83142bcb","stage":"combo","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:34:08.008834+00:00] [system] [customer_journey_logs] [d120fc45-a90f-4565-9202-ad7591d6bcea]
+phone=919000000002 | product=clove | event=step_suppressed | stage=combo
+message=combo
+metadata={"followup_id":"9310f64f-4cfc-4daf-bb1a-c7e44c561081","stage":"combo","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:39:08.402636+00:00] [system] [customer_journey_logs] [539b989e-0bf9-4217-890b-1d157435dacd]
+phone=919000000001 | product=cardamom | event=step_suppressed | stage=text
+message=text
+metadata={"followup_id":"983eb4b3-a902-4d3a-a5f3-d348a946608b","stage":"text","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:39:38.446112+00:00] [system] [customer_journey_logs] [99e29575-8618-4782-9aa0-90904b55e87f]
+phone=919000000002 | product=clove | event=step_suppressed | stage=text
+message=text
+metadata={"followup_id":"92058b7a-a3d8-4fe6-bd20-cfe59062f343","stage":"text","reason":"product_journey_inactive","send_live":false}
+
+Follow-up suppression summary
+- cardamom / gentle_reminder: 3
+- clove / gentle_reminder: 3
+- white_pepper / combo_offer: 3
+- white_pepper / final_followup: 3
+- white_pepper / gentle_reminder: 3
+- white_pepper / image_only: 3
+- white_pepper / soft_nudge: 3
+- black_pepper / combo_offer: 2
+- black_pepper / final_followup: 2
+- black_pepper / gentle_reminder: 2
+- black_pepper / image_only: 2
+- black_pepper / soft_nudge: 2
+- cardamom / combo_offer: 2
+- cardamom / final_followup: 2
+- cardamom / image_only: 2
+- cardamom / soft_nudge: 2
+- cardamom / text: 2
+- clove / combo_offer: 2
+- clove / final_followup: 2
+- clove / image_only: 2
+- clove / soft_nudge: 2
+- clove / text: 2
+- cardamom / combo: 1
+- cardamom / cross_sell: 1
+- cardamom / text_with_image: 1
+- cinnamon / cross_sell: 1
+- cinnamon / gentle_reminder: 1
+- clove / combo: 1
+- clove / cross_sell: 1
+- clove / text_with_image: 1
+- pepper / cross_sell: 1
+- pepper / gentle_reminder: 1
+- pepper / order_capture_reminder: 1
+
+Conclusion
+- No raw customer chat messages were found in the live production tables for the last 6 hours.
+- The only visible activity was automation suppression from inactive product journeys.

@@ -25,6 +25,7 @@ from app.ai.conversation_state_manager import get_conversation_state, merge_conv
 from app.ai.clarification_flow import send_clarification_menu, log_knowledge_gap, log_missing_product
 from app.ai.audit_logger import log_customer_message
 from app.ai.audit_logger import log_ai_response
+from app.ai.audit_logger import reserve_ai_outgoing_reply, update_ai_outgoing_reply_status
 from app.ai.customer_state_engine import get_customer_state, record_ai_reply, reply_hash
 from app.ai.message_decision_engine import deterministic_reply_for_message
 from app.ai.message_decision_service import (
@@ -478,6 +479,16 @@ def _store_generated_reply(
         "message_id": "",
         "note": "NOT_SENT",
     }
+    reply_id = reserve_ai_outgoing_reply(
+        conversation_id=conversation_id,
+        customer_phone=customer_phone,
+        reply_text=reply_text,
+        intent=intent,
+        escalated=should_escalate,
+        message_mode=media_mode,
+        media_urls=image_urls,
+        send_status="pending",
+    )
     try:
         send_result = send_whatsapp_reply_with_fallback(
             phone_number=customer_phone,
@@ -512,30 +523,23 @@ def _store_generated_reply(
         logger.error(f"[AI-RESPONSE-SEND-FAILED] {customer_phone}: {exc}")
         send_result = {"success": False, "error": str(exc)}
 
-    reply_id = str(uuid.uuid4())
-    try:
-        conn = get_db_connection()
-        conn.execute(
-            """
-            INSERT INTO ai_outgoing_replies
-            (id, conversation_id, customer_phone, reply_text, intent,
-             escalated, send_status, message_mode, media_json, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                reply_id,
-                conversation_id,
-                customer_phone,
-                reply_text,
-                intent,
-                should_escalate,
-                "sent" if send_result.get("success") else "failed",
-                media_mode,
-                json.dumps({"image_urls": image_urls}, ensure_ascii=False),
-                datetime.now(timezone.utc).isoformat(),
-            ),
+    final_status = "sent" if send_result.get("success") else "failed"
+    if reply_id:
+        update_ai_outgoing_reply_status(reply_id, send_status=final_status)
+    else:
+        reply_id = reserve_ai_outgoing_reply(
+            conversation_id=conversation_id,
+            customer_phone=customer_phone,
+            reply_text=reply_text,
+            intent=intent,
+            escalated=should_escalate,
+            message_mode=media_mode,
+            media_urls=image_urls,
+            send_status=final_status,
         )
 
+    try:
+        conn = get_db_connection()
         if should_escalate:
             reason = reply_result.get("escalation_reason", "AI escalation")
             conn.execute(
@@ -652,6 +656,16 @@ def _store_generated_reply(
         ]
     for extra_text in extra_messages:
         try:
+            extra_reply_id = reserve_ai_outgoing_reply(
+                conversation_id=conversation_id,
+                customer_phone=customer_phone,
+                reply_text=extra_text,
+                intent=f"{intent}_cta",
+                escalated=False,
+                message_mode="text",
+                media_urls=[],
+                send_status="pending",
+            )
             extra_send = send_whatsapp_reply_with_fallback(
                 phone_number=customer_phone,
                 message_text=extra_text,
@@ -662,29 +676,20 @@ def _store_generated_reply(
                 },
                 customer_name=customer_name,
             )
-            conn = get_db_connection()
-            conn.execute(
-                """
-                INSERT INTO ai_outgoing_replies
-                (id, conversation_id, customer_phone, reply_text, intent,
-                 escalated, send_status, message_mode, media_json, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    str(uuid.uuid4()),
-                    conversation_id,
-                    customer_phone,
-                    extra_text,
-                    f"{intent}_cta",
-                    0,
-                    "sent" if extra_send.get("success") else "failed",
-                    "text",
-                    json.dumps({"image_urls": []}, ensure_ascii=False),
-                    datetime.now(timezone.utc).isoformat(),
-                ),
-            )
-            conn.commit()
-            conn.close()
+            extra_final_status = "sent" if extra_send.get("success") else "failed"
+            if extra_reply_id:
+                update_ai_outgoing_reply_status(extra_reply_id, send_status=extra_final_status)
+            else:
+                reserve_ai_outgoing_reply(
+                    conversation_id=conversation_id,
+                    customer_phone=customer_phone,
+                    reply_text=extra_text,
+                    intent=f"{intent}_cta",
+                    escalated=False,
+                    message_mode="text",
+                    media_urls=[],
+                    send_status=extra_final_status,
+                )
             log_ai_response(
                 phone=customer_phone,
                 response_message=extra_text,

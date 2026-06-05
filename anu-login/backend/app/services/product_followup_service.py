@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from app.ai.conversation_state_manager import get_conversation_state, set_conversation_state
+from app.ai.audit_logger import reserve_ai_outgoing_reply, update_ai_outgoing_reply_status
 from app.ai.customer_state_engine import record_ai_reply
 from app.ai.pricing_formatter import PricingFormatter
 from app.ai.whatsapp_delivery_service import send_whatsapp_reply_with_fallback
@@ -959,6 +960,16 @@ def run_due_product_followups(limit: int = 100, send_live: bool | None = None) -
             send_status = "logged"
             send_error = None
             scenario = str(payload.get("scenario") or item.get("scenario") or "availability")
+            reply_row_id = reserve_ai_outgoing_reply(
+                conversation_id=f"product_followup:{item['id']}",
+                customer_phone=item["phone"],
+                reply_text=reply_text,
+                intent=f"product_followup_{item['followup_stage']}",
+                escalated=False,
+                message_mode=payload.get("media_mode", "text"),
+                media_urls=payload.get("media_urls", []),
+                send_status="pending",
+            )
 
             if live_mode:
                 result = send_whatsapp_reply_with_fallback(
@@ -983,6 +994,19 @@ def run_due_product_followups(limit: int = 100, send_live: bool | None = None) -
                 else:
                     send_status = "failed"
                     send_error = result.get("error")
+            if reply_row_id:
+                update_ai_outgoing_reply_status(reply_row_id, send_status=send_status)
+            else:
+                reserve_ai_outgoing_reply(
+                    conversation_id=f"product_followup:{item['id']}",
+                    customer_phone=item["phone"],
+                    reply_text=reply_text,
+                    intent=f"product_followup_{item['followup_stage']}",
+                    escalated=False,
+                    message_mode=payload.get("media_mode", "text"),
+                    media_urls=payload.get("media_urls", []),
+                    send_status=send_status,
+                )
 
             conn.execute(
                 """
@@ -1008,27 +1032,6 @@ def run_due_product_followups(limit: int = 100, send_live: bool | None = None) -
 
             if item.get("followup_stage") == "latent_handoff" and send_status in {"sent", "logged"}:
                 activations.append((item, scenario))
-
-            conn.execute(
-                """
-                INSERT INTO ai_outgoing_replies
-                (id, conversation_id, customer_phone, reply_text, intent,
-                 escalated, send_status, message_mode, media_json, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    str(uuid.uuid4()),
-                    f"product_followup:{item['id']}",
-                    item["phone"],
-                    reply_text,
-                    f"product_followup_{item['followup_stage']}",
-                    0,
-                    send_status,
-                    payload.get("media_mode", "text"),
-                    json.dumps({"image_urls": payload.get("media_urls", [])}, ensure_ascii=False),
-                    now,
-                ),
-            )
             state_sync_events.append(
                 {
                     "customer_id": item["phone"],

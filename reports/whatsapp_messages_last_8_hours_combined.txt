@@ -1,0 +1,1225 @@
+PureLeven WhatsApp Messages Report - Last 8 Hours (Reconstructed)
+
+This file combines the stored raw 4h audit, the 6h production message report, and the Wabis screenshot-confirmed reply that was not persisted in the primary DB.
+
+Sources:
+- WHATSAPP_RAW_AUDIT_LAST_4_HOURS.md
+- reports/whatsapp_messages_last_6_hours.txt
+- Wabis screenshot for +917902708421 at 2026-06-05 1:05 PM
+
+
+=== SOURCE 1: RAW 4-HOUR AUDIT ===
+
+
+# WhatsApp / Customer Message Audit - Last 4 Hours
+Cutoff UTC: 2026-06-04T10:08:23+00:00
+Total rows: 199
+
+Customer: 919020946593
+Conversation ID: product_followup:1de0e33c-bb0b-436e-b619-44ce738c6cf2
+
+[10:08:27] [ai] [ai_outgoing_replies] [806b56a3-e7c6-4cc9-b289-35161374af75]
+Order venenkil peru, address, phone number, pincode ayacholu 😊
+
+---
+
+Customer: 971558760952
+Conversation ID: product_followup:e254c5d6-2534-4fe0-9318-6edda66d4295
+
+[10:09:27] [ai] [ai_outgoing_replies] [f58ce166-1b96-47e4-9338-a409e9594171]
+Ithu venenkil innu dispatch cheyyan try cheyyam. Fresh stock aanu 😊
+
+---
+
+Customer: 918606699133
+Conversation ID: 918606699133-43011
+
+[10:09:35] [customer] [ai_incoming_messages] [1c0b8aaa-c379-4911-b457-4751f3551e68]
+Paid using Google Pay! ✅
+
+[10:09:35] [customer] [conversation_audit_log:customer] [86e20aa6-3a5e-4541-a145-3460d499db7d]
+Paid using Google Pay! ✅
+
+[10:10:43] [ai] [ai_outgoing_replies] [62398f91-ae9b-4b42-866a-3f6fb97baa6c]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+[10:11:16] [customer] [ai_incoming_messages] [2f76ab48-634d-4d10-a607-43d5d9a977e1]
+എന്ത്
+
+[10:11:16] [customer] [conversation_audit_log:customer] [970e5b18-370d-403f-981d-9731071ad746]
+എന്ത്
+
+[10:12:28] [ai] [ai_outgoing_replies] [5dab6491-3af6-4a58-ba32-cc1c1bd8dfca]
+കുറച്ച് clear ആയി പറയാമോ? Product, delivery, payment, order എല്ലാം help ചെയ്യാം.
+
+[10:14:43] [customer] [ai_incoming_messages] [ad6fff2d-4499-4e36-8a38-5a301689dec4]
+[[media:audio]]
+
+[10:14:43] [customer] [conversation_audit_log:customer] [291e8855-c528-4eb4-9230-5bc0e3b84356]
+[[media:audio]]
+
+[10:15:58] [ai] [ai_outgoing_replies] [e65f431c-77a1-46d4-8583-67d4bebe66c8]
+I received the audio 😊
+
+If this is for an order/payment, please type one line also so I can understand it clearly.
+
+---
+
+Customer: 918606786365
+Conversation ID: 918606786365-43011
+
+[10:09:38] [customer] [ai_incoming_messages] [92b14bac-7e17-4d1c-b4c0-2952fbb74558]
+#Button Reply#Buy Now
+
+[10:09:38] [customer] [conversation_audit_log:customer] [0cd18966-380f-4e84-be87-df3f949a597b]
+#Button Reply#Buy Now
+
+[10:10:47] [customer] [ai_incoming_messages] [403d5209-8eb6-441b-9ea7-87c26d58d3b4]
+#Button Reply#വിലാസം നൽകുക
+
+[10:10:47] [customer] [conversation_audit_log:customer] [6c75fec0-7ba2-4ca7-8046-eda17777c247]
+#Button Reply#വിലാസം നൽകുക
+
+---
+
+Customer: 918606786365
+Conversation ID: 918606786365
+
+[10:09:38] [system] [routing_log] [becdf2b0-edb8-4756-915d-8298dd157b4f]
+#Button Reply#Buy Now
+
+[10:09:38] [system] [conversation_audit_log:system] [65287641-18c5-41a3-97c1-4b1a8a568d40]
+#Button Reply#Buy Now
+
+[10:10:47] [system] [routing_log] [32026b07-4728-46e2-9c72-4d279de56bfd]
+#Button Reply#വിലാസം നൽകുക
+
+[10:10:47] [system] [conversation_audit_log:system] [c61b3040-e9ea-4167-9cc5-8dcd264aada5]
+#Button Reply#വിലാസം നൽകുക
+
+---
+
+Customer: 918606699133
+Conversation ID: 918606699133
+
+[10:10:42] [system] [routing_log] [58a138fc-ea51-499f-b8a0-f09283d87ea3]
+Paid using Google Pay! ✅
+
+[10:10:42] [system] [conversation_audit_log:system] [2c10b54e-0411-4b5a-80ed-1b6722ac287b]
+Paid using Google Pay! ✅
+
+[10:10:43] [ai] [conversation_audit_log:ai] [185f59be-99ba-4330-be39-4663a769da61]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+[10:12:27] [system] [routing_log] [b1ebab98-ad2b-4fdf-94fd-2d7082ab03b8]
+എന്ത്
+
+[10:12:27] [system] [conversation_audit_log:system] [cf7516bb-76f3-4d2f-910d-c2f130b0adb4]
+എന്ത്
+
+[10:12:28] [ai] [conversation_audit_log:ai] [b5d87039-0637-4fef-add0-9c91978b026b]
+കുറച്ച് clear ആയി പറയാമോ? Product, delivery, payment, order എല്ലാം help ചെയ്യാം.
+
+[10:15:57] [system] [routing_log] [ddca512d-5291-46b5-8230-aebe6c5f70e5]
+[[media:audio]]
+
+[10:15:57] [system] [conversation_audit_log:system] [c20d5a89-18c1-4b6d-83f0-83b838c06c24]
+[[media:audio]]
+
+[10:15:58] [ai] [conversation_audit_log:ai] [db5183f7-e823-4f82-a622-9c8ac6b769d6]
+I received the audio 😊
+
+If this is for an order/payment, please type one line also so I can understand it clearly.
+
+---
+
+Customer: 918547574028
+Conversation ID: product_followup:ea7d4eda-f6aa-4ded-ba9a-f80b5dbe1e8b
+
+[10:17:27] [ai] [ai_outgoing_replies] [94852358-ac0f-47ca-aab1-4e89bddd139a]
+Value nokkiyal combo packs aanu best. Fresh spices mix cheythu free delivery option kittum.
+
+*COMBO PACKS*
+
+*Combo    | Includes                            | Price*
+────────────────────────────────────────────
+Combo Offer 1 | Cardamom 100g + Clove 100g          | ₹560
+Combo Offer 2 | Cardamom 100g + Black Pepper 200g   | ₹640
+Combo Offer 3 | Cardamom 100g + Ceylon Cinnamon 100g | ₹699
+Combo Offer 4 | Cardamom 200g + Clove 200g + Black Pepper 500g | ₹1649
+Combo Offer 5 | Cardamom 100g + Clove 100g + Black Pepper 200g + Ceylon Cinnamon 100g | ₹999
+Combo Offer 6 | Cardamom 100g + Black Pepper 500g   | ₹845
+
+കേരളത്തിൽ ₹600 കഴിഞ്ഞാൽ free delivery. കേരളത്തിന് പുറത്തേക്ക് customer charge ₹60 ആണ്.
+
+---
+
+Customer: 919482539902
+Conversation ID: product_followup:1e945540-b07a-413f-adaf-59ce94bffca9
+
+[10:21:27] [ai] [ai_outgoing_replies] [1a939372-68b6-4d52-b6a6-682c7539d4f2]
+Ithu venenkil innu dispatch cheyyan try cheyyam. Fresh stock aanu 😊
+
+---
+
+Customer: 919895292423
+Conversation ID: product_followup:bda88e7d-0fd0-4a43-9097-97afe4cc8f13
+
+[10:22:27] [ai] [ai_outgoing_replies] [453f3689-da5e-47d2-928e-0206ca9c4013]
+I’ll keep this open for now. If you want to continue later, just reply with the product name.
+
+---
+
+Customer: 919961446547
+Conversation ID: 919961446547-43011
+
+[10:23:27] [customer] [ai_incoming_messages] [0884a7d6-1e77-4c7d-898e-ed4edc2b2ac8]
+Hello! Can I get more expa info on blackpepper?
+
+[10:23:27] [customer] [conversation_audit_log:customer] [d8d1020f-4869-4a10-aeda-5bc6578fa5e0]
+Hello! Can I get more expa info on blackpepper?
+
+[10:24:09] [customer] [ai_incoming_messages] [cffc632b-e1b4-42a7-a6e7-bcb1e4409101]
+പറയാം kurachu കഴിഞ്ഞു ഓഡർ തരാം
+
+[10:24:09] [customer] [conversation_audit_log:customer] [57ae0228-1fc2-4212-9ac8-3636e9173fb7]
+പറയാം kurachu കഴിഞ്ഞു ഓഡർ തരാം
+
+[10:25:13] [ai] [ai_outgoing_replies] [72fc1db9-a76c-4a2a-98cc-b3acc29bba87]
+കുറച്ച് clear ആയി പറയാമോ? Product, delivery, payment, order എല്ലാം help ചെയ്യാം.
+
+[10:27:19] [customer] [ai_incoming_messages] [b7a9d5df-b4db-496b-b838-72b16875fc4c]
+I
+
+[10:27:19] [customer] [conversation_audit_log:customer] [cfbb14f5-c841-4685-acab-8d1609071f0a]
+I
+
+[10:27:34] [customer] [ai_incoming_messages] [57124f74-373b-4f1b-915e-e626508b750c]
+[[media:audio]]
+
+[10:27:34] [customer] [conversation_audit_log:customer] [62b71029-c664-4600-b072-0be47498889b]
+[[media:audio]]
+
+[10:28:43] [ai] [ai_outgoing_replies] [c61b6e40-264d-4155-9ab7-1bd58a180043]
+I received the audio 😊
+
+If this is for an order/payment, please type one line also so I can understand it clearly.
+
+---
+
+Customer: 918904604151
+Conversation ID: 918904604151-43011
+
+[10:23:27] [customer] [ai_incoming_messages] [42191e5f-7cb7-4cb8-b1ff-2cd9fecaa34b]
+Hello! Can I get more expa info on blackpepper?
+
+[10:23:27] [customer] [conversation_audit_log:customer] [39dca06d-b2be-4a4a-988a-9e54bb230fb8]
+Hello! Can I get more expa info on blackpepper?
+
+[10:23:37] [customer] [ai_incoming_messages] [6e8780fc-036a-432a-b261-6da2734c5bb1]
+Good effort
+
+[10:23:37] [customer] [conversation_audit_log:customer] [e6048090-c7e8-490d-84a1-00611481d0b7]
+Good effort
+
+[10:23:56] [customer] [ai_incoming_messages] [20fc00df-906a-4c03-b48e-a828e258fec0]
+Where is location,
+
+[10:23:56] [customer] [conversation_audit_log:customer] [82a2b19d-d966-46ef-87ec-9e94e8cda595]
+Where is location,
+
+[10:24:58] [ai] [ai_outgoing_replies] [6123611e-2694-4e36-bfe6-554dbef11c48]
+PureLeven Idukki-side spices aanu. Farm story, products, delivery, എല്ലാം help cheyyാം.
+
+---
+
+Customer: 918904604151
+Conversation ID: 918904604151
+
+[10:24:57] [system] [routing_log] [995e3173-9cc7-43b6-9e5c-71a62e225f88]
+Where is location,
+
+[10:24:57] [system] [conversation_audit_log:system] [10d4815b-79a6-45c3-b0de-4b0c170dc817]
+Where is location,
+
+[10:24:58] [ai] [conversation_audit_log:ai] [cbb57891-9e3a-47d1-b4ff-b89639e08a26]
+PureLeven Idukki-side spices aanu. Farm story, products, delivery, എല്ലാം help cheyyാം.
+
+---
+
+Customer: 919961446547
+Conversation ID: 919961446547
+
+[10:25:12] [system] [routing_log] [e624abe4-d4d8-47b9-899a-a94ad1be143d]
+പറയാം kurachu കഴിഞ്ഞു ഓഡർ തരാം
+
+[10:25:12] [system] [conversation_audit_log:system] [b6fe2eab-4404-4896-b761-98e14aa506e4]
+പറയാം kurachu കഴിഞ്ഞു ഓഡർ തരാം
+
+[10:25:13] [ai] [conversation_audit_log:ai] [ddff90e6-9ebf-4bbd-9d2c-de759a9fe6b9]
+കുറച്ച് clear ആയി പറയാമോ? Product, delivery, payment, order എല്ലാം help ചെയ്യാം.
+
+[10:28:42] [system] [routing_log] [84d40cbd-1937-4041-8726-be86c196c07b]
+[[media:audio]]
+
+[10:28:42] [system] [conversation_audit_log:system] [894f6112-59b5-44a6-a88d-6e48af98aa50]
+[[media:audio]]
+
+[10:28:43] [ai] [conversation_audit_log:ai] [6bb0605f-f8c6-4e81-b098-123d1e48e4f0]
+I received the audio 😊
+
+If this is for an order/payment, please type one line also so I can understand it clearly.
+
+---
+
+Customer: 918086898530
+Conversation ID: 918086898530-43011
+
+[10:35:04] [customer] [ai_incoming_messages] [75a81a82-5e96-4626-a994-b20dbd02fbb7]
+Hello! Can I get more expa info on blackpepper?
+
+[10:35:04] [customer] [conversation_audit_log:customer] [645d02d5-cb96-4c5b-a0b1-6cb7d9a9bac1]
+Hello! Can I get more expa info on blackpepper?
+
+[10:35:17] [customer] [ai_incoming_messages] [80207dcb-5b23-44cb-a575-41ab99127554]
+#Button Reply#🇮🇳 മലയാളം
+
+[10:35:17] [customer] [conversation_audit_log:customer] [246ba855-20d8-4f60-a3a4-dadf09d485a4]
+#Button Reply#🇮🇳 മലയാളം
+
+[10:35:31] [customer] [ai_incoming_messages] [8f122838-c345-4494-8702-099897c700c6]
+#Button Reply#🍃 വില കാണം
+
+[10:35:31] [customer] [conversation_audit_log:customer] [9df9a6a7-fa9f-4ac4-9616-b5c8a71177d8]
+#Button Reply#🍃 വില കാണം
+
+---
+
+Customer: 918086898530
+Conversation ID: 918086898530
+
+[10:35:17] [system] [routing_log] [ebb9cfa3-2326-4897-89f2-85372a796c39]
+#Button Reply#🇮🇳 മലയാളം
+
+[10:35:17] [system] [conversation_audit_log:system] [df70d0ac-6892-4c28-8210-7972615b2207]
+#Button Reply#🇮🇳 മലയാളം
+
+[10:35:31] [system] [routing_log] [2ba7696b-3e81-4fe2-82f6-1fa753290671]
+#Button Reply#🍃 വില കാണം
+
+[10:35:31] [system] [conversation_audit_log:system] [45094ab2-885f-4577-a484-79d232800279]
+#Button Reply#🍃 വില കാണം
+
+---
+
+Customer: 918113808522
+Conversation ID: product_followup:4fb79bcd-f143-4c5f-b46a-a00af1f87552
+
+[10:38:27] [ai] [ai_outgoing_replies] [28e70cec-e095-4077-97be-dd7879b2df6d]
+Ithu venenkil innu dispatch cheyyan try cheyyam. Fresh stock aanu 😊
+
+---
+
+Customer: 918123014265
+Conversation ID: product_followup:aa8017c3-69f2-4779-b9a5-85e49de82762
+
+[10:38:27] [ai] [ai_outgoing_replies] [a97f3308-75f7-4e56-a541-2d57a0626c02]
+I’ll keep this open for now. If you want to continue later, just reply with the product name.
+
+---
+
+Customer: 918524007577
+Conversation ID: product_followup:38da835b-889e-490a-ada9-f170294eb246
+
+[10:41:27] [ai] [ai_outgoing_replies] [5b5a8975-519a-4135-bc86-ca2f2e4e5ede]
+I’ll keep this open for now. If you want to continue later, just reply with the product name.
+
+---
+
+Customer: 919495658746
+Conversation ID: 919495658746-43011
+
+[10:43:09] [customer] [ai_incoming_messages] [21ebb442-8bc7-4678-a411-2b861a500095]
+Hello! Can I get more expa info on blackpepper?
+
+[10:43:09] [customer] [conversation_audit_log:customer] [c21a94d6-ae41-47e8-b013-73ac1fe5b71b]
+Hello! Can I get more expa info on blackpepper?
+
+[10:44:18] [ai] [ai_outgoing_replies] [f5645229-d41f-4efd-b69d-21c35a1f3e1e]
+Hello there! Happy to share all the details about our black pepper.
+
+Washed and cleaned Idukki black pepper from our spice-growing belt.
+
+*Why customers pick this*
+• Source: Idukki
+• Bold aroma, clean whole peppercorns, and strong everyday cooking heat.
+• Good for: everyday cooking, pepper tea, masala blends
+
+Customers usually use this for everyday cooking, pepper tea, masala blends.
+
+*BLACK PEPPER* • Idukki
+
+_Bold aroma, clean whole peppercorns, and strong everyday cooking heat._
+
+*Size     | Price*
+────────────────
+250g    | ₹300
+500g    | ₹540
+1kg     | ₹950
+
+What specific information are you looking for?
+
+[10:44:19] [ai] [ai_outgoing_replies] [4aefc80f-185f-4824-ae96-bae00eb68e96]
+To order, please send:
+
+Name, full address, phone number, and pincode 😊
+
+Kerala orders ₹600+ get free delivery.
+
+Outside Kerala normal delivery is ₹120, but we collect only ₹60 from the customer.
+
+Combo order or ₹600+ purchase gets free delivery.
+
+---
+
+Customer: 919495658746
+Conversation ID: 919495658746
+
+[10:44:12] [system] [routing_log] [cb4f8615-d10f-4960-896b-108d89e9dbce]
+Hello! Can I get more expa info on blackpepper?
+
+[10:44:12] [system] [conversation_audit_log:system] [3be355dd-932b-4345-bfff-2401a33dfec3]
+Hello! Can I get more expa info on blackpepper?
+
+[10:44:18] [ai] [conversation_audit_log:ai] [86206406-44d1-4f03-8e9c-fba38b5b0a2c]
+Hello there! Happy to share all the details about our black pepper.
+
+Washed and cleaned Idukki black pepper from our spice-growing belt.
+
+*Why customers pick this*
+• Source: Idukki
+• Bold aroma, clean whole peppercorns, and strong everyday cooking heat.
+• Good for: everyday cooking, pepper tea, masala blends
+
+Customers usually use this for everyday cooking, pepper tea, masala blends.
+
+*BLACK PEPPER* • Idukki
+
+_Bold aroma, clean whole peppercorns, and strong everyday cooking heat._
+
+*Size     | Price*
+────────────────
+250g    | ₹300
+500g    | ₹540
+1kg     | ₹950
+
+What specific information are you looking for?
+
+[10:44:19] [ai] [conversation_audit_log:ai] [c5806c47-0e80-48c2-a88f-1ac96c8749a4]
+To order, please send:
+
+Name, full address, phone number, and pincode 😊
+
+Kerala orders ₹600+ get free delivery.
+
+Outside Kerala normal delivery is ₹120, but we collect only ₹60 from the customer.
+
+Combo order or ₹600+ purchase gets free delivery.
+
+---
+
+Customer: 919495658746
+Conversation ID: product_followup:f3391e3b-9a40-42a2-9b8d-c65d5305b2d5
+
+[10:48:27] [ai] [ai_outgoing_replies] [8ec5e419-9559-418b-bf7d-5eafd7d87180]
+Order venenkil peru, address, phone number, pincode ayacholu 😊
+
+---
+
+Customer: 919497276757
+Conversation ID: 919497276757-43011
+
+[10:49:14] [customer] [ai_incoming_messages] [25e50d17-1a99-40f4-98d6-c6485425fa0e]
+Hello! Can I get more expa info on blackpepper?
+
+[10:49:14] [customer] [conversation_audit_log:customer] [145d0e10-4d03-4b99-aee5-953440977d8c]
+Hello! Can I get more expa info on blackpepper?
+
+[10:49:20] [customer] [ai_incoming_messages] [b95fae4c-bab4-45f6-a378-f51f18d6686b]
+#Button Reply#🇬🇧 English
+
+[10:49:20] [customer] [conversation_audit_log:customer] [484e76c1-f7d9-4617-abba-9d3671303f8c]
+#Button Reply#🇬🇧 English
+
+---
+
+Customer: 919497276757
+Conversation ID: 919497276757
+
+[10:49:20] [system] [routing_log] [79248971-53d6-4768-b5d5-1bbbb16e1dbe]
+#Button Reply#🇬🇧 English
+
+[10:49:20] [system] [conversation_audit_log:system] [3edad2b9-4794-4982-baed-61bf961525cb]
+#Button Reply#🇬🇧 English
+
+---
+
+Customer: 918129100661
+Conversation ID: 918129100661-43011
+
+[10:49:31] [customer] [ai_incoming_messages] [c09a5dd1-bef7-49ed-9ce4-b53dd579d026]
+Ok
+
+[10:49:31] [customer] [conversation_audit_log:customer] [480b3957-fa09-4bcc-9500-2da5289f57e4]
+Ok
+
+[10:50:43] [ai] [ai_outgoing_replies] [a99a9d80-75bc-413d-bade-12fb80632321]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+---
+
+Customer: 918129100661
+Conversation ID: 918129100661
+
+[10:50:42] [system] [routing_log] [63112aba-7260-428b-ad3f-b8eff3438e5a]
+Ok
+
+[10:50:42] [system] [conversation_audit_log:system] [6d089144-196b-4b2f-b194-5741313309f7]
+Ok
+
+[10:50:43] [ai] [conversation_audit_log:ai] [386fd87a-a897-4064-b463-6556d0fc6a9f]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+---
+
+Customer: 918890406046
+Conversation ID: 918890406046-43011
+
+[10:51:05] [customer] [ai_incoming_messages] [ab2394e5-c13d-46c4-ae08-d02f89d9adac]
+Ok
+
+[10:51:05] [customer] [conversation_audit_log:customer] [d03ac89c-261a-4243-ba08-4f229f0e1a0a]
+Ok
+
+[10:52:13] [ai] [ai_outgoing_replies] [74bca3bb-ad48-49d7-a70a-a3da232b0f5a]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+---
+
+Customer: 918890406046
+Conversation ID: 918890406046
+
+[10:52:12] [system] [routing_log] [67848092-d486-4bec-8473-2b4d9990cd44]
+Ok
+
+[10:52:12] [system] [conversation_audit_log:system] [1da2408f-3a61-47b8-b2a7-5a6d8c1ffdd6]
+Ok
+
+[10:52:13] [ai] [conversation_audit_log:ai] [080d0e37-1f5d-44d4-9994-7238670af0e2]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+---
+
+Customer: 917025634807
+Conversation ID: product_followup:7f6d90f1-7c8d-4651-9210-bfebf07fce3f
+
+[10:53:27] [ai] [ai_outgoing_replies] [91cd9212-e0b1-4d58-8da4-e319b07e7a53]
+I’ll keep this open for now. If you want to continue later, just reply with the product name.
+
+---
+
+Customer: 917892264667
+Conversation ID: 917892264667-43011
+
+[10:55:03] [customer] [ai_incoming_messages] [156bf2fa-ad62-4284-ac3f-57f8ffa403d2]
+Hello! Can I get more expa info on blackpepper?
+
+[10:55:03] [customer] [conversation_audit_log:customer] [b97bf166-8db3-430e-8c08-d16e6b2e058f]
+Hello! Can I get more expa info on blackpepper?
+
+[10:55:24] [customer] [ai_incoming_messages] [1429f6b3-a9ac-4828-b681-eb14060259d7]
+Plants available??
+
+[10:55:24] [customer] [conversation_audit_log:customer] [06a03bbf-ee79-4886-836e-1f636788a1be]
+Plants available??
+
+[10:56:28] [ai] [ai_outgoing_replies] [6bdd7d4f-e528-4c73-b807-461565c52fbf]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+[11:00:07] [customer] [ai_incoming_messages] [6a668d69-003f-4328-abab-20e9f455ac34]
+Ok
+
+[11:00:07] [customer] [conversation_audit_log:customer] [ed4c1093-9440-44fe-9619-b80981d7dd06]
+Ok
+
+[11:00:42] [customer] [ai_incoming_messages] [b5376d4b-3416-4d5d-a84c-b8a0c19ceedc]
+Your nalyani green gold
+
+[11:00:42] [customer] [conversation_audit_log:customer] [12230a82-07bb-40d5-b498-4797d0f1b16c]
+Your nalyani green gold
+
+[11:00:46] [customer] [ai_incoming_messages] [28708a48-0d71-484f-a7e9-56ac37cf6258]
+??
+
+[11:00:46] [customer] [conversation_audit_log:customer] [35c19800-7402-431b-8baf-1d26b68b30dc]
+??
+
+[11:00:59] [customer] [ai_incoming_messages] [63b9fe30-9df8-40b2-9172-f0252829ac64]
+Your plonts
+
+[11:00:59] [customer] [conversation_audit_log:customer] [87e75b94-75e0-4811-a403-fa96f24e8b83]
+Your plonts
+
+---
+
+Customer: 917892264667
+Conversation ID: 917892264667
+
+[10:56:27] [system] [routing_log] [34132dd5-a1ce-402a-8f72-02597b8a8499]
+Plants available??
+
+[10:56:27] [system] [conversation_audit_log:system] [b93dea7e-2969-4c81-bc66-357561fb01ab]
+Plants available??
+
+[10:56:28] [ai] [conversation_audit_log:ai] [a84ae1a2-e5fa-45dc-b0d3-63062f4a0acd]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+[11:02:12] [system] [routing_log] [31a30206-6c62-46d0-a50b-9bba7d76f342]
+Your plonts
+
+[11:02:12] [system] [conversation_audit_log:system] [3ee53426-e87c-4b4c-b5a0-a15bbc370d4f]
+Your plonts
+
+---
+
+Customer: 919656343434
+Conversation ID: product_followup:1454ef2d-3953-4bea-ac36-6a8e25478bff
+
+[11:06:27] [ai] [ai_outgoing_replies] [bb42fdda-a35b-46d1-b858-99c6bb57e66c]
+I’ll keep this open for now. If you want to continue later, just reply with the product name.
+
+---
+
+Customer: 919539662671
+Conversation ID: 919539662671-43011
+
+[11:14:05] [customer] [ai_incoming_messages] [a9c66125-a486-4756-8807-7af2e4cef880]
+Hello! Can I get more expa info on blackpepper?
+
+[11:14:05] [customer] [conversation_audit_log:customer] [7b2358f1-ab31-4fc1-b70c-703fda4de0eb]
+Hello! Can I get more expa info on blackpepper?
+
+[11:15:17] [ai] [ai_outgoing_replies] [7ff2b09d-28a6-4c6d-8c75-50eb6676828c]
+Hello! Absolutely, happy to share more details about our black pepper.
+
+Washed and cleaned Idukki black pepper from our spice-growing belt.
+
+*Why customers pick this*
+• Source: Idukki
+• Bold aroma, clean whole peppercorns, and strong everyday cooking heat.
+• Good for: everyday cooking, pepper tea, masala blends
+
+Customers usually use this for everyday cooking, pepper tea, masala blends.
+
+*BLACK PEPPER* • Idukki
+
+_Bold aroma, clean whole peppercorns, and strong everyday cooking heat._
+
+*Size     | Price*
+────────────────
+250g    | ₹300
+500g    | ₹540
+1kg     | ₹950
+
+What specific information would you like to know?
+
+[11:15:18] [ai] [ai_outgoing_replies] [c9684278-bf5a-4df1-b615-44d13b9fb161]
+To order, please send:
+
+Name, full address, phone number, and pincode 😊
+
+Kerala orders ₹600+ get free delivery.
+
+Outside Kerala normal delivery is ₹120, but we collect only ₹60 from the customer.
+
+Combo order or ₹600+ purchase gets free delivery.
+
+[11:17:49] [customer] [ai_incoming_messages] [d77ff839-13d0-4267-959b-4d744f063d67]
+#Button Reply#🇮🇳 മലയാളം
+
+[11:17:49] [customer] [conversation_audit_log:customer] [37d1cfe9-b051-4319-99f1-af63d65c9f19]
+#Button Reply#🇮🇳 മലയാളം
+
+[11:18:21] [customer] [ai_incoming_messages] [70a99729-4462-4e29-b544-ff54fcd713cf]
+#Button Reply#🍃 വില കാണം
+
+[11:18:21] [customer] [conversation_audit_log:customer] [63c37630-12e1-4cdb-8847-9d9c9d7202ab]
+#Button Reply#🍃 വില കാണം
+
+---
+
+Customer: 919539662671
+Conversation ID: 919539662671
+
+[11:15:12] [system] [routing_log] [135f9011-e03f-40d1-b9ad-a74e052f5f4d]
+Hello! Can I get more expa info on blackpepper?
+
+[11:15:12] [system] [conversation_audit_log:system] [a292e6b6-aea8-404f-b353-3c641f59b04d]
+Hello! Can I get more expa info on blackpepper?
+
+[11:15:17] [ai] [conversation_audit_log:ai] [9ca088a1-b178-4a2d-ae68-4e98a393f8fc]
+Hello! Absolutely, happy to share more details about our black pepper.
+
+Washed and cleaned Idukki black pepper from our spice-growing belt.
+
+*Why customers pick this*
+• Source: Idukki
+• Bold aroma, clean whole peppercorns, and strong everyday cooking heat.
+• Good for: everyday cooking, pepper tea, masala blends
+
+Customers usually use this for everyday cooking, pepper tea, masala blends.
+
+*BLACK PEPPER* • Idukki
+
+_Bold aroma, clean whole peppercorns, and strong everyday cooking heat._
+
+*Size     | Price*
+────────────────
+250g    | ₹300
+500g    | ₹540
+1kg     | ₹950
+
+What specific information would you like to know?
+
+[11:15:18] [ai] [conversation_audit_log:ai] [7f544408-6aaa-4e7e-8715-2e057b543206]
+To order, please send:
+
+Name, full address, phone number, and pincode 😊
+
+Kerala orders ₹600+ get free delivery.
+
+Outside Kerala normal delivery is ₹120, but we collect only ₹60 from the customer.
+
+Combo order or ₹600+ purchase gets free delivery.
+
+[11:17:49] [system] [routing_log] [ea6ba108-c60f-4e6a-b1ae-94a1b4656ad7]
+#Button Reply#🇮🇳 മലയാളം
+
+[11:17:49] [system] [conversation_audit_log:system] [e2513670-e3ea-4766-84cf-2632cc204620]
+#Button Reply#🇮🇳 മലയാളം
+
+[11:18:21] [system] [routing_log] [3658c542-5ee6-4148-8184-bc0e2629c0a8]
+#Button Reply#🍃 വില കാണം
+
+[11:18:21] [system] [conversation_audit_log:system] [dedda8dc-06cb-4165-bf7a-80e742bc3811]
+#Button Reply#🍃 വില കാണം
+
+---
+
+Customer: 919946882289
+Conversation ID: product_followup:161e6b9e-60c8-49dc-8368-438e0a0659c6
+
+[11:15:27] [ai] [ai_outgoing_replies] [9c8d89b9-ecf0-4e8b-a9aa-c877c0b0cc6b]
+ഇപ്പോൾ ഇത് തുറന്ന നിലയിലാണ്. പിന്നീട് വേണമെങ്കിൽ product name അയച്ചാൽ മതി.
+
+---
+
+Customer: 919745486998
+Conversation ID: product_followup:30fa5bce-eafb-4852-b8d5-f49ced979d86
+
+[11:16:27] [ai] [ai_outgoing_replies] [269c9aac-530c-456a-a6e4-e34590010b8f]
+Ithu venenkil innu dispatch cheyyan try cheyyam. Fresh stock aanu 😊
+
+---
+
+Customer: 917744073783
+Conversation ID: 917744073783-43011
+
+[11:31:40] [customer] [ai_incoming_messages] [60c89aaf-eb26-47fa-b461-373eba892518]
+Hello! Can I get more expa info on blackpepper?
+
+[11:31:40] [customer] [conversation_audit_log:customer] [c5644766-fc1a-4e39-b926-f9a5e9312ad7]
+Hello! Can I get more expa info on blackpepper?
+
+[11:32:01] [customer] [ai_incoming_messages] [4bd117c1-b073-4aeb-9c49-88f7e30e7bc9]
+Black pepper what rate
+
+[11:32:01] [customer] [conversation_audit_log:customer] [dbf9afc0-6ee9-441d-bb76-142f5809c1a8]
+Black pepper what rate
+
+[11:32:22] [customer] [ai_incoming_messages] [76ad962c-76d0-4cc8-a778-ce672a5e996c]
+#Button Reply#🇬🇧 English
+
+[11:32:22] [customer] [conversation_audit_log:customer] [ce9ed0c8-701f-4489-9029-582463ede7ff]
+#Button Reply#🇬🇧 English
+
+[11:33:12] [customer] [ai_incoming_messages] [d6fa0300-5213-4990-a78b-9fa50469b0ab]
+#Button Reply#🍃 Spices Price
+
+[11:33:12] [customer] [conversation_audit_log:customer] [9049e1b0-7e48-423b-ad5a-0f0c8f2fb9eb]
+#Button Reply#🍃 Spices Price
+
+---
+
+Customer: 917744073783
+Conversation ID: 917744073783
+
+[11:32:22] [system] [routing_log] [60e0fa97-703d-4efd-a886-9f1ec829c1a5]
+#Button Reply#🇬🇧 English
+
+[11:32:22] [system] [conversation_audit_log:system] [02820367-3e9a-4344-9a32-f46f86e6400d]
+#Button Reply#🇬🇧 English
+
+[11:33:12] [system] [routing_log] [4f5d430b-8b46-4576-891f-886fd5915af1]
+#Button Reply#🍃 Spices Price
+
+[11:33:12] [system] [conversation_audit_log:system] [fb621149-66ce-416d-9472-aeffdbafd609]
+#Button Reply#🍃 Spices Price
+
+---
+
+Customer: 919539772914
+Conversation ID: 919539772914-43011
+
+[11:44:35] [customer] [ai_incoming_messages] [808b1a72-4c44-48f2-baed-e882be3f7008]
+Hello! Can I get more expa info on blackpepper?
+
+[11:44:35] [customer] [conversation_audit_log:customer] [6090e9ee-820d-4cb3-838b-ac79cfe24d2c]
+Hello! Can I get more expa info on blackpepper?
+
+[11:44:55] [customer] [ai_incoming_messages] [d88fefe3-09d1-43be-aec9-033d3e4769a9]
+#Button Reply#🇮🇳 മലയാളം
+
+[11:44:55] [customer] [conversation_audit_log:customer] [efd405e7-4b89-45e8-8e9f-8715df8a3e50]
+#Button Reply#🇮🇳 മലയാളം
+
+---
+
+Customer: 919539772914
+Conversation ID: 919539772914
+
+[11:44:55] [system] [routing_log] [83f4f854-4285-4f91-8090-50708ed310cf]
+#Button Reply#🇮🇳 മലയാളം
+
+[11:44:55] [system] [conversation_audit_log:system] [dc63e7a8-e7c8-47c4-9873-7b3763e805dc]
+#Button Reply#🇮🇳 മലയാളം
+
+---
+
+Customer: 917012028446
+Conversation ID: product_followup:d20ebf2b-3cb3-4eef-9465-d8fcf7f16c8e
+
+[11:49:27] [ai] [ai_outgoing_replies] [1ac5abb4-90d3-4723-8853-486ed6561161]
+I’ll keep this open for now. If you want to continue later, just reply with the product name.
+
+---
+
+Customer: 918309502995
+Conversation ID: 918309502995-43011
+
+[11:50:23] [customer] [ai_incoming_messages] [84c2a5c2-4e9e-4e35-81cf-2e0dc2d72308]
+Clove 250gm,cinnamon250gm.
+How much
+
+[11:50:23] [customer] [conversation_audit_log:customer] [8185b0d6-d7d7-4702-8b3a-5491532c29ae]
+Clove 250gm,cinnamon250gm.
+How much
+
+[11:50:39] [customer] [ai_incoming_messages] [ec4de80d-92e1-47b1-b6de-894065043a18]
+#Button Reply#🇬🇧 English
+
+[11:50:39] [customer] [conversation_audit_log:customer] [1689fd80-22d8-4775-837b-200f0c573d19]
+#Button Reply#🇬🇧 English
+
+[11:50:53] [customer] [ai_incoming_messages] [7bc6c45b-9b03-4860-945d-2573cd217281]
+#Button Reply#🍃 Spices Price
+
+[11:50:53] [customer] [conversation_audit_log:customer] [b1840829-57a4-4b86-a74b-3d378ba0eb38]
+#Button Reply#🍃 Spices Price
+
+---
+
+Customer: 918309502995
+Conversation ID: 918309502995
+
+[11:50:39] [system] [routing_log] [7d0cf857-c7b2-4c8e-9551-e9dc83162270]
+#Button Reply#🇬🇧 English
+
+[11:50:39] [system] [conversation_audit_log:system] [40382fa1-a145-401b-a84b-f8e959480fac]
+#Button Reply#🇬🇧 English
+
+[11:50:53] [system] [routing_log] [73c05913-b675-43f7-9533-b2c6f7675459]
+#Button Reply#🍃 Spices Price
+
+[11:50:53] [system] [conversation_audit_log:system] [4a1b0f70-9a1e-4ca8-b7b7-bdd40f580c62]
+#Button Reply#🍃 Spices Price
+
+---
+
+Customer: 917025035165
+Conversation ID: product_followup:b4a90adf-9cac-4336-9309-e2cfd87acab5
+
+[11:54:27] [ai] [ai_outgoing_replies] [c237dd61-4296-4281-8ff6-ba8132208760]
+I’ll keep this open for now. If you want to continue later, just reply with the product name.
+
+---
+
+Customer: 919400969109
+Conversation ID: 919400969109-43011
+
+[12:01:50] [customer] [ai_incoming_messages] [229733a5-53a0-49bf-a968-47accb111cea]
+Yes saved
+
+[12:01:50] [customer] [conversation_audit_log:customer] [2106b18a-223d-4794-82e2-f06ee3c508e8]
+Yes saved
+
+[12:02:58] [ai] [ai_outgoing_replies] [10b006d1-8d66-430a-b2a5-4150626198a3]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+---
+
+Customer: 919400969109
+Conversation ID: 919400969109
+
+[12:02:57] [system] [routing_log] [974ca2bf-2fcd-47b7-860c-aa40ffd1c645]
+Yes saved
+
+[12:02:57] [system] [conversation_audit_log:system] [359fca56-63e9-48a7-863e-ed86e9a545cd]
+Yes saved
+
+[12:02:58] [ai] [conversation_audit_log:ai] [4b44e521-3268-49e2-96aa-4c0a278d8944]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+---
+
+Customer: 919048786894
+Conversation ID: 919048786894-43011
+
+[12:03:21] [customer] [ai_incoming_messages] [eaa76322-2d92-4466-9e80-1dfc82d13321]
+Ok
+
+[12:03:21] [customer] [conversation_audit_log:customer] [b1fc8af4-4140-49b3-b922-43eb82a4256d]
+Ok
+
+[12:04:28] [ai] [ai_outgoing_replies] [9f03fb46-3e4b-4140-b0e3-029b46aad615]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+---
+
+Customer: 919048786894
+Conversation ID: 919048786894
+
+[12:04:27] [system] [routing_log] [e389ba0b-b272-4218-890a-605899096ecb]
+Ok
+
+[12:04:27] [system] [conversation_audit_log:system] [11c59e83-5f0f-467a-9b81-bbf3dccb022f]
+Ok
+
+[12:04:28] [ai] [conversation_audit_log:ai] [6b6ec2bd-4e53-444d-9b41-d651b0a4bfd0]
+Athu kurach clear aakki parayamo? I can help with products, delivery, payment, or orders.
+
+---
+
+Customer: 919633205890
+Conversation ID: 919633205890-43011
+
+[12:05:05] [customer] [ai_incoming_messages] [5baa09e0-8995-4535-9454-ddbc3c590673]
+Hello! Can I get more expa info on blackpepper?
+
+[12:05:05] [customer] [conversation_audit_log:customer] [7e10c746-3748-4f50-86d6-8b0034370dc9]
+Hello! Can I get more expa info on blackpepper?
+
+[12:06:18] [ai] [ai_outgoing_replies] [185aa471-f0f2-4ed6-a1b9-d1fb1deb0e29]
+Hi there! Yes, we'd love to tell you more about our Black Pepper.
+
+Washed and cleaned Idukki black pepper from our spice-growing belt.
+
+*Why customers pick this*
+• Source: Idukki
+• Bold aroma, clean whole peppercorns, and strong everyday cooking heat.
+• Good for: everyday cooking, pepper tea, masala blends
+
+Customers usually use this for everyday cooking, pepper tea, masala blends.
+
+*BLACK PEPPER* • Idukki
+
+_Bold aroma, clean whole peppercorns, and strong everyday cooking heat._
+
+*Size     | Price*
+────────────────
+250g    | ₹300
+500g    | ₹540
+1kg     | ₹950
+
+What specific details are you looking for?
+
+[12:06:19] [ai] [ai_outgoing_replies] [86349490-bc52-4949-be34-2fe8ca028e9c]
+To order, please send:
+
+Name, full address, phone number, and pincode 😊
+
+Kerala orders ₹600+ get free delivery.
+
+Outside Kerala normal delivery is ₹120, but we collect only ₹60 from the customer.
+
+Combo order or ₹600+ purchase gets free delivery.
+
+---
+
+Customer: 919633205890
+Conversation ID: 919633205890
+
+[12:06:12] [system] [routing_log] [0408909e-0af5-4182-a2ad-c7ae0e21f936]
+Hello! Can I get more expa info on blackpepper?
+
+[12:06:12] [system] [conversation_audit_log:system] [69dbf636-cd81-4aef-a84e-3cbaaf3a83d5]
+Hello! Can I get more expa info on blackpepper?
+
+[12:06:18] [ai] [conversation_audit_log:ai] [f78060ba-aeb5-4197-803e-60510719882f]
+Hi there! Yes, we'd love to tell you more about our Black Pepper.
+
+Washed and cleaned Idukki black pepper from our spice-growing belt.
+
+*Why customers pick this*
+• Source: Idukki
+• Bold aroma, clean whole peppercorns, and strong everyday cooking heat.
+• Good for: everyday cooking, pepper tea, masala blends
+
+Customers usually use this for everyday cooking, pepper tea, masala blends.
+
+*BLACK PEPPER* • Idukki
+
+_Bold aroma, clean whole peppercorns, and strong everyday cooking heat._
+
+*Size     | Price*
+────────────────
+250g    | ₹300
+500g    | ₹540
+1kg     | ₹950
+
+What specific details are you looking for?
+
+[12:06:19] [ai] [conversation_audit_log:ai] [ce549965-e71a-4301-8b0c-c229384cac62]
+To order, please send:
+
+Name, full address, phone number, and pincode 😊
+
+Kerala orders ₹600+ get free delivery.
+
+Outside Kerala normal delivery is ₹120, but we collect only ₹60 from the customer.
+
+Combo order or ₹600+ purchase gets free delivery.
+
+---
+
+Customer: 919633205890
+Conversation ID: product_followup:0ce07bf1-9df9-4709-bfff-6545911b5ee7
+
+[12:10:27] [ai] [ai_outgoing_replies] [1e04f0a0-20cb-4d31-87ab-2d0364a95e42]
+Order venenkil peru, address, phone number, pincode ayacholu 😊
+
+---
+
+Customer: 918454979244
+Conversation ID: 918454979244-43011
+
+[12:22:18] [customer] [ai_incoming_messages] [7113b4de-f1c5-4633-a930-b96bcee54c48]
+Hello! Can I get more expa info on blackpepper?
+
+[12:22:18] [customer] [conversation_audit_log:customer] [bd8e1e88-b4c1-4f6c-a1f2-889b4f5c1766]
+Hello! Can I get more expa info on blackpepper?
+
+[12:22:26] [customer] [ai_incoming_messages] [91d28d76-0f11-48f8-a3f7-787013ce81c2]
+#Button Reply#🇮🇳 മലയാളം
+
+[12:22:26] [customer] [conversation_audit_log:customer] [5ffbfbab-489c-4be2-85e4-f6f3497c35c1]
+#Button Reply#🇮🇳 മലയാളം
+
+[12:23:16] [customer] [ai_incoming_messages] [4057970e-992f-41c7-b5e1-b8ecb2afeb2c]
+#Button Reply#🍃 വില കാണം
+
+[12:23:16] [customer] [conversation_audit_log:customer] [644caef9-5864-484f-a503-d5e1ba1107c0]
+#Button Reply#🍃 വില കാണം
+
+---
+
+Customer: 918454979244
+Conversation ID: 918454979244
+
+[12:22:26] [system] [routing_log] [3eb1ab29-0e4a-4467-8507-9f883c75815d]
+#Button Reply#🇮🇳 മലയാളം
+
+[12:22:26] [system] [conversation_audit_log:system] [9ff27b15-6189-4d51-944c-4d4e2aaf2431]
+#Button Reply#🇮🇳 മലയാളം
+
+[12:23:16] [system] [routing_log] [36ab75c6-040a-4054-ad49-69346cea6ae1]
+#Button Reply#🍃 വില കാണം
+
+[12:23:16] [system] [conversation_audit_log:system] [67f0f970-c04c-4d1d-a182-5c93a3716cd7]
+#Button Reply#🍃 വില കാണം
+
+---
+
+Customer: 918075609331
+Conversation ID: product_followup:f2735657-ba9d-4fde-a8e6-853e9824e2cd
+
+[12:27:27] [ai] [ai_outgoing_replies] [b34285b2-d9d9-4122-a743-2dc16b903313]
+I’ll keep this open for now. If you want to continue later, just reply with the product name.
+
+---
+
+Customer: 919900000123
+Conversation ID: product_followup:dd6b4ea4-f623-4382-9a47-220e7d177501
+
+[12:28:27] [ai] [ai_outgoing_replies] [4731318b-8b00-4973-8b1a-0e559aacdf6d]
+Value nokkiyal combo packs aanu best. Fresh spices mix cheythu free delivery option kittum.
+
+*COMBO PACKS*
+
+*Combo    | Includes                            | Price*
+────────────────────────────────────────────
+Combo Offer 1 | Cardamom 100g + Clove 100g          | ₹560
+Combo Offer 2 | Cardamom 100g + Black Pepper 200g   | ₹640
+Combo Offer 3 | Cardamom 100g + Ceylon Cinnamon 100g | ₹699
+Combo Offer 4 | Cardamom 200g + Clove 200g + Black Pepper 500g | ₹1649
+Combo Offer 5 | Cardamom 100g + Clove 100g + Black Pepper 200g + Ceylon Cinnamon 100g | ₹999
+Combo Offer 6 | Cardamom 100g + Black Pepper 500g   | ₹845
+
+Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.
+
+---
+
+Customer: 919900000125
+Conversation ID: product_followup:4a316726-b548-4cda-9c62-88025322c348
+
+[12:29:27] [ai] [ai_outgoing_replies] [072cc0a6-4132-4e32-a10e-6c001ed2aa86]
+Value nokkiyal combo packs aanu best. Fresh spices mix cheythu free delivery option kittum.
+
+*COMBO PACKS*
+
+*Combo    | Includes                            | Price*
+────────────────────────────────────────────
+Combo Offer 1 | Cardamom 100g + Clove 100g          | ₹560
+Combo Offer 2 | Cardamom 100g + Black Pepper 200g   | ₹640
+Combo Offer 3 | Cardamom 100g + Ceylon Cinnamon 100g | ₹699
+Combo Offer 4 | Cardamom 200g + Clove 200g + Black Pepper 500g | ₹1649
+Combo Offer 5 | Cardamom 100g + Clove 100g + Black Pepper 200g + Ceylon Cinnamon 100g | ₹999
+Combo Offer 6 | Cardamom 100g + Black Pepper 500g   | ₹845
+
+Kerala-il ₹600 kazhinjal free delivery. Outside Kerala customer charge ₹60 aanu.
+
+---
+
+
+
+=== SOURCE 2: 6-HOUR REPORT ===
+
+
+PureLeven WhatsApp Messages Report
+Window: last 6 hours
+Generated from live production database on 2026-06-05 UTC
+
+Raw customer messages
+No customer messages were stored in the primary raw message tables during this window.
+Checked tables:
+- conversation_audit_log
+- ai_incoming_messages
+- ai_outgoing_replies
+
+Related automation/system events seen in the same window
+
+[2026-06-05T04:31:37.812914+00:00] [system] [customer_journey_logs] [5ae229a6-f72c-41b6-9958-ce5fa17d931a]
+phone=919000000001 | product=cardamom | event=step_suppressed | stage=text
+message=text
+metadata={"followup_id":"2dfb1f92-ae4b-4c42-a239-fd77987ce97d","stage":"text","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:32:07.850346+00:00] [system] [customer_journey_logs] [79255988-0dbb-44e1-a67e-2dbf8b014b0d]
+phone=919000000002 | product=clove | event=step_suppressed | stage=text
+message=text
+metadata={"followup_id":"60ad5300-7736-4bed-9ab6-416a99b91a57","stage":"text","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:32:37.887092+00:00] [system] [customer_journey_logs] [9cf810cb-e43f-4872-b8e1-83db5d798c39]
+phone=919000000001 | product=cardamom | event=step_suppressed | stage=text_with_image
+message=text_with_image
+metadata={"followup_id":"1584a1f2-12f9-4d0e-9f13-976cad1f9179","stage":"text_with_image","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:33:07.923685+00:00] [system] [customer_journey_logs] [3a64a653-b1bb-46d6-b115-592337a45de5]
+phone=919000000002 | product=clove | event=step_suppressed | stage=text_with_image
+message=text_with_image
+metadata={"followup_id":"23c0bb87-0ad5-4051-aaa1-c0e12aeea5a9","stage":"text_with_image","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:33:37.963042+00:00] [system] [customer_journey_logs] [72420706-750d-48fa-bfe1-64c67b65f3d6]
+phone=919000000001 | product=cardamom | event=step_suppressed | stage=combo
+message=combo
+metadata={"followup_id":"c9ffaad5-230e-4abb-abf2-562f83142bcb","stage":"combo","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:34:08.008834+00:00] [system] [customer_journey_logs] [d120fc45-a90f-4565-9202-ad7591d6bcea]
+phone=919000000002 | product=clove | event=step_suppressed | stage=combo
+message=combo
+metadata={"followup_id":"9310f64f-4cfc-4daf-bb1a-c7e44c561081","stage":"combo","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:39:08.402636+00:00] [system] [customer_journey_logs] [539b989e-0bf9-4217-890b-1d157435dacd]
+phone=919000000001 | product=cardamom | event=step_suppressed | stage=text
+message=text
+metadata={"followup_id":"983eb4b3-a902-4d3a-a5f3-d348a946608b","stage":"text","reason":"product_journey_inactive","send_live":false}
+
+[2026-06-05T04:39:38.446112+00:00] [system] [customer_journey_logs] [99e29575-8618-4782-9aa0-90904b55e87f]
+phone=919000000002 | product=clove | event=step_suppressed | stage=text
+message=text
+metadata={"followup_id":"92058b7a-a3d8-4fe6-bd20-cfe59062f343","stage":"text","reason":"product_journey_inactive","send_live":false}
+
+Follow-up suppression summary
+- cardamom / gentle_reminder: 3
+- clove / gentle_reminder: 3
+- white_pepper / combo_offer: 3
+- white_pepper / final_followup: 3
+- white_pepper / gentle_reminder: 3
+- white_pepper / image_only: 3
+- white_pepper / soft_nudge: 3
+- black_pepper / combo_offer: 2
+- black_pepper / final_followup: 2
+- black_pepper / gentle_reminder: 2
+- black_pepper / image_only: 2
+- black_pepper / soft_nudge: 2
+- cardamom / combo_offer: 2
+- cardamom / final_followup: 2
+- cardamom / image_only: 2
+- cardamom / soft_nudge: 2
+- cardamom / text: 2
+- clove / combo_offer: 2
+- clove / final_followup: 2
+- clove / image_only: 2
+- clove / soft_nudge: 2
+- clove / text: 2
+- cardamom / combo: 1
+- cardamom / cross_sell: 1
+- cardamom / text_with_image: 1
+- cinnamon / cross_sell: 1
+- cinnamon / gentle_reminder: 1
+- clove / combo: 1
+- clove / cross_sell: 1
+- clove / text_with_image: 1
+- pepper / cross_sell: 1
+- pepper / gentle_reminder: 1
+- pepper / order_capture_reminder: 1
+
+Conclusion
+- No raw customer chat messages were found in the live production tables for the last 6 hours.
+- The only visible activity was automation suppression from inactive product journeys.
+
+
+
+=== SCREENSHOT-CONFIRMED WABIS REPLY (NOT PERSISTED) ===
+
+Customer: +917902708421
+Conversation ID: Wabis screenshot / 2026-06-05 1:05 PM
+
+
+[13:03:00] [customer] [wabis_screenshot]
+Payment screenshot shared by customer
+
+
+[13:05:00] [ai] [wabis_screenshot]
+I received the image 😊
+
+If this is for an order/payment, please type one line also so I can understand it clearly.

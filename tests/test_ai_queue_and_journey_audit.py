@@ -14,6 +14,7 @@ for path in (str(ROOT), str(BACKEND_ROOT)):
         sys.path.insert(0, path)
 
 from app.ai.conversation_state_manager import reset_conversation_state, set_conversation_state
+from app.ai.clarification_flow import send_clarification_menu
 from app.runtime_db import ensure_runtime_tables, get_db_connection
 from app.services.ai_reply_queue_service import enqueue_ai_reply_job, run_due_ai_reply_jobs
 from app.services.customer_journey_service import stop_customer_journeys_for_customer
@@ -33,6 +34,7 @@ def _cleanup_phone(phone: str) -> None:
             ("ai_reply_jobs", "customer_phone"),
             ("ai_conversation_sessions", "customer_phone"),
             ("ai_decision_logs", "customer_phone"),
+            ("conversation_audit_log", "phone"),
             ("customer_journey_assignments", "customer_phone"),
             ("customer_journey_logs", "customer_phone"),
             ("product_journey_followups", "phone"),
@@ -197,6 +199,107 @@ def test_wabis_owned_ai_job_is_skipped_not_sent(monkeypatch) -> None:
         ).fetchone()
     assert job["status"] == "skipped"
     assert job["skipped_reason"] == "wabis_owns"
+
+
+def test_store_generated_reply_is_persisted_before_send_failure(monkeypatch) -> None:
+    phone = "919999777004"
+    _cleanup_phone(phone)
+
+    from app.routes import wave02_wabis_routes
+
+    def fail_send_whatsapp_reply_with_fallback(**_kwargs):
+        raise RuntimeError("simulated send failure")
+
+    monkeypatch.setattr(
+        wave02_wabis_routes,
+        "send_whatsapp_reply_with_fallback",
+        fail_send_whatsapp_reply_with_fallback,
+    )
+
+    result = wave02_wabis_routes._store_generated_reply(
+        conversation_id="store-reply-test-1",
+        customer_phone=phone,
+        reply_result={
+            "reply_text": "Undu 😊\n\n250g ₹300",
+            "intent": "availability",
+            "product_key": "black_pepper",
+            "message_understanding": {"scenario": "availability", "detected_language": "manglish"},
+        },
+        route="ai",
+        customer_name="Test",
+        inbound_message="black pepper undo?",
+    )
+
+    assert result["status"] == "failed"
+    with get_db_connection() as conn:
+        row = conn.execute(
+            """
+            SELECT reply_text, intent, send_status
+            FROM ai_outgoing_replies
+            WHERE conversation_id = ?
+            ORDER BY created_at DESC
+            LIMIT 1
+            """,
+            ("store-reply-test-1",),
+        ).fetchone()
+    assert row is not None
+    assert row["reply_text"] == "Undu 😊\n\n250g ₹300"
+    assert row["intent"] == "availability"
+    assert row["send_status"] == "failed"
+
+
+def test_clarification_menu_is_audited_and_saved(monkeypatch) -> None:
+    phone = "919999777005"
+    _cleanup_phone(phone)
+
+    from app.ai import clarification_flow
+
+    sent_payloads: list[dict[str, str]] = []
+
+    def fake_send_text_message(*, phone_number: str, message_text: str, conversation_id: str):
+        sent_payloads.append(
+            {
+                "phone_number": phone_number,
+                "message_text": message_text,
+                "conversation_id": conversation_id,
+            }
+        )
+        return {"success": True, "message_id": "msg-clarify-1"}
+
+    monkeypatch.setattr(clarification_flow.WabisAPIClient, "send_text_message", fake_send_text_message)
+
+    send_clarification_menu(phone=phone, conversation_id="clarify-test-1", original_query="plants available??")
+
+    assert sent_payloads and sent_payloads[0]["phone_number"] == phone
+    with get_db_connection() as conn:
+        outgoing = conn.execute(
+            """
+            SELECT reply_text, intent, send_status
+            FROM ai_outgoing_replies
+            WHERE conversation_id = ?
+            ORDER BY created_at DESC
+            LIMIT 1
+            """,
+            ("clarify-test-1",),
+        ).fetchone()
+        audit = conn.execute(
+            """
+            SELECT source, direction, message, reason
+            FROM conversation_audit_log
+            WHERE phone = ?
+            ORDER BY created_at DESC
+            LIMIT 1
+            """,
+            (phone,),
+        ).fetchone()
+
+    assert outgoing is not None
+    assert outgoing["intent"] == "clarification_menu"
+    assert outgoing["send_status"] == "sent"
+    assert "what you meant" in outgoing["reply_text"]
+    assert audit is not None
+    assert audit["source"] == "ai"
+    assert audit["direction"] == "outbound"
 
 
 def test_customer_reply_stops_active_journey_and_pending_followups() -> None:

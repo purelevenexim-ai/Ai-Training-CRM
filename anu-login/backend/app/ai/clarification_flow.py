@@ -13,6 +13,7 @@ from typing import Any
 from datetime import datetime, timezone
 
 from app.storage import get_db_connection
+from app.ai.audit_logger import log_ai_response, reserve_ai_outgoing_reply, update_ai_outgoing_reply_status
 from app.ai.wabis_api_client import WabisAPIClient
 
 logger = logging.getLogger(__name__)
@@ -100,10 +101,52 @@ Could you tell me more? Are you looking for:
 Just reply with the number!"""
     
     try:
+        reply_id = reserve_ai_outgoing_reply(
+            conversation_id=conversation_id,
+            customer_phone=phone,
+            reply_text=clarification_text,
+            intent="clarification_menu",
+            escalated=False,
+            message_mode="text",
+            media_urls=[],
+            send_status="pending",
+        )
         WabisAPIClient.send_text_message(
             phone_number=phone,
             message_text=clarification_text,
             conversation_id=conversation_id,
+        )
+        if reply_id:
+            update_ai_outgoing_reply_status(reply_id, send_status="sent")
+        else:
+            reserve_ai_outgoing_reply(
+                conversation_id=conversation_id,
+                customer_phone=phone,
+                reply_text=clarification_text,
+                intent="clarification_menu",
+                escalated=False,
+                message_mode="text",
+                media_urls=[],
+                send_status="sent",
+            )
+        log_ai_response(
+            phone=phone,
+            response_message=clarification_text,
+            owner="ai",
+            active_flow="clarification_menu",
+            detected_intent="clarification_menu",
+            customer_id=phone,
+            inbound_message=original_query,
+            generated_reply=clarification_text,
+            final_reply=clarification_text,
+            guard_action="sent",
+            issues_found=[],
+            active_product="",
+            journey_stage="clarification_menu",
+            metadata={
+                "conversation_id": conversation_id,
+                "source": "clarification_flow",
+            },
         )
         logger.info(f"[CLARIFICATION] Sent menu to {phone}")
     except Exception as e:

@@ -251,6 +251,75 @@ def log_ai_response(
     )
 
 
+def reserve_ai_outgoing_reply(
+    *,
+    conversation_id: str,
+    customer_phone: str,
+    reply_text: str,
+    intent: str,
+    escalated: bool = False,
+    message_mode: str = "text",
+    media_urls: Optional[list[str]] = None,
+    send_status: str = "pending",
+) -> str:
+    """Create an AI reply row before sending so the audit survives send-time failures."""
+    from app.storage import get_db_connection
+
+    try:
+        reply_id = str(uuid.uuid4())
+        conn = get_db_connection()
+        conn.execute(
+            """
+            INSERT INTO ai_outgoing_replies
+            (id, conversation_id, customer_phone, reply_text, intent,
+             escalated, send_status, message_mode, media_json, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                reply_id,
+                conversation_id,
+                customer_phone,
+                reply_text,
+                intent,
+                int(bool(escalated)),
+                send_status,
+                message_mode,
+                json.dumps({"image_urls": media_urls or []}, ensure_ascii=False),
+                datetime.now(timezone.utc).isoformat(),
+            ),
+        )
+        conn.commit()
+        return reply_id
+    except Exception as exc:
+        logger.warning("Failed to reserve AI outgoing reply for %s: %s", customer_phone, exc)
+        return ""
+
+
+def update_ai_outgoing_reply_status(
+    reply_id: str,
+    *,
+    send_status: str,
+) -> None:
+    """Update a reserved AI reply row after the Wabis send attempt completes."""
+    if not reply_id:
+        return
+    from app.storage import get_db_connection
+
+    try:
+        conn = get_db_connection()
+        conn.execute(
+            """
+            UPDATE ai_outgoing_replies
+            SET send_status = ?
+            WHERE id = ?
+            """,
+            (send_status, reply_id),
+        )
+        conn.commit()
+    except Exception as exc:
+        logger.warning("Failed to update AI outgoing reply %s status to %s: %s", reply_id, send_status, exc)
+
+
 def log_flow_transition(
     phone: str,
     owner_before: str,

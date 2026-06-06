@@ -22,6 +22,46 @@ CONTROL_EVENT_TYPES = {
     "conversation.archived",
 }
 
+# ── Status precedence for monotonic projection ────────────────────────────────
+# failed is terminal; otherwise read > delivered > sent > accepted
+STATUS_PRECEDENCE: dict[str, int] = {
+    "accepted": 1,
+    "sent": 2,
+    "delivered": 3,
+    "read": 4,
+    "failed": 5,       # terminal — never overwritten by a lower precedence status
+    "undelivered": 5,  # treat as terminal failure
+    "unsupported": 0,  # informational — does not affect delivery state
+}
+
+# ── Conversation mode values ──────────────────────────────────────────────────
+CONVERSATION_MODES = {"AUTO", "HUMAN_SOFT_LOCK", "HUMAN_HARD_LOCK", "PAUSED", "ARCHIVED"}
+
+# ── Retry state values ────────────────────────────────────────────────────────
+RETRY_STATES = {"NOT_SCHEDULED", "SCHEDULED", "CANCELLED_BY_HUMAN", "EXECUTED", "EXHAUSTED"}
+
+
+def _status_precedence(status: str) -> int:
+    """Return numeric precedence for a delivery status. Higher = more advanced."""
+    return STATUS_PRECEDENCE.get(status.lower(), 0)
+
+
+def _is_status_upgrade(current: str | None, incoming: str) -> bool:
+    """Return True if `incoming` status is a monotonic upgrade over `current`.
+
+    `failed` and `undelivered` are terminal — once set they are never
+    overwritten by a lower-precedence status.  `unsupported` is informational
+    and never wins over a real delivery state.
+    """
+    if not current:
+        return True
+    cur_prec = _status_precedence(current)
+    inc_prec = _status_precedence(incoming)
+    # Terminal states (failed/undelivered) never get downgraded
+    if cur_prec == 5:
+        return False
+    return inc_prec >= cur_prec
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -272,6 +312,13 @@ def _project_human_event(normalized: dict[str, Any], raw_delivery_id: str) -> di
             cancelled_followups = 0
         delay_seconds = human_inactivity_delay_seconds()
         lock_until = (datetime.now(timezone.utc) + timedelta(seconds=delay_seconds)).isoformat()
+        # Determine conversation_mode from event type
+        if event_type == "conversation.bot_paused":
+            conv_mode = "PAUSED"
+        elif event_type in ("conversation.agent_assigned", "conversation.archived"):
+            conv_mode = "HUMAN_HARD_LOCK"
+        else:
+            conv_mode = "HUMAN_SOFT_LOCK"
         set_conversation_state(
             phone,
             owner="human",
@@ -289,8 +336,12 @@ def _project_human_event(normalized: dict[str, Any], raw_delivery_id: str) -> di
                 "human_inactivity_seconds": delay_seconds,
                 "followups_allowed": False,
                 "journey_stage": "human_review",
+                "conversation_mode": conv_mode,
+                "retry_state": "CANCELLED_BY_HUMAN",
+                "latest_outbound_state": "HUMAN_SENT",
             },
         )
+        review_item_id = None
         try:
             with get_db_connection() as connection:
                 connection.execute(
@@ -308,6 +359,39 @@ def _project_human_event(normalized: dict[str, Any], raw_delivery_id: str) -> di
                         "human_outbound_observed",
                         lock_until,
                         raw_delivery_id,
+                        _now(),
+                    ),
+                )
+                # Create review item for human-administered outbound events
+                review_item_id = str(uuid.uuid4())
+                evidence = {
+                    "inbound_context": normalized.get("inbound_context") or "",
+                    "human_message": normalized.get("message_text") or "",
+                    "event_type": event_type,
+                    "actor_id": normalized.get("actor_id") or "",
+                    "message_id": normalized.get("message_id") or "",
+                    "lock_until": lock_until,
+                    "cancelled_ai_jobs": cancelled,
+                    "cancelled_followups": cancelled_followups,
+                }
+                connection.execute(
+                    """
+                    INSERT INTO review_items
+                    (id, conversation_id, customer_phone, inbound_event_id,
+                     human_outbound_message_id, review_state, proposed_intent,
+                     promotion_target, evidence_json, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, 'OPEN', ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        review_item_id,
+                        normalized.get("conversation_id") or phone,
+                        phone,
+                        normalized.get("inbound_event_id") or "",
+                        normalized.get("message_id") or "",
+                        normalized.get("proposed_intent") or "",
+                        normalized.get("promotion_target") or "",
+                        json.dumps(evidence, ensure_ascii=False),
+                        _now(),
                         _now(),
                     ),
                 )
@@ -448,6 +532,26 @@ def ingest_wabis_outbound_event(
                     now,
                 ),
             )
+        # Monotonic status update: only upgrade, never downgrade.
+        # Prevents a late "delivered" from overwriting an already-received "read".
+        msg_id = normalized.get("message_id")
+        if msg_id:
+            existing = connection.execute(
+                "SELECT delivery_status FROM wabis_outbound_messages WHERE message_id = ? ORDER BY created_at DESC LIMIT 1",
+                (msg_id,),
+            ).fetchone()
+            current_status = existing["delivery_status"] if existing else None
+            incoming_status = normalized["delivery_status"]
+            if _is_status_upgrade(current_status, incoming_status):
+                connection.execute(
+                    "UPDATE wabis_outbound_messages SET delivery_status = ?, updated_at = ? WHERE message_id = ?",
+                    (incoming_status, now, msg_id),
+                )
+            else:
+                logger.info(
+                    "[WABIS-OUTBOUND] status not downgraded: msg=%s current=%s incoming=%s",
+                    msg_id, current_status, incoming_status,
+                )
         connection.commit()
 
     projection = _project_human_event(normalized, raw_delivery_id)

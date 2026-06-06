@@ -1,0 +1,20 @@
+{
+  "event": "conversation.message.status",
+  "event_id": "evt_unsupported_001",
+  "timestamp": "2026-06-06T05:20:00+00:00",
+  "account": {
+    "phone_number_id": "252036884661683"
+  },
+  "message": {
+    "id": "wamid_unsupported_001",
+    "status": "unsupported"
+  },
+  "contact": {
+    "wa_id": "919746785791"
+  },
+  "error": {
+    "code": 131000,
+    "title": "Unsupported message type",
+    "message": "Message type not supported on this phone"
+  }
+}

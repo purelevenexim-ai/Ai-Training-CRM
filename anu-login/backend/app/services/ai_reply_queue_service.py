@@ -297,6 +297,14 @@ def enqueue_ai_reply_job(
 
         job_id = str(uuid.uuid4())
         scheduled_at = (now_dt + timedelta(seconds=delay_seconds)).isoformat()
+
+        # Capture conversation version at schedule time for compare-and-swap
+        try:
+            _sched_state = get_conversation_state(customer_phone)
+            metadata_payload["_scheduled_version"] = int(_sched_state.get("version") or 1) if _sched_state else 1
+        except Exception:
+            metadata_payload["_scheduled_version"] = 1
+
         conn.execute(
             """
             INSERT INTO ai_reply_jobs
@@ -598,6 +606,31 @@ def run_due_ai_reply_jobs(limit: int = 20) -> list[dict[str, Any]]:
                 _finish_job(job, "cancelled", reason="newer_customer_message")
                 processed.append({"job_id": job["id"], "status": "cancelled", "reason": "newer_customer_message"})
                 continue
+
+            # ── Compare-and-swap: re-read conversation version before firing ──
+            # If the version has changed since the job was scheduled, a human
+            # or system event intervened — abort the retry.
+            scheduled_version = job.get("metadata_json", "")
+            try:
+                meta = json.loads(scheduled_version) if scheduled_version else {}
+                job_version = int(meta.get("_scheduled_version") or 0)
+            except Exception:
+                job_version = 0
+            if job_version:
+                current_state = get_conversation_state(job["customer_phone"])
+                current_version = int(current_state.get("version") or 1) if current_state else 1
+                if current_version != job_version:
+                    _finish_job(job, "cancelled", reason="version_changed_by_intervention")
+                    processed.append({"job_id": job["id"], "status": "cancelled", "reason": "version_changed_by_intervention"})
+                    log_ai_decision(
+                        conversation_id=job["conversation_id"],
+                        customer_phone=job["customer_phone"],
+                        incoming_message=job["source_message"],
+                        final_route_owner="system",
+                        matched_template="version_changed_abort",
+                        metadata={"job_id": job["id"], "job_version": job_version, "current_version": current_version},
+                    )
+                    continue
 
             state = get_conversation_state(job["customer_phone"])
             if state and state.get("owner") == "wabis":

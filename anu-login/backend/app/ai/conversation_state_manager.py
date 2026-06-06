@@ -39,6 +39,9 @@ def set_conversation_state(
     expected_responses: Optional[str] = None,
     context: Optional[dict[str, Any]] = None,
     timeout_minutes: Optional[int] = None,
+    conversation_mode: Optional[str] = None,
+    latest_outbound_state: Optional[str] = None,
+    retry_state: Optional[str] = None,
 ) -> None:
     """
     Set complete conversation state. Single source of truth.
@@ -58,6 +61,9 @@ def set_conversation_state(
         flow_step: Current step in flow
         expected_responses: Comma-separated list of expected options from customer (e.g., "english,malayalam,1,2")
         context: Additional context dict
+        conversation_mode: AUTO, HUMAN_SOFT_LOCK, HUMAN_HARD_LOCK, PAUSED, ARCHIVED
+        latest_outbound_state: NONE, AI_PENDING, AI_SENT, HUMAN_SENT, DELIVERED, READ, FAILED
+        retry_state: NOT_SCHEDULED, SCHEDULED, CANCELLED_BY_HUMAN, EXECUTED, EXHAUSTED
     """
     
     if owner not in ("human", "campaign", "wabis", "system", "ai"):
@@ -81,10 +87,11 @@ def set_conversation_state(
         
         conn.execute(
             """
-            INSERT INTO conversation_state 
-            (phone, owner, owner_reason, flow_id, flow_step, expected_responses, expires_at, 
-             last_activity, context_json, started_at, updated_at, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO conversation_state
+            (phone, owner, owner_reason, flow_id, flow_step, expected_responses, expires_at,
+             last_activity, context_json, started_at, updated_at, created_at,
+             conversation_mode, latest_outbound_state, retry_state, version)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(phone) DO UPDATE SET
                 owner = excluded.owner,
                 owner_reason = excluded.owner_reason,
@@ -94,7 +101,11 @@ def set_conversation_state(
                 expires_at = excluded.expires_at,
                 context_json = excluded.context_json,
                 updated_at = excluded.updated_at,
-                last_activity = excluded.updated_at
+                last_activity = excluded.updated_at,
+                conversation_mode = COALESCE(?, excluded.conversation_mode),
+                latest_outbound_state = COALESCE(?, excluded.latest_outbound_state),
+                retry_state = COALESCE(?, excluded.retry_state),
+                version = conversation_state.version + 1
             """,
             (
                 phone,
@@ -109,6 +120,13 @@ def set_conversation_state(
                 now,
                 now,
                 now,
+                conversation_mode or "AUTO",
+                latest_outbound_state or "NONE",
+                retry_state or "NOT_SCHEDULED",
+                1,
+                conversation_mode,
+                latest_outbound_state,
+                retry_state,
             ),
         )
         conn.commit()
@@ -146,7 +164,8 @@ def get_conversation_state(phone: str) -> Optional[dict[str, Any]]:
             SELECT owner, owner_reason, flow_id, flow_step, expected_responses, expires_at, last_activity, context_json, updated_at,
                    customer_id, language, active_product, latest_intent, price_shared, quantity_selected, address_received,
                    pincode_received, payment_claimed, payment_screenshot_received, defer_intent, followups_allowed,
-                   journey_stage, last_ai_reply_hash, last_ai_reply_at
+                   journey_stage, last_ai_reply_hash, last_ai_reply_at,
+                   conversation_mode, latest_outbound_state, retry_state, version
             FROM conversation_state
             WHERE phone = ?
             """,
@@ -181,6 +200,10 @@ def get_conversation_state(phone: str) -> Optional[dict[str, Any]]:
             journey_stage,
             last_ai_reply_hash,
             last_ai_reply_at,
+            conversation_mode,
+            latest_outbound_state,
+            retry_state,
+            version,
         ) = row
         
         # Check if expired
@@ -215,6 +238,10 @@ def get_conversation_state(phone: str) -> Optional[dict[str, Any]]:
             "journey_stage": journey_stage or flow_step or "",
             "last_ai_reply_hash": last_ai_reply_hash or "",
             "last_ai_reply_at": last_ai_reply_at or "",
+            "conversation_mode": conversation_mode or "AUTO",
+            "latest_outbound_state": latest_outbound_state or "NONE",
+            "retry_state": retry_state or "NOT_SCHEDULED",
+            "version": version or 1,
         }
     except Exception as e:
         logger.error(f"Failed to get state: {e}")

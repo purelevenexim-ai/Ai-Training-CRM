@@ -89,6 +89,11 @@ def ensure_runtime_tables() -> None:
         _ensure_column(connection, "conversation_state", "journey_stage TEXT")
         _ensure_column(connection, "conversation_state", "last_ai_reply_hash TEXT")
         _ensure_column(connection, "conversation_state", "last_ai_reply_at TEXT")
+        # ── Admin outbound event tracking columns ──────────────────────────────
+        _ensure_column(connection, "conversation_state", "conversation_mode TEXT NOT NULL DEFAULT 'AUTO'")
+        _ensure_column(connection, "conversation_state", "latest_outbound_state TEXT NOT NULL DEFAULT 'NONE'")
+        _ensure_column(connection, "conversation_state", "retry_state TEXT NOT NULL DEFAULT 'NOT_SCHEDULED'")
+        _ensure_column(connection, "conversation_state", "version INTEGER NOT NULL DEFAULT 1")
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS product_journey_followups (
@@ -479,6 +484,82 @@ def ensure_runtime_tables() -> None:
             )
             """
         )
+        # ── Review & intent rule tables for admin outbound event tracking ──────
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS review_items (
+                id TEXT PRIMARY KEY,
+                conversation_id TEXT NOT NULL,
+                customer_phone TEXT NOT NULL,
+                inbound_event_id TEXT,
+                human_outbound_message_id TEXT,
+                review_state TEXT NOT NULL DEFAULT 'OPEN',
+                proposed_intent TEXT,
+                promotion_target TEXT,
+                evidence_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+        """)
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS intent_rules (
+                id TEXT PRIMARY KEY,
+                tenant_id TEXT NOT NULL DEFAULT 'default',
+                intent_key TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'active',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                UNIQUE(tenant_id, intent_key)
+            )
+        """)
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS intent_rule_versions (
+                id TEXT PRIMARY KEY,
+                intent_rule_id TEXT NOT NULL,
+                version_no INTEGER NOT NULL,
+                is_active INTEGER NOT NULL DEFAULT 0,
+                rule_json TEXT NOT NULL DEFAULT '{}',
+                created_at TEXT NOT NULL,
+                UNIQUE(intent_rule_id, version_no)
+            )
+        """)
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS rule_promotions (
+                id TEXT PRIMARY KEY,
+                review_item_id TEXT NOT NULL,
+                intent_rule_version_id TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',
+                promoted_by TEXT,
+                promoted_at TEXT,
+                rollback_of TEXT,
+                created_at TEXT NOT NULL
+            )
+        """)
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS audit_logs (
+                id TEXT PRIMARY KEY,
+                actor_id TEXT,
+                actor_role TEXT,
+                entity_type TEXT NOT NULL,
+                entity_id TEXT NOT NULL,
+                action TEXT NOT NULL,
+                before_json TEXT NOT NULL DEFAULT '{}',
+                after_json TEXT NOT NULL DEFAULT '{}',
+                reason TEXT,
+                source_review_item_id TEXT,
+                source_event_id TEXT,
+                request_id TEXT,
+                rollback_of TEXT,
+                created_at TEXT NOT NULL
+            )
+        """)
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_review_items_state ON review_items(review_state, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_review_items_phone ON review_items(customer_phone, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_intent_rules_key ON intent_rules(tenant_id, intent_key)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_intent_rule_versions_rule ON intent_rule_versions(intent_rule_id, version_no DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_rule_promotions_review ON rule_promotions(review_item_id)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id, created_at DESC)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_audit_logs_actor ON audit_logs(actor_id, created_at DESC)")
+
         connection.execute("CREATE INDEX IF NOT EXISTS idx_conversation_state_owner ON conversation_state(owner)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_conversation_state_expires ON conversation_state(expires_at)")
         connection.execute("CREATE INDEX IF NOT EXISTS idx_product_followups_phone ON product_journey_followups(phone, scheduled_at DESC)")

@@ -35,6 +35,7 @@ from app.routes.rules import router as rules_router
 from app.routes.settings import router as settings_router
 from app.routes.shopify_webhook import router as shopify_webhook_router
 from app.routes.test_journey import router as test_journey_router
+from app.routes.review_routes import router as review_router
 from app.routes.wave02_wabis_routes import router as wave02_wabis_router
 from app.routes.whatsapp_journey import router as whatsapp_journey_router
 from app.routes.whatsapp_tracking import router as whatsapp_tracking_router
@@ -162,3 +163,4 @@ app.include_router(review_journey_router, prefix="/api")
 app.include_router(crm_whatsapp_router, prefix="/api")
 app.include_router(root_tracking_bridge_router, prefix="/api")
 app.include_router(test_journey_router, prefix="/api")
+app.include_router(review_router, prefix="/api")  # Review dashboard API (admin outbound event tracking)

@@ -1,0 +1,21 @@
+{
+  "event": "conversation.archived",
+  "event_id": "evt_archive_001",
+  "timestamp": "2026-06-06T06:00:00+00:00",
+  "account": {
+    "phone_number_id": "252036884661683",
+    "bot_id": "pureleven_main"
+  },
+  "conversation": {
+    "id": "conv_919746785791_006"
+  },
+  "contact": {
+    "wa_id": "919746785791",
+    "profile": {
+      "name": "Basil Thomas"
+    }
+  },
+  "action": "archive",
+  "actor_type": "agent",
+  "agent_id": "agent_001"
+}

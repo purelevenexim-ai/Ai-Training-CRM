@@ -1,0 +1,22 @@
+{
+  "event": "conversation.bot_paused",
+  "event_id": "evt_pause_001",
+  "timestamp": "2026-06-06T05:10:00+00:00",
+  "account": {
+    "phone_number_id": "252036884661683",
+    "bot_id": "pureleven_main"
+  },
+  "conversation": {
+    "id": "conv_919746785791_003"
+  },
+  "contact": {
+    "wa_id": "919746785791",
+    "profile": {
+      "name": "Basil Thomas"
+    }
+  },
+  "action": "pause_bot_replies",
+  "actor_type": "agent",
+  "agent_id": "agent_002",
+  "reason": "Customer complaint — needs human handling"
+}

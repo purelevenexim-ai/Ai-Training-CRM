@@ -1,0 +1,15 @@
+{
+  "event": "conversation.message.status",
+  "event_id": "evt_status_sent_001",
+  "timestamp": "2026-06-06T04:52:15+00:00",
+  "account": {
+    "phone_number_id": "252036884661683"
+  },
+  "message": {
+    "id": "wamid_admin_reply_001",
+    "status": "sent"
+  },
+  "contact": {
+    "wa_id": "919746785791"
+  }
+}

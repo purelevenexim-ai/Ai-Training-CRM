@@ -1,5 +1,0 @@
-fastapi
-uvicorn[standard]
-prometheus_client
-sqlalchemy
-psycopg2-binary
